@@ -11,9 +11,14 @@ class Supabase:
     def __init__(
         self, url: str, service_key: str, *, transport: httpx.BaseTransport | None = None
     ) -> None:
+        headers = {"apikey": service_key}
+        # Legacy service_role keys are JWTs and also go in Authorization.
+        # New sb_secret_ keys are not JWTs and must only be sent as apikey.
+        if service_key.startswith("eyJ"):
+            headers["Authorization"] = f"Bearer {service_key}"
         self.http = httpx.Client(
             base_url=f"{url}/rest/v1",
-            headers={"apikey": service_key, "Authorization": f"Bearer {service_key}"},
+            headers=headers,
             timeout=15,
             transport=transport,
         )
