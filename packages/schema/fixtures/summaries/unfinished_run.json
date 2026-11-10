@@ -1,0 +1,23 @@
+{
+  "run_id": "exp000-20261109-r1",
+  "experiment_id": "exp000-ir-bridge",
+  "status": "open",
+  "null_test": false,
+  "started_at": "2026-11-09T20:00:00.000Z",
+  "ended_at": null,
+  "requested": 1,
+  "denied": 0,
+  "sent": 1,
+  "failed": 0,
+  "observed": 1,
+  "succeeded": 1,
+  "success_rate": 1,
+  "tools": {
+    "fan.power": {
+      "requested": 1,
+      "sent": 1,
+      "succeeded": 1,
+      "observed": 1
+    }
+  }
+}

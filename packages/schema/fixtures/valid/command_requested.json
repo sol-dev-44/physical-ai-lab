@@ -1,0 +1,13 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000002",
+  "run_id": "exp000-20261109-r1",
+  "seq": 1,
+  "ts": "2026-11-09T20:00:01.100Z",
+  "actor": "human",
+  "type": "command.requested",
+  "tool": "fan.power",
+  "args": {},
+  "device": "rm4-mini-living",
+  "payload": {}
+}

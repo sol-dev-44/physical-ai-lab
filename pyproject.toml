@@ -1,0 +1,25 @@
+# uv workspace root. Each Python service or experiment is a member with its own pyproject.
+[project]
+name = "lab-workspace"
+version = "0.0.0"
+requires-python = ">=3.12"
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+# Listed explicitly: not every experiment folder is a Python project.
+members = ["services/lab-agent", "experiments/exp000-ir-bridge"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8", "jsonschema>=4.23"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["services", "experiments"]

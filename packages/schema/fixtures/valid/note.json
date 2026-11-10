@@ -1,0 +1,12 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000011",
+  "run_id": "exp000-20261109-r1",
+  "seq": 10,
+  "ts": "2026-11-09T20:01:00.000Z",
+  "actor": "human",
+  "type": "note",
+  "payload": {
+    "text": "robot remote looks like RF, not IR"
+  }
+}

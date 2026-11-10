@@ -1,0 +1,34 @@
+# deps / build
+node_modules/
+.next/
+out/
+dist/
+target/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# local lab data: event logs and media are the source of truth and stay on the lab machine.
+# Sync publishes them to Supabase; they never go in git.
+events/
+media/
+*.jsonl
+!packages/schema/fixtures/**/*.jsonl
+
+.DS_Store
+
+# software e-stop flag (lab-agent)
+STOP

@@ -1,0 +1,16 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000003",
+  "run_id": "exp000-20261109-r1",
+  "seq": 2,
+  "ts": "2026-11-09T20:00:01.102Z",
+  "actor": "system",
+  "type": "safety.checked",
+  "tool": "fan.power",
+  "args": {},
+  "parent_id": "01JC9X7Q000000000000000002",
+  "payload": {
+    "decision": "maybe",
+    "rule": "allowlist"
+  }
+}

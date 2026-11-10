@@ -1,0 +1,17 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000004",
+  "run_id": "exp000-20261109-r1",
+  "seq": 3,
+  "ts": "2026-11-09T20:00:01.180Z",
+  "actor": "system",
+  "type": "command.sent",
+  "tool": "fan.power",
+  "args": {},
+  "device": "rm4-mini-living",
+  "parent_id": "01JC9X7Q000000000000000003",
+  "payload": {
+    "latency_ms": 78
+  },
+  "extra": 1
+}

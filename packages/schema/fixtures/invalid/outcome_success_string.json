@@ -1,0 +1,15 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000005",
+  "run_id": "exp000-20261109-r1",
+  "seq": 4,
+  "ts": "2026-11-09T20:00:03.000Z",
+  "actor": "human",
+  "type": "outcome.observed",
+  "tool": "fan.power",
+  "parent_id": "01JC9X7Q000000000000000004",
+  "payload": {
+    "success": "true",
+    "method": "human"
+  }
+}

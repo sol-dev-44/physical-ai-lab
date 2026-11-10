@@ -1,0 +1,32 @@
+---
+id: exp000-ir-bridge
+title: "Experiment 0: IR bridge"
+date: 2026-11-09
+status: planned
+summary: Control a fan, a TV and a toy robot through one typed tool registry and safety gate, log every step, and replay it.
+hypothesis: A cheap IR blaster driven through the harness can hit at least 9 of 10 commands per device, and a null test (no IR sent) scores near zero.
+hardware:
+  - BroadLink RM4 Mini
+  - Kasa smart plugs
+tags: [harness, ir, home]
+runs: []
+draft: true
+---
+
+## Why
+
+Before the arms arrive, prove the harness end to end on hardware that costs nothing:
+command in, safety gate, device, observed outcome, all in one event log.
+
+## Protocol
+
+1. Learn IR codes for each device.
+2. Send each command 10 times through the tool registry. Record the outcome by eye.
+3. Run the same script as a null test with sending disabled.
+4. Replay run 1 from its log and compare.
+
+<Callout>Fireplace is excluded from automated trials. Manual, supervised commands only.</Callout>
+
+## Results
+
+Pending. Results on this page are computed from the published runs listed in the front matter.

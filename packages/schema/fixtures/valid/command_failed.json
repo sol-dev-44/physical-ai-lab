@@ -1,0 +1,17 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000010",
+  "run_id": "exp000-20261109-r1",
+  "seq": 9,
+  "ts": "2026-11-09T20:00:20.900Z",
+  "actor": "system",
+  "type": "command.failed",
+  "tool": "robot.forward",
+  "args": {
+    "seconds": 1.5
+  },
+  "parent_id": "01JC9X7Q000000000000000009",
+  "payload": {
+    "error": "device timeout"
+  }
+}

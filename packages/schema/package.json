@@ -1,0 +1,27 @@
+{
+  "name": "@lab/schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The lab event contract. zod is the authoring source; schema/*.json is generated and is what Python and Rust validate against.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./event.v0.schema.json": "./schema/event.v0.schema.json"
+  },
+  "scripts": {
+    "gen": "tsx scripts/gen.ts",
+    "gen:check": "tsx scripts/gen.ts --check",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm gen:check && vitest run",
+    "gen:summaries": "tsx scripts/summaries.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

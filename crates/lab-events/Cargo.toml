@@ -1,0 +1,16 @@
+[package]
+name = "lab-events"
+version = "0.1.0"
+description = "Rust mirror of the lab event contract: parsing, log validation, run summaries."
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true
