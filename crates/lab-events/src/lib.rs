@@ -13,5 +13,5 @@ mod log;
 mod summary;
 
 pub use event::{Actor, Event, EventError, Kind, parse_event};
-pub use log::{LogIssue, validate_log};
+pub use log::{LogIssue, ParsedLog, parse_log, validate_log};
 pub use summary::{RunSummary, ToolCounts, summarize};

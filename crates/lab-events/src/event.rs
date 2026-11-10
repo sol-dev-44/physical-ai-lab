@@ -7,11 +7,12 @@ static ULID: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[0-9A-HJKMNP-TV-Z]
 static RUN_ID: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^[a-z0-9][a-z0-9-]{2,79}$").unwrap());
 static EXPERIMENT_ID: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^exp\d{3}(-[a-z0-9]+)*$").unwrap());
+    LazyLock::new(|| Regex::new(r"^exp[0-9]{3}(-[a-z0-9]+)*$").unwrap());
 static TOOL: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$").unwrap());
-static TS: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$").unwrap());
+static TS: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$").unwrap()
+});
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kind {

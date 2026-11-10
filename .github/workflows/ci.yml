@@ -45,6 +45,30 @@ jobs:
       - run: cargo clippy --all-targets --locked -- -D warnings
       - run: cargo test --locked
 
+  # The committed WASM (packages/lab-events-wasm/generated) must rebuild from the
+  # Rust sources. The typescript job checks its source hash and engine parity.
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - name: wasm-bindgen-cli at the Cargo.lock version
+        run: |
+          v=$(awk '/^name = "wasm-bindgen"$/{getline; sub(/version = /,""); gsub(/"/,""); print}' Cargo.lock)
+          echo "wasm-bindgen $v"
+          cargo install wasm-bindgen-cli --version "$v" --locked
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @lab/events-wasm wasm
+      - run: pnpm --filter @lab/events-wasm test
+
   database:
     runs-on: ubuntu-latest
     services:

@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::event::{Kind, parse_event};
+use crate::event::{Event, Kind, parse_event};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LogIssue {
@@ -11,6 +11,27 @@ pub struct LogIssue {
 
 /// Same rules as `packages/schema/src/log.ts` and `lab_agent.log`.
 pub fn validate_log<'a>(lines: impl IntoIterator<Item = &'a str>) -> Vec<LogIssue> {
+    scan(lines, false).issues
+}
+
+/// A log parsed in one pass: every line that is a valid event, plus every issue.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ParsedLog {
+    /// Valid events in file order, with their 1-based line numbers.
+    pub events: Vec<(usize, Event)>,
+    pub issues: Vec<LogIssue>,
+}
+
+/// Validate and keep the events, parsing each line once. `issues` is exactly
+/// what `validate_log` returns.
+pub fn parse_log<'a>(lines: impl IntoIterator<Item = &'a str>) -> ParsedLog {
+    scan(lines, true)
+}
+
+/// One pass over the log. `keep` decides whether valid events are retained
+/// (the viewer needs them; `labctl stats` only needs the issues).
+fn scan<'a>(lines: impl IntoIterator<Item = &'a str>, keep: bool) -> ParsedLog {
+    let mut events = Vec::new();
     let mut issues = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
     let mut run_id: Option<String> = None;
@@ -61,9 +82,12 @@ pub fn validate_log<'a>(lines: impl IntoIterator<Item = &'a str>) -> Vec<LogIssu
         seen.insert(e.event_id.clone());
         expected_seq = e.seq + 1;
         ended |= e.kind == Kind::RunEnded;
+        if keep {
+            events.push((line, e));
+        }
     }
     if seen.is_empty() {
         push(0, "log is empty".into());
     }
-    issues
+    ParsedLog { events, issues }
 }

@@ -17,6 +17,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@lab/events-wasm':
+        specifier: workspace:*
+        version: link:../../packages/lab-events-wasm
       '@lab/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -75,6 +78,25 @@ importers:
       tailwindcss:
         specifier: ^4
         version: 4.3.5
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 5.1.0
+        version: 5.1.0(@types/node@22.20.5)(vite@8.3.7(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+
+  packages/lab-events-wasm:
+    dependencies:
+      '@lab/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.20.5
+      tsx:
+        specifier: 4.23.15
+        version: 4.23.15
       typescript:
         specifier: 5.9.3
         version: 5.9.3

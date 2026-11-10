@@ -11,6 +11,9 @@ anyhow.workspace = true
 clap.workspace = true
 lab-events.workspace = true
 serde_json.workspace = true
+# Turns on regex's literal/DFA optimizations for lab-events in this binary
+# (about 2x on large logs). The WASM build leaves them off to stay small.
+regex = { workspace = true, features = ["perf"] }
 
 [lints]
 workspace = true

@@ -11,6 +11,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@lab/events-wasm": "workspace:*",
     "@lab/schema": "workspace:*",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.119.0",

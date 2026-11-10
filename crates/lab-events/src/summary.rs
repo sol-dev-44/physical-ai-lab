@@ -50,8 +50,16 @@ pub fn summarize(events: &[Event]) -> RunSummary {
         tools: BTreeMap::new(),
     };
 
+    // Look up per-tool counts without allocating a key unless the tool is new.
+    fn counts<'a>(tools: &'a mut BTreeMap<String, ToolCounts>, name: &str) -> &'a mut ToolCounts {
+        if !tools.contains_key(name) {
+            tools.insert(name.to_owned(), ToolCounts::default());
+        }
+        tools.get_mut(name).expect("inserted above")
+    }
+
     for e in events {
-        let tool = e.tool.clone();
+        let tool = e.tool.as_deref();
         match e.kind {
             Kind::RunStarted => {
                 s.experiment_id = e.payload_str("experiment_id").map(str::to_owned);
@@ -65,7 +73,7 @@ pub fn summarize(events: &[Event]) -> RunSummary {
             Kind::CommandRequested => {
                 s.requested += 1;
                 if let Some(t) = tool {
-                    s.tools.entry(t).or_default().requested += 1;
+                    counts(&mut s.tools, t).requested += 1;
                 }
             }
             Kind::SafetyChecked => {
@@ -76,7 +84,7 @@ pub fn summarize(events: &[Event]) -> RunSummary {
             Kind::CommandSent => {
                 s.sent += 1;
                 if let Some(t) = tool {
-                    s.tools.entry(t).or_default().sent += 1;
+                    counts(&mut s.tools, t).sent += 1;
                 }
             }
             Kind::CommandFailed => s.failed += 1,
@@ -85,7 +93,7 @@ pub fn summarize(events: &[Event]) -> RunSummary {
                 s.observed += 1;
                 s.succeeded += u64::from(ok);
                 if let Some(t) = tool {
-                    let c = s.tools.entry(t).or_default();
+                    let c = counts(&mut s.tools, t);
                     c.observed += 1;
                     c.succeeded += u64::from(ok);
                 }

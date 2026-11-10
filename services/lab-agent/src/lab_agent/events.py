@@ -18,9 +18,9 @@ SCHEMA_VERSION = 0
 
 ULID_RE = r"^[0-9A-HJKMNP-TV-Z]{26}$"
 RUN_ID_RE = r"^[a-z0-9][a-z0-9-]{2,79}$"
-EXPERIMENT_ID_RE = r"^exp\d{3}(-[a-z0-9]+)*$"
+EXPERIMENT_ID_RE = r"^exp[0-9]{3}(-[a-z0-9]+)*$"
 TOOL_RE = r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$"
-TS_RE = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$"
+TS_RE = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$"
 
 Ulid = Annotated[str, Field(pattern=ULID_RE)]
 RunId = Annotated[str, Field(pattern=RUN_ID_RE)]

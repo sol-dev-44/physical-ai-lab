@@ -1,0 +1,13 @@
+{
+  "v": 0,
+  "event_id": "01JC9X7Q000000000000000001",
+  "run_id": "exp000-20261109-r1",
+  "seq": 0,
+  "ts": "٢٠٢٦-11-09T20:00:00.000Z",
+  "actor": "cli",
+  "type": "run.started",
+  "payload": {
+    "experiment_id": "exp000-ir-bridge",
+    "git_sha": "abc1234"
+  }
+}

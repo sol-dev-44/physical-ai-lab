@@ -1,0 +1,64 @@
+---
+title: "Rust in the browser: measured, and it lost"
+date: 2026-11-10
+summary: I compiled the lab's Rust event library to WebAssembly for the replay viewer. It is 2 to 3 times slower than the TypeScript it would replace, so TypeScript stays the default.
+tags: [rust, wasm, harness, benchmark]
+draft: true
+---
+
+The lab's rule for Rust (ADR 0004) is that it has to earn its place with a
+measurement. The roadmap's next step was a replay viewer in the browser, built on
+`lab-events`, the Rust crate that already validates logs for `labctl`. So I built
+it and measured it.
+
+## What shipped
+
+- **Replay viewer** at `/harness/replay`. Open a run log and step through it
+  event by event, with the run's numbers updating as you go. The log is checked
+  against the event contract in your browser and never uploaded.
+- **Two engines behind one switch.** TypeScript (`@lab/schema`, zod) and Rust
+  compiled to WebAssembly (`@lab/events-wasm`). A test makes both agree, step by
+  step, on every shared log fixture. "Time both engines" runs them on your own
+  machine.
+- **A contract bug, found on the way.** Rust and Python accepted Unicode digits
+  like `٣` in timestamps and experiment ids; zod did not. Two new fixtures pin it,
+  and all three languages now use `[0-9]`.
+
+## The numbers
+
+Synthetic logs of realistic command cycles. Load means validate every line and
+fold the summary. Scrub means the summary at 100 positions in an already loaded
+log. Median of 5 to 15 runs, Node 22 (the V8 engine Chrome uses), Apple M3 Pro.
+
+| events | log size | load: TS | load: WASM | scrub x100: TS | scrub x100: WASM |
+|---:|---:|---:|---:|---:|---:|
+| 1,000 | 0.3 MB | 2.8 ms | 7.6 ms | 1.0 ms | 2.2 ms |
+| 10,000 | 2.6 MB | 28 ms | 74 ms | 9.2 ms | 17 ms |
+| 100,000 | 26 MB | 294 ms | 775 ms | 98 ms | 179 ms |
+
+WebAssembly is 2.6x slower to load and 1.8x slower to scrub, at every size. It
+also costs a 359 KB download (184 KB gzipped), loaded only if you pick it.
+
+Two fixes in the shared crate halved the gap before these numbers: one parse per
+line instead of two, and no string allocation per event in the fold. Both also
+apply to `labctl`, with no change in its speed.
+
+## Why it lost
+
+V8 is very good at exactly this workload: `JSON.parse` is native code, and the
+fold is a loop over plain objects the JIT inlines. `lab-events` parses each line
+into a generic `serde_json::Value` tree with a heap string for every field. That
+design is deliberate, because it makes the strict contract checks easy to write
+(reject unknown keys, allow missing optional fields but never `null`). It is also
+slow, and in WebAssembly every one of those allocations goes through a small
+general-purpose allocator.
+
+## What I'm doing with it
+
+- TypeScript is the viewer's default. The WASM engine stays behind the switch, as
+  a live benchmark anyone can run.
+- The next Rust step is the parser, not the browser: a typed, borrowing parser
+  that keeps the same strict checks. If that wins natively, the viewer gets
+  re-measured with the same benchmark (`pnpm --filter @lab/events-wasm bench`).
+- The ADR's rule held up. Without the measurement, this would have shipped as a
+  "Rust made it faster" story, and it would not have been true.

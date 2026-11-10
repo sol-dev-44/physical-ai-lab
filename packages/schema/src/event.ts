@@ -22,7 +22,7 @@ export const Ulid = z.string().regex(/^[0-9A-HJKMNP-TV-Z]{26}$/, "must be a ULID
 export const RunId = z.string().regex(/^[a-z0-9][a-z0-9-]{2,79}$/, "must be a lowercase slug");
 
 /** e.g. exp000-ir-bridge */
-export const ExperimentId = z.string().regex(/^exp\d{3}(-[a-z0-9]+)*$/, "must look like exp000-name");
+export const ExperimentId = z.string().regex(/^exp[0-9]{3}(-[a-z0-9]+)*$/, "must look like exp000-name");
 
 /** Dotted tool name from the registry, e.g. fan.power, robot.forward */
 export const ToolName = z
@@ -32,7 +32,7 @@ export const ToolName = z
 /** RFC 3339 UTC timestamp with a Z suffix, millisecond precision optional. */
 export const Timestamp = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$/, "must be RFC 3339 UTC (Z)");
+  .regex(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$/, "must be RFC 3339 UTC (Z)");
 
 export const Actor = z.enum(["human", "cli", "agent", "llm", "replay", "system"]);
 

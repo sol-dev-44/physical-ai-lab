@@ -13,7 +13,8 @@ clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
-regex = "1"
+# ASCII-only patterns (see lab-events): no Unicode tables. labctl adds "perf".
+regex = { version = "1", default-features = false, features = ["std"] }
 lab-events = { path = "crates/lab-events" }
 
 [workspace.lints.rust]
@@ -21,3 +22,13 @@ unsafe_code = "forbid"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
+
+# The browser replay viewer's WASM build (scripts/build-wasm.sh). Tuned for
+# download size; labctl keeps the default release profile.
+[profile.wasm]
+inherits = "release"
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"

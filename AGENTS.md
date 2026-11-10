@@ -6,6 +6,7 @@ Read `docs/architecture.md` first. Rules that matter most:
   `pnpm schema:gen`, new fixtures (valid and invalid), and matching changes in
   `services/lab-agent/src/lab_agent/events.py` and `crates/lab-events/src/event.rs`.
   If the change affects counts, also `summary.ts`, `summary.py`, `summary.rs`, then `pnpm --filter @lab/schema gen:summaries`.
+  Any change under `crates/lab-events` also needs `pnpm --filter @lab/events-wasm wasm` (the committed browser build).
 - Hardware is only ever reached through `Runner.request` in lab-agent. Never add a device call anywhere else, and never put safety logic in a device adapter.
 - The website never talks to devices. Admin actions insert rows; the agent decides.
 - Never commit `events/`, media, `.env*` (except `.env.example`), or anything identifying a child (ADR 0007).

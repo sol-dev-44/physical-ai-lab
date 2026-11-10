@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // Internal workspace packages ship TypeScript source.
-  transpilePackages: ["@lab/schema"],
+  transpilePackages: ["@lab/schema", "@lab/events-wasm"],
   // Content lives at the repo root, outside this app.
   outputFileTracingRoot: repoRoot,
   outputFileTracingIncludes: { "/**": ["../../content/**/*"] },

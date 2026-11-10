@@ -1,0 +1,25 @@
+{
+  "name": "@lab/events-wasm",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "crates/lab-events compiled to WebAssembly: the browser replay viewer's log validator and summary fold.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "wasm": "tsx scripts/build.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "bench": "tsx bench/bench.ts"
+  },
+  "dependencies": {
+    "@lab/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}
