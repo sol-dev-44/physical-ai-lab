@@ -1,0 +1,12 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    // `next typegen` and `next build` both write .next/types, and build clears
+    // .next first. In parallel they race (ENOENT on routes.d.ts), so typecheck
+    // waits for this package's build.
+    "typecheck": {
+      "dependsOn": ["^build", "build"]
+    }
+  }
+}
