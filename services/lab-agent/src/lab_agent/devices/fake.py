@@ -20,6 +20,10 @@ class FakeBlaster:
             raise KeyError(f"no code named {code_name!r}")
         self.sent.append(code_name)
 
+    def hold(self, code_name: str, seconds: float) -> int:
+        self.send(code_name)
+        return max(1, round(seconds / 0.12))
+
 
 @dataclass
 class FakeSwitch:

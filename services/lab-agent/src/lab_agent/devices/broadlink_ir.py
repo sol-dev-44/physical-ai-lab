@@ -12,6 +12,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+from . import ir
 from .codes import CodeBook
 
 
@@ -35,6 +36,16 @@ class BroadlinkBlaster:
     def send(self, code_name: str) -> None:
         self._device().send_data(self.codes.get(code_name))
 
+    def hold(self, code_name: str, seconds: float) -> int:
+        """One network call: the RM4 repeats a single frame itself, so Wi-Fi latency
+        cannot chop the motion up, and a long learned code cannot outlast `seconds`."""
+        frame = ir.one_frame(self.codes.get(code_name))
+        period = ir.duration_s(frame)
+        frames = max(1, min(ir.MAX_REPEAT + 1, round(seconds / period)))
+        self._device().send_data(ir.encode(frame, repeat=frames - 1))
+        time.sleep(frames * period)  # return when the motion ends
+        return frames
+
     def learn(self, code_name: str, wait_s: float = 15.0) -> bytes:
         """Point the remote at the RM4 and press the button once."""
         from broadlink.exceptions import ReadError, StorageError
@@ -53,10 +64,36 @@ class BroadlinkBlaster:
         raise TimeoutError(f"no IR signal received in {wait_s}s for {code_name!r}")
 
 
-def discover(timeout_s: float = 5.0) -> list[dict[str, str]]:
+def _local_broadcast() -> str:
+    """Broadcast address of the LAN this machine routes through, assuming a /24."""
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("192.0.2.1", 9))  # TEST-NET address: picks the route, sends nothing
+        ip = s.getsockname()[0]
+    return ip.rsplit(".", 1)[0] + ".255"
+
+
+def discover(timeout_s: float = 5.0, broadcast: str | None = None) -> list[dict[str, str]]:
+    """Find BroadLink devices. macOS often refuses 255.255.255.255 ("No route to host"),
+    so on that error retry with the local subnet's broadcast address."""
     import broadlink
 
+    try:
+        found = broadlink.discover(
+            timeout=timeout_s, discover_ip_address=broadcast or "255.255.255.255"
+        )
+    except OSError:
+        if broadcast:
+            raise
+        found = broadlink.discover(timeout=timeout_s, discover_ip_address=_local_broadcast())
     return [
-        {"host": d.host[0], "type": d.type, "model": getattr(d, "model", ""), "mac": d.mac.hex(":")}
-        for d in broadlink.discover(timeout=timeout_s)
+        {
+            "host": d.host[0],
+            "type": d.type,
+            "model": getattr(d, "model", ""),
+            "mac": d.mac.hex(":"),
+            "locked": "yes (turn off Lock device in the BroadLink app)" if d.is_locked else "no",
+        }
+        for d in found
     ]

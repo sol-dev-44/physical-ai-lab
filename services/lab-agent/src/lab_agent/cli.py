@@ -212,7 +212,7 @@ def cmd_agent(s: Settings, a: argparse.Namespace) -> int:
 def cmd_discover(_s: Settings, a: argparse.Namespace) -> int:
     from .devices.broadlink_ir import discover
 
-    for d in discover(a.timeout):
+    for d in discover(a.timeout, a.broadcast):
         print(d)
     return 0
 
@@ -279,6 +279,7 @@ def main(argv: list[str] | None = None) -> int:
 
     sp = sub.add_parser("discover", help="find BroadLink devices on the network")
     sp.add_argument("--timeout", type=float, default=5)
+    sp.add_argument("--broadcast", help="broadcast address, e.g. 192.168.1.255")
     sp.set_defaults(fn=cmd_discover)
 
     sp = sub.add_parser("learn", help="learn IR codes from a remote")

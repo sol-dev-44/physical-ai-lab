@@ -10,6 +10,11 @@ class Blaster(Protocol):
 
     def send(self, code_name: str) -> None: ...
 
+    def hold(self, code_name: str, seconds: float) -> int:
+        """Play one frame of the code back to back for about `seconds`, never more than
+        one frame longer. Returns the number of frames played."""
+        ...
+
 
 class Switch(Protocol):
     """Anything with on/off (smart plug, relay)."""

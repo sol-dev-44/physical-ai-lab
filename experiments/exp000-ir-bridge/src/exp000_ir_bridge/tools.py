@@ -8,7 +8,6 @@ mistaken for a real one in the logs.
 from __future__ import annotations
 
 import os
-import time
 from pathlib import Path
 
 from lab_agent.devices.base import Blaster, Switch
@@ -61,12 +60,7 @@ def build() -> Registry:
     def hold(code: str):
         def handler(args: BaseModel) -> dict[str, int]:
             assert isinstance(args, Hold)
-            n, end = 0, time.monotonic() + args.seconds
-            while time.monotonic() < end:
-                ir.send(code)
-                n += 1
-                time.sleep(0.11)
-            return {"repeats": n}
+            return {"frames": ir.hold(code, args.seconds)}
 
         return handler
 
@@ -78,8 +72,22 @@ def build() -> Registry:
         Tool("fan.speed", "Fan speed step", press("fan_speed"), device=ir.id, min_interval_s=0.5)
     )
     reg.add(Tool("tv.power", "TV power toggle", press("tv_power"), device=ir.id, min_interval_s=2))
+    reg.add(
+        Tool(
+            "tv.volume_up", "TV volume up", press("tv_volume_up"), device=ir.id, min_interval_s=0.3
+        )
+    )
+    reg.add(
+        Tool(
+            "tv.volume_down",
+            "TV volume down",
+            press("tv_volume_down"),
+            device=ir.id,
+            min_interval_s=0.3,
+        )
+    )
 
-    # IR: toy robot (only if its remote turns out to be IR, not RF; check with a phone camera)
+    # IR: toy robot with a two-button IR remote (forward, reverse). Checked 2026-11-10.
     reg.add(
         Tool(
             "robot.forward",
@@ -93,20 +101,9 @@ def build() -> Registry:
     )
     reg.add(
         Tool(
-            "robot.left",
-            "Turn left",
-            hold("robot_left"),
-            args_model=Hold,
-            device=ir.id,
-            duration_arg="seconds",
-            max_duration_s=3,
-        )
-    )
-    reg.add(
-        Tool(
-            "robot.right",
-            "Turn right",
-            hold("robot_right"),
+            "robot.reverse",
+            "Reverse (this robot backs up and turns left)",
+            hold("robot_reverse"),
             args_model=Hold,
             device=ir.id,
             duration_arg="seconds",
