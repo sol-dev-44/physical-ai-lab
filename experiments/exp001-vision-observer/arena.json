@@ -51,7 +51,10 @@
   "zoom": 1.5,
   "margin_cm": 10.0,
   "tracking": "background",
+  "heading_offset_deg": 28.4,
   "background": {
+    "chroma_threshold": 30,
+    "light_threshold": 80,
     "min_robot_px": 2000,
     "max_robot_px": 200000,
     "min_front_px": 40

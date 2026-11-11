@@ -14,6 +14,9 @@ Read `docs/architecture.md` first. Rules that matter most:
   never by a send loop (ADR 0008). Learned IR codes go through `ir.one_frame`.
 - Safety rules that depend on sensors are interlocks (`lab_agent/interlocks.py`), attached to the registry and run by the gate. Never in a camera or device module.
 - Camera frames are never written, committed, synced or posted. exp001 keeps numbers only; the one exception is `exp001 snapshot --nobody-in-frame` into gitignored `media/` (ADR 0007).
+- On the lab machine always sync with `uv sync --all-packages --extra hardware`. A plain
+  `uv sync` removes broadlink/python-kasa, and every real send then fails with
+  `ModuleNotFoundError` (happened 2026-11-10).
 - Run one lab process against hardware at a time (session, trials, replay or agent):
   each has its own gate and rate limits.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.

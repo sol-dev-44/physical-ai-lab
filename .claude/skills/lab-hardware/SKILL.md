@@ -95,6 +95,9 @@ Never save or show a frame unless the person confirms nobody is in it
 
 ## If something's off
 
+- `command.failed: No module named 'broadlink'`: someone ran `uv sync` without
+  `--extra hardware`. Run `uv sync --all-packages --extra hardware`.
+
 - Surges or stutter: the hold isn't using `Blaster.hold` (ADR 0008).
 - One direction does nothing: check `ir.one_frame` on its capture; relearn with one short press.
 - `No route to host` from a terminal tab while Bash reaches the RM4: drive from Bash.

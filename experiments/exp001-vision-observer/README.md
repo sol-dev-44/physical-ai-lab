@@ -103,5 +103,9 @@ One lab process at a time: stop the agent before running trials here.
 
 2026-11-10: software tested against the simulator. Logitech C920 connected, overhead at
 1.5x zoom over six 8-inch Botley mats (about 61 x 41 cm); the robot is about 22 x 20 cm,
-so the fence allows only short moves. Front markers: two orange checkered triangles,
-which match the orange mats, hence `background` tracking. Not calibrated yet.
+so the fence allows only short moves. Markers: a dark green circle at the front and the
+orange checkered triangles at the back (orange matches the mats, hence `background`
+tracking). Calibrated: corners from the empty-mat frame, shadow-tolerant thresholds
+(chroma 30, lightness 80; Wall-e's shadow had doubled the blob), heading offset +28.4 deg
+from one forward move (stickers sit diagonally). First measurement: forward 0.5 s moved
+6.4 cm (about 13 cm/s). `check`: robot found in 100% of frames at about 8 fps.
