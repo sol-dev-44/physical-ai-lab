@@ -4,6 +4,7 @@ import { listRecentCommands, listTools } from "@/lib/data/commands";
 import { listRunsForAdmin } from "@/lib/data/runs";
 import { setRunPublished } from "./actions";
 import { CommandForm } from "./command-form";
+import { RobotPanel } from "./robot-panel";
 
 // Every admin page: a static shell, with the session read inside a Suspense boundary.
 export default function AdminHome() {
@@ -21,6 +22,8 @@ async function Console() {
   return (
     <div className="space-y-10">
       <p className="text-sm text-muted">Signed in as {admin.email}</p>
+
+      <RobotPanel tools={tools} />
 
       <section>
         <h2 className="mb-3 text-lg font-semibold">Command console</h2>
