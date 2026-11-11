@@ -49,9 +49,21 @@
   "camera_index": 0,
   "camera_name": "HD Pro Webcam C920",
   "zoom": 1.5,
-  "margin_cm": 10.0,
+  "margin_cm": 5.0,
   "tracking": "background",
   "heading_offset_deg": 28.4,
+  "motions": {
+    "robot.forward": {
+      "speed_cm_s": 16.0,
+      "direction_deg": 0.0,
+      "slack": 0.4
+    },
+    "robot.reverse": {
+      "speed_cm_s": 18.0,
+      "direction_deg": 180.0,
+      "slack": 0.8
+    }
+  },
   "background": {
     "chroma_threshold": 30,
     "light_threshold": 80,

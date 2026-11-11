@@ -103,8 +103,13 @@ def make_rig(*, sim: bool | None = None, realtime: bool = False) -> Rig:
             )
         )
     reg.add_interlock(FreshPose(live, MOVES, max_age_s=1.0))
+    motions = (
+        {k: Motion(m.speed_cm_s, m.direction_deg, m.slack) for k, m in arena.motions.items()}
+        if arena.motions
+        else MOTIONS
+    )
     reg.add_interlock(
-        ArenaFence(live, arena.width_cm, arena.height_cm, MOTIONS, margin_cm=arena.margin_cm)
+        ArenaFence(live, arena.width_cm, arena.height_cm, motions, margin_cm=arena.margin_cm)
     )
     return Rig(reg, live, arena, sim, robot, sim_cam)
 

@@ -189,3 +189,50 @@ def test_heading_offset_is_added_and_wrapped():
     tr = Tracker(rig.arena.model_copy(update={"heading_offset_deg": 20}))
     fix = tr.find(rig.camera.read())
     assert fix is not None and abs(fix.heading_deg - (-170)) < 8
+
+
+def test_collect_keeps_inside_and_fits_the_simulated_robot(tmp_path):
+    import random
+
+    from exp001_vision_observer.collect import fit_motion, run_collect, suggest_fence
+
+    rig = make_rig(sim=True)
+    log = EventLog(tmp_path / "c.jsonl", "exp001-t-collect")
+    out = run_collect(rig, Runner(rig.registry, log), 20, rng=random.Random(1), pause_s=0)
+    assert out["moves"] >= 5
+    r = rig.robot
+    assert 0 < r.x_cm < 100 and 0 < r.y_cm < 70
+    assert validate_log(log.path.read_text().splitlines()) == []
+    fit = fit_motion([log.path])
+    assert fit["robot.forward"]["speed_cm_s"] == pytest.approx(18, rel=0.15)
+    assert fit["robot.reverse"]["speed_cm_s"] == pytest.approx(-12, rel=0.2)
+    assert fit["robot.reverse"]["turn_deg_s"] == pytest.approx(35, rel=0.2)
+    fence = suggest_fence(fit)
+    back = fence["robot.reverse"]["direction_deg"]
+    assert abs((back - 180 + 180) % 360 - 180) < 40  # pointing backwards, either sign
+
+
+def test_collect_stops_when_the_robot_falls_asleep(tmp_path):
+    import random
+
+    from exp001_vision_observer.collect import run_collect
+
+    rig = make_rig(sim=True)
+    rig.robot.forward_cm_s = rig.robot.reverse_cm_s = rig.robot.reverse_turn_deg_s = 0
+    log = EventLog(tmp_path / "s.jsonl", "exp001-t-asleep")
+    out = run_collect(rig, Runner(rig.registry, log), 20, rng=random.Random(1), pause_s=0)
+    assert out == {"status": "asleep", "moves": 3}
+
+
+def test_background_tracker_survives_an_auto_exposure_shift():
+    import numpy as np
+
+    rig = make_rig(sim=True)
+    rig.camera.floor = _busy_floor
+    rig.camera.visible = False
+    tr = _bg_tracker(rig, rig.camera.read())
+    rig.camera.visible = True
+    f = rig.camera.read().astype(np.int16)
+    f[:, :, :] += np.array([25, 35, 15], np.int16)  # brighter and warmer, like auto exposure
+    fix = tr.find(np.clip(f, 0, 255).astype(np.uint8))
+    assert fix is not None and math.hypot(fix.x_cm - 50, fix.y_cm - 35) < 3

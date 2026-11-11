@@ -62,6 +62,15 @@ class Background(BaseModel):
     min_front_px: int = 40  # front-marker pixels needed to trust the heading
 
 
+class MotionCfg(BaseModel):
+    """How far a move goes, for the fence: see lab_agent.interlocks.Motion."""
+
+    model_config = ConfigDict(extra="forbid")
+    speed_cm_s: float = Field(gt=0)
+    direction_deg: float
+    slack: float = Field(ge=0)
+
+
 class Arena(BaseModel):
     model_config = ConfigDict(extra="forbid")
     width_cm: float = Field(gt=0)
@@ -83,6 +92,8 @@ class Arena(BaseModel):
     #: Added to the marker heading so it matches the direction the robot actually drives.
     #: Measured by `exp001 heading` (one forward move); stickers needn't be on the centre line.
     heading_offset_deg: float = 0.0
+    #: Fence motions measured by `exp001 motion --save`; tools.MOTIONS (pessimistic) until then.
+    motions: dict[str, MotionCfg] | None = None
     background: Background = Background()
 
     @classmethod

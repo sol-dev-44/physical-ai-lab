@@ -224,6 +224,41 @@ def cmd_heading(a: argparse.Namespace) -> int:
         rig.live.stop()
 
 
+def cmd_collect(a: argparse.Namespace) -> int:
+    """Unattended motion data. Exit code 3 = robot looks asleep, 4 = needs re-centring."""
+    import random
+
+    from .collect import run_collect
+
+    s = Settings.from_env()
+    rig = _rig(a)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_id = f"exp001-{stamp}-collect{'-sim' if rig.simulated else ''}"
+    log = EventLog(run_path(s.events_dir, EXPERIMENT, run_id), run_id)
+    rig.live.start()
+    try:
+        out = run_collect(rig, Runner(rig.registry, log), a.n, rng=random.Random(a.seed))
+    finally:
+        rig.live.stop()
+    print(f"{out['status']} after {out['moves']} moves: {log.path}")
+    return {"completed": 0, "asleep": 3, "stuck": 4}.get(out["status"], 1)
+
+
+def cmd_motion(a: argparse.Namespace) -> int:
+    from .collect import fit_motion, suggest_fence
+    from .config import MotionCfg
+
+    fit = fit_motion([Path(p) for p in a.logs])
+    fence = suggest_fence(fit)
+    print(json.dumps({"fit": fit, "fence": fence}, indent=2))
+    if a.save:
+        arena = Arena.load()
+        motions = {k: MotionCfg(**v) for k, v in fence.items()}
+        arena.model_copy(update={"motions": motions}).save()
+        print(f"saved fence motions to {ARENA_JSON}")
+    return 0
+
+
 def run_trials(
     rig: Rig,
     runner: Runner,
@@ -372,6 +407,16 @@ def main(argv: list[str] | None = None) -> int:
     sp = sub.add_parser("heading", help="drive forward once to measure the heading offset")
     sp.add_argument("--seconds", type=float, default=1.0)
     sp.set_defaults(fn=cmd_heading)
+
+    sp = sub.add_parser("collect", help="unattended forward/reverse moves for the motion model")
+    sp.add_argument("-n", type=int, default=30)
+    sp.add_argument("--seed", type=int)
+    sp.set_defaults(fn=cmd_collect)
+
+    sp = sub.add_parser("motion", help="fit speeds and turn rates from logs; --save to fence")
+    sp.add_argument("logs", nargs="+")
+    sp.add_argument("--save", action="store_true")
+    sp.set_defaults(fn=cmd_motion)
 
     sp = sub.add_parser("check", help="track for a few seconds and report")
     sp.add_argument("--seconds", type=float, default=5)

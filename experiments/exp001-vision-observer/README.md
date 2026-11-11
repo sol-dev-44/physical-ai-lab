@@ -109,3 +109,16 @@ tracking). Calibrated: corners from the empty-mat frame, shadow-tolerant thresho
 (chroma 30, lightness 80; Wall-e's shadow had doubled the blob), heading offset +28.4 deg
 from one forward move (stickers sit diagonally). First measurement: forward 0.5 s moved
 6.4 cm (about 13 cm/s). `check`: robot found in 100% of frames at about 8 fps.
+
+Paused 2026-11-10 evening. Learned in the first data runs:
+- The tracker is steady on a still robot (+-0.1 cm, +-1 deg).
+- The C920 re-balances exposure and colour by itself; a dark robot entering view shifted
+  the whole picture, so every pixel read as "changed". The background tracker now takes
+  out the median global shift first (tested in the simulator; not yet confirmed live).
+- The mats slide when the robot drives or someone touches them; then the empty-arena
+  picture is stale and the whole area reads as robot. Fix before resuming: tape the mats
+  down (or to a board), retake `exp001 background`, re-check the corners.
+- The pessimistic fence made every move "stuck" in a 61 x 41 cm arena. arena.json now has
+  first measured motions (forward ~16 cm/s, reverse ~18 cm/s with slack, 5 cm margin).
+- 0.3 s pulses barely move the robot; use 0.5 s and up. `exp001 collect` / `motion` are
+  ready to gather and fit the motion model once tracking is stable.

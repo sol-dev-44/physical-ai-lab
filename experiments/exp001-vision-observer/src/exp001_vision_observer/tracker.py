@@ -112,7 +112,13 @@ class BackgroundTracker(Tracker):
         return lab.astype(np.int16)
 
     def robot_mask(self, frame_bgr: np.ndarray) -> np.ndarray:
-        d = np.abs(self._prep(frame_bgr) - self.bg)
+        cur = self._prep(frame_bgr)
+        # The webcam re-balances exposure and colour on its own (a dark robot entering view
+        # shifts the whole picture). Measure that global shift as the median difference over
+        # the arena, where the robot is a minority, and take it out before comparing.
+        inside = self.inside > 0
+        shift = np.median((cur - self.bg)[inside], axis=0).astype(np.int16)
+        d = np.abs(cur - shift - self.bg)
         changed = (
             (d[:, :, 1] > self.cfg.chroma_threshold)
             | (d[:, :, 2] > self.cfg.chroma_threshold)
