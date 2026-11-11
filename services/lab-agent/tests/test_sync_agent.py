@@ -55,3 +55,21 @@ def test_agent_registers_tools_and_handles_commands(runner):
     )
     patch = rec.calls[-1]
     assert patch[0] == "PATCH" and patch[2] == {"id": "eq.2"} and patch[3]["status"] == "rejected"
+
+
+def test_agent_names_the_run_without_linking_an_unsynced_run(runner):
+    rec = Recorder()
+    runner.start("exp000-test")
+    handle(db(rec), runner, {"id": "1", "tool": "fan.power", "args": {}})
+    body = rec.calls[-1][3]
+    assert "run_id" not in body  # FK to runs; the run exists there only after `lab sync`
+    assert runner.log.run_id in body["result"]
+
+
+def test_agent_survives_a_failed_status_update(runner):
+    def conflict(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(409, json={"message": "violates foreign key constraint"})
+
+    broken = Supabase("https://x.supabase.co", "key", transport=httpx.MockTransport(conflict))
+    runner.start("exp000-test")
+    assert handle(broken, runner, {"id": "1", "tool": "fan.power", "args": {}}) == "done"

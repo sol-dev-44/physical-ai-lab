@@ -28,7 +28,7 @@ const CommandInput = z.object({
  * logs every step. The confirmation flag is advisory; the agent re-checks.
  */
 export async function requestCommand(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
-  const admin = await requireAdmin();
+  await requireAdmin();
   const input = CommandInput.safeParse({
     tool: formData.get("tool"),
     args: formData.get("args") ?? "{}",
@@ -44,11 +44,12 @@ export async function requestCommand(_prev: ActionResult | null, formData: FormD
     return { ok: false, message: `${input.data.tool} requires confirmation` };
   }
 
+  // requested_by is not sent: the column defaults to auth.uid(), the role may only insert
+  // (tool, args, confirmed), and the commands_queue policy checks requested_by = auth.uid().
   const { error } = await db.from("commands").insert({
     tool: input.data.tool,
     args: input.data.args,
     confirmed: input.data.confirmed,
-    requested_by: admin.id,
   });
   if (error) return { ok: false, message: error.message };
   revalidatePath("/admin");

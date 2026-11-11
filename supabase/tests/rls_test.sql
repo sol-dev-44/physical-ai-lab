@@ -68,6 +68,9 @@ select pg_temp.expect_count('select * from public.runs', 2);
 select pg_temp.expect_count('select * from public.events', 2);
 select pg_temp.expect_count('select * from public.tools', 1);
 insert into public.commands (tool, args) values ('fan.power', '{}');
+-- the web must not send requested_by: the database fills it from auth.uid() (this bit /admin once)
+select pg_temp.expect_error($q$insert into public.commands (tool, requested_by) values ('fan.power', '00000000-0000-0000-0000-000000000001')$q$);
+select pg_temp.expect_count($q$select * from public.commands where requested_by = '00000000-0000-0000-0000-000000000001'$q$, 1);
 select pg_temp.expect_error($q$insert into public.commands (tool, status) values ('fan.power', 'claimed')$q$);
 select pg_temp.expect_error($q$update public.runs set status = 'completed'$q$);
 select pg_temp.expect_error($q$select * from public.claim_next_command('admin')$q$);

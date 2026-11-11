@@ -11,6 +11,8 @@ import time
 from collections.abc import Callable
 from typing import Any
 
+import httpx
+
 from .events import now_ts
 from .registry import Registry
 from .runner import Runner
@@ -51,11 +53,20 @@ def handle(db: Supabase, runner: Runner, cmd: dict[str, Any]) -> str:
         status, text = "done", "sent"
     else:
         status, text = "failed", result.outcome.payload.error  # type: ignore[union-attr]
-    db.update(
-        "commands",
-        {"id": cmd["id"]},
-        {"status": status, "result": text, "run_id": runner.log.run_id, "finished_at": now_ts()},
-    )
+    # run_id is a foreign key to runs, and runs exist only after `lab sync`, so name the
+    # local run in the result instead. A failed status update must not stop the agent.
+    try:
+        db.update(
+            "commands",
+            {"id": cmd["id"]},
+            {
+                "status": status,
+                "result": f"{text} (run {runner.log.run_id})",
+                "finished_at": now_ts(),
+            },
+        )
+    except httpx.HTTPError as e:
+        print(f"  could not record result for command {cmd['id']}: {e}", flush=True)
     return status
 
 
