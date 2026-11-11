@@ -12,6 +12,8 @@ Read `docs/architecture.md` first. Rules that matter most:
   The web inserts only `(tool, args, confirmed)` into `commands`; the database fills `requested_by`.
 - Timed device actions (holds) are played by the device from one frame with a repeat count,
   never by a send loop (ADR 0008). Learned IR codes go through `ir.one_frame`.
+- Safety rules that depend on sensors are interlocks (`lab_agent/interlocks.py`), attached to the registry and run by the gate. Never in a camera or device module.
+- Camera frames are never written, committed, synced or posted. exp001 keeps numbers only; the one exception is `exp001 snapshot --nobody-in-frame` into gitignored `media/` (ADR 0007).
 - Run one lab process against hardware at a time (session, trials, replay or agent):
   each has its own gate and rate limits.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.

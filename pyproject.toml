@@ -9,7 +9,7 @@ package = false
 
 [tool.uv.workspace]
 # Listed explicitly: not every experiment folder is a Python project.
-members = ["services/lab-agent", "experiments/exp000-ir-bridge"]
+members = ["services/lab-agent", "experiments/exp000-ir-bridge", "experiments/exp001-vision-observer"]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.8", "jsonschema>=4.23"]

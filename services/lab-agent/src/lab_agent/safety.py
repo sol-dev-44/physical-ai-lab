@@ -1,8 +1,9 @@
 """Safety gate. Every command passes through check() before any device sees it.
 
-Rules run in order; the first deny wins. Each decision is logged as a
-safety.checked event, including the rule that decided it, so the gate itself
-can be evaluated from the logs.
+Rules run in order; the first deny wins. Interlocks (world-state rules a tool set
+attaches, see interlocks.py) run after the request rules and before the rate limit.
+Each decision is logged as a safety.checked event, including the rule that decided
+it, so the gate itself can be evaluated from the logs.
 
 This lives with the hardware, never on the website. It is a candidate for a
 Rust port once it guards the arms (see docs/adr/0004-rust-policy.md).
@@ -61,6 +62,10 @@ class SafetyGate:
             denied = rule(tool, req, args)
             if denied:
                 return denied
+        for interlock in self.registry.interlocks:
+            reason = interlock.check(tool, args)
+            if reason:
+                return Decision(False, "interlock", f"{interlock.name}: {reason}")
         if tool.min_interval_s:
             last = self._last_sent.get(tool.name)
             if last is not None and self.clock() - last < tool.min_interval_s:

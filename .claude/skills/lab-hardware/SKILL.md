@@ -86,6 +86,13 @@ Space queued moves by at least their duration plus 2 s (poll interval); rows old
 `lab trials` asks y/n per trial, so drive it like the session (FIFO) or let the person
 run it. Null tests add `--dry-run`. Log notes say what happened, in the person's words.
 
+## 6. Camera experiments (exp001)
+
+`uv run exp001 ...` from `services/lab-agent`; see `experiments/exp001-vision-observer/README.md`.
+`--sim` runs robot and camera in a simulator; real mode needs `arena.json` (calibrate).
+Never save or show a frame unless the person confirms nobody is in it
+(`snapshot --nobody-in-frame`, local `media/` only). Stop the agent before trials.
+
 ## If something's off
 
 - Surges or stutter: the hold isn't using `Blaster.hold` (ADR 0008).

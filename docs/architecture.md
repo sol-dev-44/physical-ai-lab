@@ -58,6 +58,8 @@ flowchart TB
 | Nothing invalid is ever written | `EventLog.append` validates before writing |
 | Hardware is reachable only through the gate | Runner is the only caller of handlers; web has no device path |
 | Stale or remote commands can't fire dangerous tools | `claim_next_command` expiry; `manual_only` rule for `remote` |
+| A camera-guarded move needs a fresh fix and must stay inside the arena | `FreshPose` and `ArenaFence` interlocks in the gate (exp001), tested in `test_interlocks.py` |
+| No camera frame is kept or published | exp001 tracks and drops frames; only `snapshot --nobody-in-frame` writes one, to gitignored `media/` (ADR 0007) |
 | A timed action can't outlast its `seconds` | Gate caps `seconds`; `Blaster.hold` plays one frame with a repeat count (ADR 0008) |
 | The web can only queue `(tool, args, confirmed)` as itself | Column grants + `commands_queue` policy (`requested_by = auth.uid()`), pinned in `rls_test.sql` |
 | Only published runs are public | RLS policies, tested in `supabase/tests/rls_test.sql` |
@@ -79,6 +81,7 @@ Not enforced yet; work around them, and fix them before the arms arrive.
 ## Adding things
 
 - **New event type**: edit `packages/schema/src/event.ts`, `pnpm schema:gen`, add valid + invalid fixtures, mirror in Python and Rust, update the folds if it counts toward a summary. CI fails until all three agree.
+- **New world-state safety rule** (camera, sensor): an interlock in `lab_agent/interlocks.py`, attached with `registry.add_interlock`. Sensors report state; only interlocks decide.
 - **New device**: adapter in `services/lab-agent/src/lab_agent/devices/`, no safety logic in it. Timed actions are played by the device (ADR 0008), not by a send loop.
 - **New tool set**: a `build() -> Registry` function in the experiment's package; point `LAB_TOOLS` at it.
 - **New experiment**: `experiments/expNNN-name/` (code) + `content/experiments/expNNN-name.mdx` (write-up). If Python, add it to `[tool.uv.workspace].members`.

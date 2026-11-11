@@ -45,6 +45,12 @@ class Tool:
 class Registry:
     def __init__(self) -> None:
         self._tools: dict[str, Tool] = {}
+        #: World-state safety rules the gate runs after its own (see interlocks.py).
+        #: Typed loosely to avoid an import cycle; each must satisfy interlocks.Interlock.
+        self.interlocks: list[Any] = []
+
+    def add_interlock(self, interlock: Any) -> None:
+        self.interlocks.append(interlock)
 
     def add(self, tool: Tool) -> Tool:
         import re

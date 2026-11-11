@@ -19,7 +19,8 @@ caller (CLI session | trials | replay | website queue | LLM later)
 | `events.py` | Pydantic mirror of the event contract (`packages/schema`) |
 | `log.py` | Append-only JSONL writer (fsync per line) and log validator |
 | `registry.py` | Typed tools: name, args model, handler, safety metadata |
-| `safety.py` | The gate: STOP file, allowlist, args, manual-only, confirmation, duration cap, rate limit |
+| `safety.py` | The gate: STOP file, allowlist, args, manual-only, confirmation, duration cap, interlocks, rate limit |
+| `interlocks.py` | World-state rules a tool set attaches: `FreshPose` (no recent fix, no motion), `ArenaFence` (predicted end too near an edge) |
 | `runner.py` | The single execution path; logs every step with causal `parent_id` links |
 | `replay.py` | Re-issue a run as a new forked run, paced like the original |
 | `summary.py` | Fold a run into numbers; must match the TypeScript fold exactly |

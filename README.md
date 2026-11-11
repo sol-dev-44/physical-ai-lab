@@ -54,3 +54,7 @@ CI runs all of these on every push.
 [experiments/exp000-ir-bridge](experiments/exp000-ir-bridge/README.md): an RM4 Mini IR
 blaster driving a toy robot and a TV, from the CLI or from `/admin` through the agent.
 Its README has the device checklist, which remotes work, and the bench notes.
+
+Next: [experiments/exp001-vision-observer](experiments/exp001-vision-observer/README.md),
+an overhead webcam that judges each robot command and guards the arena, then a motion
+model, then a small RL experiment.
