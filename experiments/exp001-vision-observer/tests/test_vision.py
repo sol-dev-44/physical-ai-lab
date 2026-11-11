@@ -179,3 +179,13 @@ def test_background_tracker_rejects_an_empty_arena_and_a_big_intruder():
     f = rig.camera.read()
     cv2.rectangle(f, (90, 60), (560, 420), (30, 60, 200), -1)  # a person or a hand
     assert tr.find(f) is None
+
+
+def test_heading_offset_is_added_and_wrapped():
+    rig = make_rig(sim=True)
+    from exp001_vision_observer.tracker import Tracker
+
+    rig.robot.heading_deg = 170
+    tr = Tracker(rig.arena.model_copy(update={"heading_offset_deg": 20}))
+    fix = tr.find(rig.camera.read())
+    assert fix is not None and abs(fix.heading_deg - (-170)) < 8

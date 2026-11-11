@@ -1,0 +1,59 @@
+{
+  "width_cm": 61.0,
+  "height_cm": 40.6,
+  "corners_px": [
+    [
+      174.0,
+      692.0
+    ],
+    [
+      1205.0,
+      703.0
+    ],
+    [
+      1207.0,
+      32.0
+    ],
+    [
+      180.0,
+      27.0
+    ]
+  ],
+  "markers": {
+    "head": {
+      "lo": [
+        40,
+        60,
+        30
+      ],
+      "hi": [
+        90,
+        255,
+        200
+      ]
+    },
+    "tail": {
+      "lo": [
+        4,
+        130,
+        140
+      ],
+      "hi": [
+        20,
+        255,
+        255
+      ]
+    },
+    "min_area_px": 30
+  },
+  "camera_index": 0,
+  "camera_name": "HD Pro Webcam C920",
+  "zoom": 1.5,
+  "margin_cm": 10.0,
+  "tracking": "background",
+  "background": {
+    "min_robot_px": 2000,
+    "max_robot_px": 200000,
+    "min_front_px": 40
+  }
+}

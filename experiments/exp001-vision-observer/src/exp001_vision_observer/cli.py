@@ -179,6 +179,51 @@ def cmd_check(a: argparse.Namespace) -> int:
     return 0 if s.fix_rate >= 0.9 else 1
 
 
+def cmd_heading(a: argparse.Namespace) -> int:
+    """Drive forward once and set heading_offset_deg so the tracked heading matches the
+    direction of travel. Goes through the gate like any trial (logged as a run)."""
+    s = Settings.from_env()
+    rig = _rig(a)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_id = f"exp001-{stamp}-heading{'-sim' if rig.simulated else ''}"
+    log = EventLog(run_path(s.events_dir, EXPERIMENT, run_id), run_id)
+    runner = Runner(rig.registry, log)
+    rig.live.start()
+    try:
+        runner.start(EXPERIMENT, purpose="heading calibration", simulated=rig.simulated)
+        before = rig.live.settle(5)
+        result = runner.request("robot.forward", {"seconds": a.seconds}, actor="cli")
+        if not result.allowed:
+            print(f"denied: {getattr(result.checked.payload, 'reason', '')}")
+            print("Put the robot near one end, facing the far end, and try again.")
+            runner.end("aborted")
+            return 1
+        after = rig.live.settle(5)
+        if before is None or after is None:
+            runner.end("aborted")
+            raise SystemExit("robot not tracked before or after the move")
+        dx, dy = after.x_cm - before.x_cm, after.y_cm - before.y_cm
+        moved = math.hypot(dx, dy)
+        if moved < 5:
+            runner.end("aborted")
+            raise SystemExit(f"only moved {moved:.1f} cm; can't tell the direction")
+        travel = math.degrees(math.atan2(dy, dx))
+        marker = (before.heading_deg + after.heading_deg) / 2  # includes the old offset
+        arena = Arena.load() if ARENA_JSON.exists() and not rig.simulated else rig.arena
+        offset = ((travel - marker + arena.heading_offset_deg) + 180) % 360 - 180
+        runner.note(f"heading calibration: travel {travel:.1f} deg, markers {marker:.1f} deg")
+        runner.end("completed")
+        print(f"moved {moved:.1f} cm toward {travel:.0f} deg; markers said {marker:.0f} deg")
+        if not rig.simulated:
+            arena.model_copy(update={"heading_offset_deg": round(offset, 1)}).save()
+            print(f"saved heading_offset_deg = {offset:.1f}")
+        else:
+            print(f"(simulated; would set heading_offset_deg = {offset:.1f})")
+        return 0
+    finally:
+        rig.live.stop()
+
+
 def run_trials(
     rig: Rig,
     runner: Runner,
@@ -323,6 +368,10 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--camera-name", help='macOS camera name, e.g. "HD Pro Webcam C920"')
     sp.add_argument("--zoom", type=float, help="digital zoom, e.g. 1.5")
     sp.set_defaults(fn=cmd_snapshot)
+
+    sp = sub.add_parser("heading", help="drive forward once to measure the heading offset")
+    sp.add_argument("--seconds", type=float, default=1.0)
+    sp.set_defaults(fn=cmd_heading)
 
     sp = sub.add_parser("check", help="track for a few seconds and report")
     sp.add_argument("--seconds", type=float, default=5)

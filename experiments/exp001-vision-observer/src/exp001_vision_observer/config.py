@@ -52,7 +52,11 @@ class Background(BaseModel):
     same-coloured floors and ignores static glare; needs steady lighting."""
 
     model_config = ConfigDict(extra="forbid")
-    threshold: int = 30  # per-pixel colour difference (Lab) that counts as "changed"
+    #: A pixel changed if its colour (Lab a or b) moved more than this...
+    chroma_threshold: int = 30
+    #: ...or its lightness moved more than this. Higher than chroma so shadows, which
+    #: mostly darken, don't count as robot (measured on the Botley mats, 2026-11-10).
+    light_threshold: int = 80
     min_robot_px: int = 2000  # smaller blobs are noise
     max_robot_px: int = 200_000  # bigger means a person, a hand, or a lighting change
     min_front_px: int = 40  # front-marker pixels needed to trust the heading
@@ -76,6 +80,9 @@ class Arena(BaseModel):
     #: "markers": two colour stickers (front + back). "background": empty-arena difference
     #: plus one front colour (`markers.head`), for floors that share the stickers' colours.
     tracking: Literal["markers", "background"] = "markers"
+    #: Added to the marker heading so it matches the direction the robot actually drives.
+    #: Measured by `exp001 heading` (one forward move); stickers needn't be on the centre line.
+    heading_offset_deg: float = 0.0
     background: Background = Background()
 
     @classmethod

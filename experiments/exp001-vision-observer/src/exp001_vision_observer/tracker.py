@@ -32,6 +32,10 @@ class Fix:
     tail: Blob
 
 
+def _wrap(deg: float) -> float:
+    return (deg + 180) % 360 - 180
+
+
 def mask(hsv: np.ndarray, r: HsvRange) -> np.ndarray:
     lo, hi = np.array(r.lo, np.uint8), np.array(r.hi, np.uint8)
     if r.lo[0] <= r.hi[0]:
@@ -82,8 +86,8 @@ class Tracker:
             return None
         hx, hy = self.to_cm(head.x_px, head.y_px)
         tx, ty = self.to_cm(tail.x_px, tail.y_px)
-        heading = math.degrees(math.atan2(hy - ty, hx - tx))
-        return Fix((hx + tx) / 2, (hy + ty) / 2, heading, head, tail)
+        heading = math.degrees(math.atan2(hy - ty, hx - tx)) + self.arena.heading_offset_deg
+        return Fix((hx + tx) / 2, (hy + ty) / 2, _wrap(heading), head, tail)
 
 
 class BackgroundTracker(Tracker):
@@ -108,8 +112,13 @@ class BackgroundTracker(Tracker):
         return lab.astype(np.int16)
 
     def robot_mask(self, frame_bgr: np.ndarray) -> np.ndarray:
-        diff = np.abs(self._prep(frame_bgr) - self.bg).max(axis=2).astype(np.uint8)
-        m = np.where(diff > self.cfg.threshold, 255, 0).astype(np.uint8)
+        d = np.abs(self._prep(frame_bgr) - self.bg)
+        changed = (
+            (d[:, :, 1] > self.cfg.chroma_threshold)
+            | (d[:, :, 2] > self.cfg.chroma_threshold)
+            | (d[:, :, 0] > self.cfg.light_threshold)
+        )
+        m = np.where(changed, 255, 0).astype(np.uint8)
         m = cv2.bitwise_and(m, self.inside)
         m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
         return cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
@@ -137,11 +146,20 @@ class BackgroundTracker(Tracker):
         fm = cv2.moments(front, binaryImage=True)
         fx, fy = fm["m10"] / fm["m00"], fm["m01"] / fm["m00"]
         head = Blob(fx, fy, float(n))
-        tail = Blob(2 * cx - fx, 2 * cy - fy, float(area))  # mirrored through the body centre
+        # Heading: back marker -> front marker when the back colour shows inside the body
+        # (steady, even if the front marker sits near the middle); else centre -> front.
+        back = cv2.bitwise_and(mask(hsv, self.arena.markers.tail), only_body)
+        nb = int(cv2.countNonZero(back))
+        if nb >= self.cfg.min_front_px:
+            bm = cv2.moments(back, binaryImage=True)
+            tail = Blob(bm["m10"] / bm["m00"], bm["m01"] / bm["m00"], float(nb))
+        else:
+            tail = Blob(2 * cx - fx, 2 * cy - fy, 0.0)  # mirrored through the body centre
         bx, by = self.to_cm(cx, cy)
         hx, hy = self.to_cm(fx, fy)
-        heading = math.degrees(math.atan2(hy - by, hx - bx))
-        return Fix(bx, by, heading, head, tail)
+        tx, ty = self.to_cm(tail.x_px, tail.y_px)
+        heading = math.degrees(math.atan2(hy - ty, hx - tx)) + self.arena.heading_offset_deg
+        return Fix(bx, by, _wrap(heading), head, tail)
 
 
 def make_tracker(arena: Arena) -> Tracker:
