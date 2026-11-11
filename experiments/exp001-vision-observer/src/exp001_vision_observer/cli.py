@@ -24,7 +24,7 @@ from lab_agent.config import Settings, load_dotenv
 from lab_agent.log import EventLog, read_log
 from lab_agent.runner import Runner, run_path
 
-from .config import ARENA_JSON, Arena
+from .config import ARENA_JSON, BACKGROUND, PRESETS, Arena, Markers
 from .judge import judge
 from .tools import Rig, make_rig
 
@@ -46,9 +46,17 @@ def _pose(p: Any) -> str:
     )
 
 
-def cmd_cameras(_a: argparse.Namespace) -> int:
-    from .camera import list_cameras
+def cmd_cameras(a: argparse.Namespace) -> int:
+    from .camera import list_cameras, match_index
 
+    if a.match:
+        found = match_index(a.match)
+        if found is None:
+            print("no OpenCV camera opened (macOS: allow camera access for this app)")
+            return 1
+        i, score = found
+        print(f"{a.match!r} is OpenCV camera {i} (picture match {score:.2f}; above 0.8 is sure)")
+        return 0 if score >= 0.8 else 1
     found = list_cameras()
     for i, w, h in found:
         print(f"camera {i}: {w}x{h}")
@@ -62,40 +70,95 @@ def cmd_calibrate(a: argparse.Namespace) -> int:
     if len(corners) != 4 or any(len(c) != 2 for c in corners):
         raise SystemExit("--corners needs four x,y pixel pairs: origin, +x, +x+y, +y")
     base = Arena.load() if ARENA_JSON.exists() else None
+    markers = base.markers if base else Markers()
+    if a.front:
+        markers = markers.model_copy(update={"head": PRESETS[a.front]})
+    if a.back:
+        markers = markers.model_copy(update={"tail": PRESETS[a.back]})
     arena = Arena(
         width_cm=a.width,
         height_cm=a.height,
         corners_px=corners,  # type: ignore[arg-type]  # validated as 2-tuples above
-        markers=base.markers if base else Arena.model_fields["markers"].default,
+        markers=markers,
         camera_index=a.camera if a.camera is not None else (base.camera_index if base else 0),
+        zoom=a.zoom if a.zoom is not None else (base.zoom if base else 1.0),
+        camera_name=a.camera_name or (base.camera_name if base else None),
+        tracking=a.tracking or (base.tracking if base else "markers"),
     )
     arena.save()
-    print(f"saved {ARENA_JSON}")
+    print(f"saved {ARENA_JSON} (tracking: {arena.tracking})")
+    return 0
+
+
+def cmd_background(a: argparse.Namespace) -> int:
+    """Capture the empty arena for tracking="background". Robot out, nobody in frame."""
+    import cv2
+
+    from .camera import grab_by_name
+
+    if not a.nobody_in_frame:
+        raise SystemExit("Refusing: pass --nobody-in-frame once you've checked (ADR 0007)")
+    load_dotenv()
+    arena = Arena.load() if ARENA_JSON.exists() else None
+    name = a.camera_name or (arena.camera_name if arena else None)
+    if not name:
+        raise SystemExit('Pass --camera-name "HD Pro Webcam C920" (or calibrate first)')
+    zoom = a.zoom if a.zoom is not None else (arena.zoom if arena else 1.0)
+    frame = grab_by_name(name, zoom)
+    BACKGROUND.parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(BACKGROUND), frame)
+    print(f"saved empty-arena background {BACKGROUND} ({frame.shape[1]}x{frame.shape[0]})")
+    print("Retake it if the lighting changes or the mats move.")
     return 0
 
 
 def cmd_snapshot(a: argparse.Namespace) -> int:
-    """The only command that writes a frame, and only when told nobody is in it (ADR 0007)."""
+    """The only command that writes a frame, and only when told nobody is in it (ADR 0007).
+    Works before calibration (for reading the corner pixels): pass --camera."""
     import cv2
 
     if not a.nobody_in_frame:
         raise SystemExit("Refusing: pass --nobody-in-frame once you've checked (ADR 0007)")
-    rig = _rig(a)
-    frame = rig.live.camera.read()
+    from .camera import grab_by_name
+
+    load_dotenv()
+    arena = Arena.load() if ARENA_JSON.exists() else None
+    name = a.camera_name or (arena.camera_name if arena else None)
+    if not name:
+        raise SystemExit(
+            'Pass --camera-name "HD Pro Webcam C920" (names: ffmpeg -f avfoundation '
+            '-list_devices true -i "")'
+        )
+    zoom = a.zoom if a.zoom is not None else (arena.zoom if arena else 1.0)
+    frame = grab_by_name(name, zoom)
     if frame is None:
         raise SystemExit("camera gave no frame")
-    for i, (x, y) in enumerate(rig.arena.corners_px):
-        cv2.circle(frame, (int(x), int(y)), 8, (0, 255, 255), 2)
-        cv2.putText(frame, str(i), (int(x) + 10, int(y)), 0, 0.7, (0, 255, 255), 2)
-    fix = rig.live.tracker.find(frame)
-    if fix:
-        for b, color in ((fix.head, (0, 255, 0)), (fix.tail, (255, 0, 255))):
-            cv2.circle(frame, (int(b.x_px), int(b.y_px)), 12, color, 2)
+    fix = None
+    if arena:
+        from .tracker import make_tracker
+
+        for i, (x, y) in enumerate(arena.corners_px):
+            cv2.circle(frame, (int(x), int(y)), 8, (0, 255, 255), 2)
+            cv2.putText(frame, str(i), (int(x) + 10, int(y)), 0, 0.7, (0, 255, 255), 2)
+        try:
+            fix = make_tracker(arena).find(frame)
+        except FileNotFoundError:
+            fix = None
+        if fix:
+            for b, color in ((fix.head, (0, 255, 0)), (fix.tail, (255, 0, 255))):
+                cv2.circle(frame, (int(b.x_px), int(b.y_px)), 12, color, 2)
+    # a 100 px grid makes reading corner pixels off the image easy
+    h, w = frame.shape[:2]
+    for x in range(0, w, 100):
+        cv2.line(frame, (x, 0), (x, h), (255, 255, 255), 1)
+        cv2.putText(frame, str(x), (x + 2, 14), 0, 0.4, (255, 255, 255), 1)
+    for y in range(0, h, 100):
+        cv2.line(frame, (0, y), (w, y), (255, 255, 255), 1)
+        cv2.putText(frame, str(y), (2, y + 14), 0, 0.4, (255, 255, 255), 1)
     MEDIA.mkdir(parents=True, exist_ok=True)
     out = MEDIA / f"snapshot-{datetime.now():%Y%m%d-%H%M%S}.jpg"
     cv2.imwrite(str(out), frame)
-    print(f"saved {out} ({frame.shape[1]}x{frame.shape[0]}); robot: {_pose(fix)}")
-    rig.live.stop()
+    print(f"saved {out} ({w}x{h}); robot: {_pose(fix) if arena else 'not calibrated'}")
     return 0
 
 
@@ -233,7 +296,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--sim", action="store_true", help="force the simulator")
     sub = p.add_subparsers(required=True)
 
-    sp = sub.add_parser("cameras", help="list camera indexes that open")
+    sp = sub.add_parser("cameras", help="list camera indexes, or --match a macOS camera name")
+    sp.add_argument("--match", metavar="NAME", help="find the OpenCV index for this camera")
     sp.set_defaults(fn=cmd_cameras)
 
     sp = sub.add_parser("calibrate", help="save arena size and corner pixels to arena.json")
@@ -241,10 +305,23 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--width", type=float, required=True, help="cm along the first edge")
     sp.add_argument("--height", type=float, required=True, help="cm along the second edge")
     sp.add_argument("--camera", type=int)
+    sp.add_argument("--zoom", type=float, help="digital zoom used for the corner snapshot")
+    sp.add_argument("--camera-name", help="macOS camera name (snapshots open it by name)")
+    sp.add_argument("--tracking", choices=["markers", "background"])
+    sp.add_argument("--front", choices=sorted(PRESETS), help="front marker colour")
+    sp.add_argument("--back", choices=sorted(PRESETS), help="back marker colour (markers mode)")
     sp.set_defaults(fn=cmd_calibrate)
+
+    sp = sub.add_parser("background", help="capture the empty arena (robot out, nobody in)")
+    sp.add_argument("--nobody-in-frame", action="store_true")
+    sp.add_argument("--camera-name")
+    sp.add_argument("--zoom", type=float)
+    sp.set_defaults(fn=cmd_background)
 
     sp = sub.add_parser("snapshot", help="save one annotated frame locally (nobody in frame)")
     sp.add_argument("--nobody-in-frame", action="store_true")
+    sp.add_argument("--camera-name", help='macOS camera name, e.g. "HD Pro Webcam C920"')
+    sp.add_argument("--zoom", type=float, help="digital zoom, e.g. 1.5")
     sp.set_defaults(fn=cmd_snapshot)
 
     sp = sub.add_parser("check", help="track for a few seconds and report")

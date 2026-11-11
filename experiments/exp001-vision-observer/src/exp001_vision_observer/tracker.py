@@ -84,3 +84,75 @@ class Tracker:
         tx, ty = self.to_cm(tail.x_px, tail.y_px)
         heading = math.degrees(math.atan2(hy - ty, hx - tx))
         return Fix((hx + tx) / 2, (hy + ty) / 2, heading, head, tail)
+
+
+class BackgroundTracker(Tracker):
+    """The robot is the biggest region that differs from the empty arena; the front-marker
+    colour *inside* that region gives the heading. The floor can share the marker's colour
+    (it isn't searched), and static glare is part of the background."""
+
+    def __init__(self, arena: Arena, background_bgr: np.ndarray) -> None:
+        super().__init__(arena)
+        self.cfg = arena.background
+        self.bg = self._prep(background_bgr)
+        h, w = background_bgr.shape[:2]
+        self.inside = np.zeros((h, w), np.uint8)
+        poly = np.array(arena.corners_px, np.int32)
+        cv2.fillPoly(self.inside, [poly], 255)
+        # the robot can overhang the edge a little; look slightly beyond the corners
+        self.inside = cv2.dilate(self.inside, np.ones((31, 31), np.uint8))
+
+    @staticmethod
+    def _prep(frame_bgr: np.ndarray) -> np.ndarray:
+        lab = cv2.cvtColor(cv2.GaussianBlur(frame_bgr, (7, 7), 0), cv2.COLOR_BGR2LAB)
+        return lab.astype(np.int16)
+
+    def robot_mask(self, frame_bgr: np.ndarray) -> np.ndarray:
+        diff = np.abs(self._prep(frame_bgr) - self.bg).max(axis=2).astype(np.uint8)
+        m = np.where(diff > self.cfg.threshold, 255, 0).astype(np.uint8)
+        m = cv2.bitwise_and(m, self.inside)
+        m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+        return cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+
+    def find(self, frame_bgr: np.ndarray) -> Fix | None:
+        if frame_bgr.shape[:2] != self.bg.shape[:2]:
+            return None
+        m = self.robot_mask(frame_bgr)
+        contours, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            return None
+        body = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(body)
+        if not self.cfg.min_robot_px <= area <= self.cfg.max_robot_px:
+            return None  # nothing there, or something that isn't the robot
+        mo = cv2.moments(body)
+        cx, cy = mo["m10"] / mo["m00"], mo["m01"] / mo["m00"]
+        only_body = np.zeros_like(m)
+        cv2.drawContours(only_body, [body], -1, 255, -1)
+        hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV)
+        front = cv2.bitwise_and(mask(hsv, self.arena.markers.head), only_body)
+        n = int(cv2.countNonZero(front))
+        if n < self.cfg.min_front_px:
+            return None  # can't tell front from back
+        fm = cv2.moments(front, binaryImage=True)
+        fx, fy = fm["m10"] / fm["m00"], fm["m01"] / fm["m00"]
+        head = Blob(fx, fy, float(n))
+        tail = Blob(2 * cx - fx, 2 * cy - fy, float(area))  # mirrored through the body centre
+        bx, by = self.to_cm(cx, cy)
+        hx, hy = self.to_cm(fx, fy)
+        heading = math.degrees(math.atan2(hy - by, hx - bx))
+        return Fix(bx, by, heading, head, tail)
+
+
+def make_tracker(arena: Arena) -> Tracker:
+    """The tracker arena.json asks for."""
+    if arena.tracking == "markers":
+        return Tracker(arena)
+    from .config import BACKGROUND
+
+    if not BACKGROUND.exists():
+        raise FileNotFoundError(
+            f"tracking is 'background' but {BACKGROUND} is missing: run `exp001 background`"
+        )
+    bg = cv2.imread(str(BACKGROUND), cv2.IMREAD_COLOR)
+    return BackgroundTracker(arena, bg)

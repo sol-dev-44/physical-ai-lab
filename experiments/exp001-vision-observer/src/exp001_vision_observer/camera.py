@@ -11,6 +11,7 @@ from __future__ import annotations
 import math
 import random
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -31,7 +32,10 @@ class Camera(Protocol):
 class OpenCVCamera:
     """A webcam. macOS asks once for camera permission for the app running this."""
 
-    def __init__(self, index: int, width: int = 1280, height: int = 720) -> None:
+    def __init__(
+        self, index: int, width: int = 1920, height: int = 1080, zoom: float = 1.0
+    ) -> None:
+        self.zoom = zoom
         self.cap = cv2.VideoCapture(index)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -42,10 +46,67 @@ class OpenCVCamera:
 
     def read(self) -> np.ndarray | None:
         ok, frame = self.cap.read()
-        return frame if ok else None
+        if not ok:
+            return None
+        return crop_zoom(frame, self.zoom)
 
     def close(self) -> None:
         self.cap.release()
+
+
+def crop_zoom(frame: np.ndarray, zoom: float) -> np.ndarray:
+    """The centre 1/zoom of the frame (digital zoom without resampling)."""
+    if zoom <= 1.0:
+        return frame
+    h, w = frame.shape[:2]
+    ch, cw = int(h / zoom), int(w / zoom)
+    y, x = (h - ch) // 2, (w - cw) // 2
+    return frame[y : y + ch, x : x + cw]
+
+
+def grab_by_name(name: str, zoom: float = 1.0) -> np.ndarray:
+    """One frame from the camera macOS calls `name`, via ffmpeg (OpenCV can only open by
+    index, and its indexes don't follow macOS's order). Held in memory, never written."""
+    import subprocess
+
+    out = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "avfoundation",
+         "-framerate", "30", "-video_size", "1920x1080", "-i", name,
+         "-vf", "select=gte(n\\,10)",  # skip auto-exposure warm-up frames
+         "-frames:v", "1", "-f", "image2pipe", "-vcodec", "bmp", "-"],
+        capture_output=True, timeout=20,
+    )  # fmt: skip
+    if out.returncode != 0 or not out.stdout:
+        raise RuntimeError(f"ffmpeg could not read camera {name!r}: {out.stderr.decode()[-300:]}")
+    frame = cv2.imdecode(np.frombuffer(out.stdout, np.uint8), cv2.IMREAD_COLOR)
+    return crop_zoom(frame, zoom)
+
+
+def match_index(name: str, max_index: int = 3) -> tuple[int, float] | None:
+    """Which OpenCV index shows the same picture as the camera named `name`? Compares tiny
+    grayscale thumbnails taken a moment apart; nothing is saved."""
+
+    def thumb(f: np.ndarray) -> np.ndarray:
+        g = cv2.resize(cv2.cvtColor(f, cv2.COLOR_BGR2GRAY), (64, 36)).astype(np.float32)
+        return (g - g.mean()) / (g.std() + 1e-6)
+
+    ref = thumb(grab_by_name(name))
+    best: tuple[int, float] | None = None
+    for i in range(max_index + 1):
+        cap = cv2.VideoCapture(i)
+        try:
+            frame = None
+            for _ in range(10):
+                ok, f = cap.read() if cap.isOpened() else (False, None)
+                frame = f if ok else frame
+        finally:
+            cap.release()
+        if frame is None:
+            continue
+        score = float((thumb(frame) * ref).mean())  # correlation, 1.0 = identical
+        if best is None or score > best[1]:
+            best = (i, score)
+    return best
 
 
 def list_cameras(max_index: int = 5) -> list[tuple[int, int, int]]:
@@ -131,6 +192,8 @@ class SimCamera:
     size: tuple[int, int] = (640, 480)
     #: Set False to simulate the robot being covered or out of view.
     visible: bool = True
+    #: Draws extra floor (patterns, glare) under the robot, for tracker tests.
+    floor: Callable[[np.ndarray], None] | None = None
 
     def __post_init__(self) -> None:
         w, h = self.arena.width_cm, self.arena.height_cm
@@ -147,11 +210,13 @@ class SimCamera:
         cv2.fillPoly(img, [floor], (150, 150, 150))
         for c in floor:
             cv2.circle(img, tuple(int(v) for v in c), 6, (0, 200, 255), -1)  # tape corners
+        if self.floor:
+            self.floor(img)
         if self.visible:
             r = self.robot
             a = math.radians(r.heading_deg)
             ux, uy = math.cos(a), math.sin(a)
-            cv2.circle(img, self._px(r.x_cm, r.y_cm), 18, (40, 40, 40), -1)  # body
+            cv2.circle(img, self._px(r.x_cm, r.y_cm), 34, (40, 40, 40), -1)  # body covers markers
             cv2.circle(img, self._px(r.x_cm + 4 * ux, r.y_cm + 4 * uy), 7, (40, 255, 60), -1)
             cv2.circle(img, self._px(r.x_cm - 4 * ux, r.y_cm - 4 * uy), 7, (180, 60, 255), -1)
         return img

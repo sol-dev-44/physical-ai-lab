@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from .camera import SIM_ARENA, Camera, OpenCVCamera, SimBlaster, SimCamera, SimRobot
 from .config import Arena
 from .live import LivePose
-from .tracker import Tracker
+from .tracker import Tracker, make_tracker
 
 CODES = Path(__file__).resolve().parents[3] / "exp000-ir-bridge" / "codes" / "rm4-mini-living.json"
 MOVES = frozenset({"robot.forward", "robot.reverse"})
@@ -75,9 +75,9 @@ def make_rig(*, sim: bool | None = None, realtime: bool = False) -> Rig:
         blaster = BroadlinkBlaster(
             id="rm4-mini-living", host=os.environ["RM4_HOST"], codes=CodeBook(CODES)
         )
-        camera = OpenCVCamera(arena.camera_index)
+        camera = OpenCVCamera(arena.camera_index, zoom=arena.zoom)
 
-    live = LivePose(camera, Tracker(arena))
+    live = LivePose(camera, Tracker(arena) if sim else make_tracker(arena))
     reg = Registry()
 
     def hold(code: str):

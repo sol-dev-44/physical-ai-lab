@@ -124,3 +124,58 @@ def test_report_pairs_camera_and_human(tmp_path, monkeypatch):
 def test_snapshot_refuses_without_the_privacy_flag():
     with pytest.raises(SystemExit, match="ADR 0007"):
         main(["--sim", "snapshot"])
+
+
+def test_crop_zoom_keeps_the_centre():
+    import numpy as np
+    from exp001_vision_observer.camera import crop_zoom
+
+    f = np.zeros((1080, 1920, 3), np.uint8)
+    f[540, 960] = 255
+    z = crop_zoom(f, 1.5)
+    assert z.shape[:2] == (720, 1280) and z[360, 640].any()
+
+
+def _busy_floor(img):
+    """A floor patch in the front-marker colour, and a glare spot, under the robot."""
+    import cv2
+
+    cv2.rectangle(img, (120, 80), (300, 400), (40, 255, 60), -1)
+    cv2.circle(img, (450, 120), 30, (255, 255, 255), -1)
+
+
+def _bg_tracker(rig, empty):
+    from exp001_vision_observer.config import Background
+    from exp001_vision_observer.tracker import BackgroundTracker
+
+    small = Background(min_robot_px=300, max_robot_px=20_000, min_front_px=20)
+    arena = rig.arena.model_copy(update={"tracking": "background", "background": small})
+    return BackgroundTracker(arena, empty)
+
+
+def test_background_tracker_ignores_a_same_coloured_floor_and_glare():
+    rig = make_rig(sim=True)
+    rig.camera.floor = _busy_floor
+    rig.camera.visible = False
+    tr = _bg_tracker(rig, rig.camera.read())
+    rig.camera.visible = True
+    for x, y, h in [(50, 35, 0), (25, 30, 120), (35, 45, -60)]:  # incl. over the patch
+        rig.robot.x_cm, rig.robot.y_cm, rig.robot.heading_deg = x, y, h
+        fix = tr.find(rig.camera.read())
+        assert fix is not None
+        assert math.hypot(fix.x_cm - x, fix.y_cm - y) < 3.0
+        assert abs((fix.heading_deg - h + 180) % 360 - 180) < 15
+
+
+def test_background_tracker_rejects_an_empty_arena_and_a_big_intruder():
+    import cv2
+
+    rig = make_rig(sim=True)
+    rig.camera.visible = False
+    empty = rig.camera.read()
+    tr = _bg_tracker(rig, empty)
+    assert tr.find(empty) is None  # nothing there
+    rig.camera.visible = True
+    f = rig.camera.read()
+    cv2.rectangle(f, (90, 60), (560, 420), (30, 60, 200), -1)  # a person or a hand
+    assert tr.find(f) is None

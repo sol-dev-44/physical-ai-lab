@@ -10,10 +10,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 ARENA_JSON = Path(__file__).resolve().parents[2] / "arena.json"
+#: The empty-arena reference frame. Local only (media/ is gitignored), captured only with
+#: --nobody-in-frame (ADR 0007).
+BACKGROUND = Path(__file__).resolve().parents[4] / "media" / "exp001" / "background.png"
 
 
 class HsvRange(BaseModel):
@@ -24,11 +28,34 @@ class HsvRange(BaseModel):
     hi: tuple[int, int, int]
 
 
+#: Named colours for --front / --back. Orange: the checkered triangles on the exp000 robot.
+PRESETS: dict[str, HsvRange] = {
+    "green": HsvRange(lo=(45, 120, 120), hi=(80, 255, 255)),
+    "pink": HsvRange(lo=(150, 100, 120), hi=(175, 255, 255)),
+    "orange": HsvRange(lo=(4, 130, 140), hi=(20, 255, 255)),
+    "blue": HsvRange(lo=(100, 150, 80), hi=(125, 255, 255)),
+    # dark green sticker: low brightness, so a wide value range; tune from a snapshot
+    "darkgreen": HsvRange(lo=(40, 60, 30), hi=(90, 255, 200)),
+}
+
+
 class Markers(BaseModel):
     model_config = ConfigDict(extra="forbid")
     head: HsvRange = HsvRange(lo=(45, 120, 120), hi=(80, 255, 255))  # neon green, front
     tail: HsvRange = HsvRange(lo=(150, 100, 120), hi=(175, 255, 255))  # pink, back
     min_area_px: int = 30
+
+
+class Background(BaseModel):
+    """Settings for tracking="background": the robot is whatever differs from the empty
+    arena, and the `markers.head` colour inside it marks the front. Works on busy or
+    same-coloured floors and ignores static glare; needs steady lighting."""
+
+    model_config = ConfigDict(extra="forbid")
+    threshold: int = 30  # per-pixel colour difference (Lab) that counts as "changed"
+    min_robot_px: int = 2000  # smaller blobs are noise
+    max_robot_px: int = 200_000  # bigger means a person, a hand, or a lighting change
+    min_front_px: int = 40  # front-marker pixels needed to trust the heading
 
 
 class Arena(BaseModel):
@@ -39,7 +66,17 @@ class Arena(BaseModel):
     markers: Markers = Markers()
     #: Camera index for OpenCV (0 is usually the built-in camera; Continuity Camera is often 1).
     camera_index: int = 0
+    #: macOS camera name; snapshots open the camera by this name, and `exp001 cameras
+    #: --match` finds the OpenCV index showing the same picture.
+    camera_name: str | None = None
+    #: Digital zoom: crop the centre 1/zoom of the frame (1.5 = what the 1.5x preview shows).
+    #: Corner pixels are in the cropped frame, so change zoom only before calibrating.
+    zoom: float = Field(default=1.0, ge=1.0, le=4.0)
     margin_cm: float = 10.0
+    #: "markers": two colour stickers (front + back). "background": empty-arena difference
+    #: plus one front colour (`markers.head`), for floors that share the stickers' colours.
+    tracking: Literal["markers", "background"] = "markers"
+    background: Background = Background()
 
     @classmethod
     def load(cls, path: Path = ARENA_JSON) -> Arena:

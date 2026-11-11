@@ -25,6 +25,14 @@ lab Runner.request -> RM4 hold ---+         outcome.observed (method: camera)
 - **Markers:** a neon green sticker on the robot's head (front) and a pink one on its
   back. Position is their midpoint, heading points tail to head. Colours are HSV ranges
   in `arena.json`.
+- **Two tracking modes** (`tracking` in `arena.json`):
+  - `markers`: two stickers in colours found nowhere else in view (front and back).
+  - `background`: the robot is whatever differs from a stored picture of the empty arena,
+    and one front colour *inside* the robot's outline gives the heading. Use it when the
+    floor shares the sticker colours (the Botley mats are orange like the exp000 robot's
+    triangles) or has glare. Needs steady light; retake the background when it changes.
+    A blob too big to be the robot (a hand, a person) reads as "not tracked", so the gate
+    stops motion.
 - **Arena:** a taped rectangle. `arena.json` holds its size in cm and the four corner
   pixels, in order origin, +x, +x+y, +y going counterclockwise seen from above. That
   order makes left turns positive, whatever the camera's orientation.
@@ -43,9 +51,21 @@ lab Runner.request -> RM4 hold ---+         outcome.observed (method: camera)
 ## Privacy (ADR 0007)
 
 The camera can see people. Frames are tracked and dropped in memory; only numbers are
-logged. The one exception is `exp001 snapshot --nobody-in-frame`, for calibration: it
-writes a single annotated frame to `media/exp001/` (gitignored, never synced) and refuses
-to run without the flag. Never commit, sync or post a frame.
+logged. Two commands write a frame, both refuse without `--nobody-in-frame`, and both
+write only to `media/exp001/` (gitignored, never synced): `snapshot` (calibration) and
+`background` (the empty arena). Never commit, sync or post a frame. If a frame turns out
+to show a person, delete it at once. (2026-11-10: a snapshot from the wrong camera caught
+people; it was deleted, and snapshots now open the camera by name.)
+
+## macOS camera notes
+
+- The Claude app can't get camera permission; camera commands run in **Terminal**
+  (it asks once; allow it). `scripts/camera_permission.py` waits for the answer.
+- OpenCV's camera numbers don't follow macOS's order. Snapshots open the camera by name
+  (ffmpeg); `exp001 cameras --match "HD Pro Webcam C920"` finds the OpenCV index by
+  comparing pictures (on the lab Mac the C920 is OpenCV camera 0).
+- Live view for people: `ffplay -f avfoundation -video_size 1920x1080 -i "HD Pro Webcam C920"`
+  (add `-vf "crop=iw/1.5:ih/1.5"` for the 1.5x zoom). Nothing is recorded.
 
 ## Commands
 
@@ -58,7 +78,9 @@ uv run exp001 --sim check                          # tracker on simulated frames
 uv run exp001 --sim trials robot.forward -n 10     # a whole run, simulated
 uv run exp001 cameras                              # which camera index is which
 uv run exp001 snapshot --nobody-in-frame           # one frame to media/exp001/, for corners
-uv run exp001 calibrate --corners X,Y X,Y X,Y X,Y --width 120 --height 90 --camera 1
+uv run exp001 background --nobody-in-frame --camera-name "HD Pro Webcam C920" --zoom 1.5
+uv run exp001 calibrate --corners X,Y X,Y X,Y X,Y --width 61 --height 41 --camera 0 \
+  --camera-name "HD Pro Webcam C920" --zoom 1.5 --tracking background --front orange
 uv run exp001 check                                # real camera: is the robot tracked?
 uv run exp001 trials robot.forward -n 10 --human   # camera + you
 uv run exp001 trials robot.forward -n 10 --dry-run # null test
@@ -79,4 +101,7 @@ One lab process at a time: stop the agent before running trials here.
 
 ## Status
 
-Software ready and tested against the simulator (2026-11-10). Real camera not wired yet.
+2026-11-10: software tested against the simulator. Logitech C920 connected, overhead at
+1.5x zoom over six 8-inch Botley mats (about 61 x 41 cm); the robot is about 22 x 20 cm,
+so the fence allows only short moves. Front markers: two orange checkered triangles,
+which match the orange mats, hence `background` tracking. Not calibrated yet.
