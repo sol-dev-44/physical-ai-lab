@@ -218,17 +218,28 @@ def cmd_discover(_s: Settings, a: argparse.Namespace) -> int:
 
 
 def cmd_learn(_s: Settings, a: argparse.Namespace) -> int:
+    from .devices import ir
     from .devices.broadlink_ir import BroadlinkBlaster
     from .devices.codes import CodeBook
 
     blaster = BroadlinkBlaster(id="learn", host=a.host, codes=CodeBook(Path(a.codes)))
+    failed = 0
     for name in a.names:
-        input(
-            f"Ready to learn {name!r}: press Enter, then press the remote button once at the RM4..."
-        )
-        blaster.learn(name)
-        print(f"  saved {name} to {a.codes}")
-    return 0
+        input(f"Ready to learn {name!r}: press Enter, wait for the RM4 LED, press the button once")
+        try:
+            packet = blaster.learn(name, wait_s=a.wait)
+        except TimeoutError as e:
+            print(f"  {e}")
+            failed += 1
+            continue
+        frames = ir.frames(ir.decode(packet))
+        try:
+            one = ir.one_frame(packet)
+            check = f"usable frame {ir.duration_s(one) * 1000:.0f} ms"
+        except ValueError as e:
+            check = f"WARNING: {e}"
+        print(f"  saved {name} to {a.codes}: {len(frames)} frames, {check}")
+    return 1 if failed else 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -285,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
     sp = sub.add_parser("learn", help="learn IR codes from a remote")
     sp.add_argument("--host", required=True)
     sp.add_argument("--codes", required=True, help="code book JSON path")
+    sp.add_argument("--wait", type=float, default=60, help="seconds to listen per code")
     sp.add_argument("names", nargs="+")
     sp.set_defaults(fn=cmd_learn)
 

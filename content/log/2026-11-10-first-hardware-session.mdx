@@ -1,0 +1,54 @@
+---
+title: "First hardware session: the robot moved in surges"
+date: 2026-11-10
+summary: The RM4 Mini learned a toy robot's remote, the robot surged instead of driving, and the fix also closed a safety gap. By the end it drove smoothly from the website.
+tags: [harness, ir, hardware, safety]
+draft: true
+---
+
+Experiment 0 got real hardware today: a BroadLink RM4 Mini IR blaster, a toy robot, a TV
+and a ceiling fan.
+
+## Which remotes are IR
+
+The RM4 Mini only hears infrared. Of five remotes, one was learnable: the robot's
+two-button remote (forward, and a reverse that backs up to the left). The fan's remote and
+a second robot remote are radio, and the smart TV remote is Bluetooth. The TV still obeys
+the standard Samsung IR codes, so it stays in the experiment without its remote.
+
+Two setup traps, for next time: the RM4 has to have "Lock device" turned off in its app,
+and macOS refuses the broadcast that device discovery uses, so the lab now retries on the
+local subnet.
+
+## Surges
+
+The first `robot.forward {"seconds": 1}` worked, but the robot moved in "two rounds of
+three surges". The log said why: the lab re-sent the code every 0.11 s, each send to the
+RM4 took 0.2 to 0.4 s over Wi-Fi, so one second was two sends, and each learned code held
+three frames.
+
+Looking closer found something worse. A learned code is every frame the remote sent while
+the button was down. One capture was 5.9 seconds long, and the safety gate's 3 second cap
+only limits the `seconds` argument, not what a single packet plays.
+
+The fix does both jobs: the lab sends one frame, once, and tells the RM4 to repeat it for
+exactly the requested time (8 frames of 127 ms for one second). The robot drove in one
+smooth push.
+
+## Picking the right frame
+
+Reverse then did nothing. Its first frame was glitched. Switching to "the most common
+frame" fixed reverse and quietly broke forward: this remote sends a few frames for the
+button, then a "still held" frame that's identical for both buttons, so forward would have
+become a generic hold. The lab caught it before sending, because the capture looked mixed,
+and the rule became "the first frame that repeats". Both directions now drive smoothly.
+
+## From the website
+
+The admin page got a Wall-e Robot panel. The first tap failed with "permission denied",
+a bug from day zero: the site sent a field the database fills in itself. The second tap
+moved the robot, then the agent crashed reporting back, linking to a run that isn't
+synced yet. Both fixed, with tests.
+
+Nothing here is published as a result. These were bench runs, and the device list isn't
+final. The decision record is ADR 0008.

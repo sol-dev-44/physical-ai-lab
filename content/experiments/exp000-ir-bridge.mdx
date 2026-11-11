@@ -2,12 +2,11 @@
 id: exp000-ir-bridge
 title: "Experiment 0: IR bridge"
 date: 2026-11-09
-status: planned
-summary: Control a fan, a TV and a toy robot through one typed tool registry and safety gate, log every step, and replay it.
+status: running
+summary: Control a toy robot and a TV through one typed tool registry and safety gate, log every step, and replay it.
 hypothesis: A cheap IR blaster driven through the harness can hit at least 9 of 10 commands per device, and a null test (no IR sent) scores near zero.
 hardware:
   - BroadLink RM4 Mini
-  - Kasa smart plugs
 tags: [harness, ir, home]
 runs: []
 draft: true
@@ -18,6 +17,13 @@ draft: true
 Before the arms arrive, prove the harness end to end on hardware that costs nothing:
 command in, safety gate, device, observed outcome, all in one event log.
 
+## Devices
+
+The RM4 Mini only hears infrared, so the first job was finding out which remotes are IR.
+A toy robot's two-button remote is. The ceiling fan's remote and a second robot remote are
+radio, and the smart TV remote is Bluetooth, though the TV itself still obeys standard IR
+codes. The device list isn't final yet.
+
 ## Protocol
 
 1. Learn IR codes for each device.
@@ -26,6 +32,12 @@ command in, safety gate, device, observed outcome, all in one event log.
 4. Replay run 1 from its log and compare.
 
 <Callout>Fireplace is excluded from automated trials. Manual, supervised commands only.</Callout>
+
+## Bench notes
+
+The first hardware session (see the log) turned up two things worth a decision record:
+holding a robot button has to be played by the blaster, not timed over Wi-Fi, and a learned
+code has to be trimmed to one clean frame or it can outlast the safety cap.
 
 ## Results
 

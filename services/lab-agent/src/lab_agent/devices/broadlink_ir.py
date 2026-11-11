@@ -46,22 +46,31 @@ class BroadlinkBlaster:
         time.sleep(frames * period)  # return when the motion ends
         return frames
 
-    def learn(self, code_name: str, wait_s: float = 15.0) -> bytes:
-        """Point the remote at the RM4 and press the button once."""
+    def learn(self, code_name: str, wait_s: float = 60.0, arm_s: float = 25.0) -> bytes:
+        """Point the remote at the RM4 and press the button once.
+
+        The RM4 leaves learning mode after about 30 s (its LED goes off), so re-arm every
+        `arm_s` until `wait_s`. A capture holds every frame sent while the button was
+        down; `ir.one_frame` picks the usable one at send time."""
         from broadlink.exceptions import ReadError, StorageError
 
         dev = self._device()
-        dev.enter_learning()
         deadline = time.monotonic() + wait_s
         while time.monotonic() < deadline:
-            time.sleep(0.5)
-            try:
-                packet = dev.check_data()
-            except (ReadError, StorageError):
-                continue
-            self.codes.put(code_name, packet)
-            return packet
-        raise TimeoutError(f"no IR signal received in {wait_s}s for {code_name!r}")
+            dev.enter_learning()
+            armed = time.monotonic()
+            while time.monotonic() - armed < arm_s and time.monotonic() < deadline:
+                time.sleep(0.5)
+                try:
+                    packet = dev.check_data()
+                except (ReadError, StorageError):  # StorageError = nothing captured yet
+                    continue
+                self.codes.put(code_name, packet)
+                return packet
+        raise TimeoutError(
+            f"no IR received in {wait_s:.0f}s for {code_name!r}: the remote is probably RF or"
+            " Bluetooth (the RM4 Mini hears IR only), or was pressed while the LED was off"
+        )
 
 
 def _local_broadcast() -> str:

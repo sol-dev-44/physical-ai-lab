@@ -18,6 +18,10 @@ Invariants enforced in the database, not just the app:
 - Anonymous users only see published runs and their events.
 - Only admins can queue commands or publish runs; only the service role can claim commands.
 - A command older than 60 seconds is marked `expired` instead of being run.
+- The web may insert only `(tool, args, confirmed)` into `commands`. `requested_by`
+  defaults to `auth.uid()` and the policy checks it, so **don't send it**: including it
+  fails with "permission denied for table commands".
+- `commands.run_id` references `runs`, so it can only be set once that run is synced.
 
 ## Setup (new project)
 
@@ -32,6 +36,8 @@ Invariants enforced in the database, not just the app:
 4. Auth > URL Configuration: add `http://localhost:3000/auth/callback` and the production callback.
 5. Copy the URL and anon key into `apps/web/.env.local`; the service role key goes only in
    `services/lab-agent/.env` on the lab machine. Never ship the service role key to the web app.
+   New projects issue `sb_secret_...` keys (Project Settings, API Keys, Secret keys); the
+   lab-agent client accepts them. The `sb_publishable_...` key is the public one.
 
 ## Tests
 

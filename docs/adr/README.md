@@ -13,3 +13,4 @@ old one `Superseded by 00NN`.
 | [0005](0005-standalone-apps.md) | When an experiment gets its own app | Accepted |
 | [0006](0006-content-and-data.md) | Write-ups in git, run data in Supabase | Accepted |
 | [0007](0007-child-privacy.md) | No identifiable child data, ever | Accepted |
+| [0008](0008-device-played-holds.md) | Timed actions are played by the device, from one frame | Accepted |

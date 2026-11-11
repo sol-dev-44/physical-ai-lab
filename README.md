@@ -27,7 +27,7 @@ Needs Node 22+, pnpm 10, uv, Rust stable.
 
 ```bash
 pnpm install
-uv sync --all-packages            # add --extra hardware in experiments when using real devices
+uv sync --all-packages            # add --extra hardware for real devices (broadlink, python-kasa)
 cargo build
 
 pnpm dev                          # site at http://localhost:3000 (works without Supabase)
@@ -51,4 +51,6 @@ CI runs all of these on every push.
 
 ## First experiment
 
-[experiments/exp000-ir-bridge](experiments/exp000-ir-bridge/README.md)
+[experiments/exp000-ir-bridge](experiments/exp000-ir-bridge/README.md): an RM4 Mini IR
+blaster driving a toy robot and a TV, from the CLI or from `/admin` through the agent.
+Its README has the device checklist, which remotes work, and the bench notes.

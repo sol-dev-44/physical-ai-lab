@@ -58,14 +58,28 @@ flowchart TB
 | Nothing invalid is ever written | `EventLog.append` validates before writing |
 | Hardware is reachable only through the gate | Runner is the only caller of handlers; web has no device path |
 | Stale or remote commands can't fire dangerous tools | `claim_next_command` expiry; `manual_only` rule for `remote` |
+| A timed action can't outlast its `seconds` | Gate caps `seconds`; `Blaster.hold` plays one frame with a repeat count (ADR 0008) |
+| The web can only queue `(tool, args, confirmed)` as itself | Column grants + `commands_queue` policy (`requested_by = auth.uid()`), pinned in `rls_test.sql` |
 | Only published runs are public | RLS policies, tested in `supabase/tests/rls_test.sql` |
 | Write-ups have valid front matter | zod at build + `apps/web/test/content.test.ts` |
 | Site builds with no secrets | CI builds without Supabase env |
 
+## Known gaps
+
+Not enforced yet; work around them, and fix them before the arms arrive.
+
+- **One lab process per device.** The gate's rate limits live in each process, so a
+  session and the agent (or two sessions) don't see each other's commands. Run one.
+- **The agent runs only while someone keeps it running.** No launchd service yet.
+- **`commands.run_id` stays empty** until runs are synced; the agent names its local run
+  in `result` instead.
+- **Run logs mix tuning and trials.** A bench session is a run like any other; mark it
+  with notes and don't publish it as an experiment run.
+
 ## Adding things
 
 - **New event type**: edit `packages/schema/src/event.ts`, `pnpm schema:gen`, add valid + invalid fixtures, mirror in Python and Rust, update the folds if it counts toward a summary. CI fails until all three agree.
-- **New device**: adapter in `services/lab-agent/src/lab_agent/devices/`, no safety logic in it.
+- **New device**: adapter in `services/lab-agent/src/lab_agent/devices/`, no safety logic in it. Timed actions are played by the device (ADR 0008), not by a send loop.
 - **New tool set**: a `build() -> Registry` function in the experiment's package; point `LAB_TOOLS` at it.
 - **New experiment**: `experiments/expNNN-name/` (code) + `content/experiments/expNNN-name.mdx` (write-up). If Python, add it to `[tool.uv.workspace].members`.
 - **New write-up collection**: schema in `apps/web/lib/content/collections.ts`, routes via `collectionIndex` / `collectionDetail`.
