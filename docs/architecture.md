@@ -68,7 +68,7 @@ flowchart TB
 
 ## Known gaps
 
-Not enforced yet; work around them, and fix them before the arms arrive.
+Not enforced yet; work around them, and fix them before the arms run autonomously.
 
 - **One lab process per device.** The gate's rate limits live in each process, so a
   session and the agent (or two sessions) don't see each other's commands. Run one.

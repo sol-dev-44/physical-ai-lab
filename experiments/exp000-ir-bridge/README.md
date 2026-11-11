@@ -4,6 +4,12 @@ Write-up: `content/experiments/exp000-ir-bridge.mdx`. Plan and run sheet: the
 "Experiment 0" Claude Doc (Alan edits it). Bench history: the log entry
 `content/log/2026-11-10-first-hardware-session.mdx`.
 
+**Outcome:** a $30 BroadLink RM4 Mini drives a two-button toy robot through the harness,
+from the CLI and from the website's `/admin` queue. The first moves came out as jerky
+surges: Wi-Fi latency between per-frame sends. Holds are now played by the device from one
+frame with a repeat count (ADR 0008), which made motion smooth and closed a gap where a
+long recorded code could outlast the gate's 3 s cap. The toy then became exp001's robot.
+
 ## Question
 
 Can a $30 IR blaster, driven through the harness, hit at least 9/10 commands per
