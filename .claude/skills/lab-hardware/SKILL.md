@@ -88,10 +88,24 @@ run it. Null tests add `--dry-run`. Log notes say what happened, in the person's
 
 ## 6. Camera experiments (exp001)
 
-`uv run exp001 ...` from `services/lab-agent`; see `experiments/exp001-vision-observer/README.md`.
-`--sim` runs robot and camera in a simulator; real mode needs `arena.json` (calibrate).
-Never save or show a frame unless the person confirms nobody is in it
-(`snapshot --nobody-in-frame`, local `media/` only). Stop the agent before trials.
+Read `experiments/exp001-vision-observer/README.md` first: status, resume order, data so
+far, and a long gotchas list. The essentials:
+
+- Camera commands run in **macOS Terminal**, not in this app (no camera permission here).
+  Launch and read back like this, writing straight to a file (pipes killed a run):
+
+  ```bash
+  L=~/physical-ai-lab/media/exp001/run.log; rm -f $L
+  osascript -e "tell application \"Terminal\" to do script \"cd ~/physical-ai-lab/services/lab-agent && uv run exp001 check > $L 2>&1; echo EXIT \$? >> $L\""
+  for i in $(seq 1 60); do grep -q '^EXIT' $L 2>/dev/null && break; sleep 2; done; grep -v '^OpenCV:' $L
+  ```
+
+- The C920 is OpenCV camera 0; snapshots open it by name. Never save, show or describe a
+  frame unless the person just confirmed nobody is in view; delete one that shows a person.
+- Empty-arena `background` must be retaken whenever the mats move or lighting changes.
+  Symptom: `blobs.py` shows one huge region and the tracker returns None.
+- Stop the agent before camera runs (one process). Restart it afterwards for /admin.
+- Tell the person when Wall-e needs switching on (`collect` exits 3, "asleep").
 
 ## If something's off
 

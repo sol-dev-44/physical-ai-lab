@@ -1,0 +1,44 @@
+---
+title: "A webcam as the judge: first night"
+date: 2026-11-10
+summary: An overhead webcam now tracks the robot, guards the arena and judges each move. The first live data runs taught more about cameras and floors than about the robot.
+tags: [vision, eval, safety, harness]
+draft: true
+---
+
+Experiment 0 needs a person to watch every trial and type y or n. Experiment 1 replaces
+that person with a $60 webcam, because everything after it (a motion model, then a small
+reinforcement learning experiment) needs an automatic judge.
+
+## What got built
+
+- **Interlocks in the safety gate.** Rules that depend on the world, not the request: no
+  recent sighting of the robot, no motion; a move whose predicted end comes too close to
+  the arena edge is refused. They live in the gate, logged like every other rule, so the
+  camera only ever reports where things are.
+- **A tracker that works on a busy floor.** The arena is six puzzle mats, two of them the
+  same orange as the robot's stickers. Colour tracking couldn't work, so the robot is
+  whatever differs from a picture of the empty arena, and stickers are only read *inside*
+  its outline. Shadows are ignored by counting colour change separately from brightness.
+- **A heading that doesn't need careful stickers.** One forward move measures the angle
+  between where the stickers point and where the robot actually goes (28 degrees here).
+- **A simulator** of the robot and the overhead camera, so every piece runs in tests.
+- **Privacy by default.** Frames are tracked and dropped; only numbers are logged. The two
+  commands that save an image refuse unless told nobody is in view.
+
+## What the first night taught
+
+- Tracking a still robot: steady to a millimetre and a degree, in every frame.
+- One forward half-second: 6.4 cm. Short pulses (0.3 s) barely move it.
+- The safety fence did its job: 21 moves refused for the edge, 6 for lost tracking. It
+  was also too cautious for a 61 x 41 cm arena until it got measured speeds.
+- Two things broke the empty-arena picture: the webcam re-balancing its own exposure when
+  a dark robot entered view, and the mats sliding. The first is now corrected in software.
+  The second needs tape.
+- One mistake worth recording: a calibration snapshot came from the wrong camera (macOS
+  and OpenCV number cameras differently) and caught people. It was deleted at once, and
+  snapshots now open the camera by name.
+
+Next session: tape the mats, retake the background, collect thirty moves, fit the motion
+model. Then the question this experiment exists for: how often does the camera agree with
+a person?

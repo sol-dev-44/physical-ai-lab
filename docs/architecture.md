@@ -75,6 +75,10 @@ Not enforced yet; work around them, and fix them before the arms arrive.
 - **The agent runs only while someone keeps it running.** No launchd service yet.
 - **`commands.run_id` stays empty** until runs are synced; the agent names its local run
   in `result` instead.
+- **Camera runs only from macOS Terminal.** The Claude app can't get camera permission,
+  so exp001 commands are launched in Terminal and read back from a log file.
+- **The empty-arena background goes stale** when the floor moves or the light changes;
+  nothing detects that yet beyond "one huge blob, not tracked" (which stops motion).
 - **Run logs mix tuning and trials.** A bench session is a run like any other; mark it
   with notes and don't publish it as an experiment run.
 
