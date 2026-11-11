@@ -103,8 +103,20 @@ class BackgroundTracker(Tracker):
         self.inside = np.zeros((h, w), np.uint8)
         poly = np.array(arena.corners_px, np.int32)
         cv2.fillPoly(self.inside, [poly], 255)
-        # the robot can overhang the edge a little; look slightly beyond the corners
-        self.inside = cv2.dilate(self.inside, np.ones((31, 31), np.uint8))
+        # Look beyond the tape too: the robot overhangs the edge, or strays out and
+        # needs bringing back. Pixels per cm from the first edge.
+        (x0, y0), (x1, y1) = arena.corners_px[0], arena.corners_px[1]
+        self.px_per_cm = math.hypot(x1 - x0, y1 - y0) / arena.width_cm
+        k = 2 * max(15, int(self.cfg.look_beyond_cm * self.px_per_cm)) + 1
+        self.inside = cv2.dilate(self.inside, np.ones((k, k), np.uint8))
+        if self.cfg.ignore_tape:
+            # Shiny tape changes most when the light moves; leave it out of the comparison
+            # (bright and colourless in the empty-arena picture, plus a small border).
+            hsv = cv2.cvtColor(background_bgr, cv2.COLOR_BGR2HSV)
+            tape = ((hsv[:, :, 1] < 60) & (hsv[:, :, 2] > 150)).astype(np.uint8) * 255
+            tape = cv2.morphologyEx(tape, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+            tape = cv2.dilate(tape, np.ones((9, 9), np.uint8))
+            self.inside = cv2.bitwise_and(self.inside, cv2.bitwise_not(tape))
 
     @staticmethod
     def _prep(frame_bgr: np.ndarray) -> np.ndarray:
@@ -136,31 +148,56 @@ class BackgroundTracker(Tracker):
         contours, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:
             return None
-        body = max(contours, key=cv2.contourArea)
+        # The biggest region of robot size: a stale strip of floor or a person is bigger
+        # and is skipped rather than mistaken for the robot.
+        sized = [
+            c
+            for c in contours
+            if self.cfg.min_robot_px <= cv2.contourArea(c) <= self.cfg.max_robot_px
+        ]
+        if not sized:
+            return None  # nothing there, or nothing that could be the robot
+        body = max(sized, key=cv2.contourArea)
         area = cv2.contourArea(body)
-        if not self.cfg.min_robot_px <= area <= self.cfg.max_robot_px:
-            return None  # nothing there, or something that isn't the robot
         mo = cv2.moments(body)
         cx, cy = mo["m10"] / mo["m00"], mo["m01"] / mo["m00"]
         only_body = np.zeros_like(m)
         cv2.drawContours(only_body, [body], -1, 255, -1)
+        if self.cfg.marker_margin_cm > 0:
+            # A dark robot on a dark floor is only partly found; its markers can sit just
+            # outside the found part. Only safe when the floor lacks the marker colours.
+            k = 2 * int(self.cfg.marker_margin_cm * self.px_per_cm) + 1
+            only_body = cv2.dilate(only_body, np.ones((k, k), np.uint8))
         hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV)
-        front = cv2.bitwise_and(mask(hsv, self.arena.markers.head), only_body)
-        n = int(cv2.countNonZero(front))
-        if n < self.cfg.min_front_px:
-            return None  # can't tell front from back
-        fm = cv2.moments(front, binaryImage=True)
-        fx, fy = fm["m10"] / fm["m00"], fm["m01"] / fm["m00"]
-        head = Blob(fx, fy, float(n))
-        # Heading: back marker -> front marker when the back colour shows inside the body
-        # (steady, even if the front marker sits near the middle); else centre -> front.
         back = cv2.bitwise_and(mask(hsv, self.arena.markers.tail), only_body)
         nb = int(cv2.countNonZero(back))
+        tail = None
         if nb >= self.cfg.min_front_px:
             bm = cv2.moments(back, binaryImage=True)
             tail = Blob(bm["m10"] / bm["m00"], bm["m01"] / bm["m00"], float(nb))
+        if self.cfg.heading_from == "none":
+            # Position only: the heading comes from how the robot moves (LivePose).
+            bx, by = self.to_cm(cx, cy)
+            body_blob = Blob(cx, cy, area)
+            return Fix(bx, by, math.nan, body_blob, body_blob)
+        if self.cfg.heading_from == "back_to_body":
+            if tail is None:
+                return None  # can't tell front from back
+            fx, fy = cx, cy  # the body's centre stands in for the front
+            head = Blob(cx, cy, area)
         else:
-            tail = Blob(2 * cx - fx, 2 * cy - fy, 0.0)  # mirrored through the body centre
+            front = cv2.bitwise_and(mask(hsv, self.arena.markers.head), only_body)
+            n = int(cv2.countNonZero(front))
+            if n < self.cfg.min_front_px:
+                return None  # can't tell front from back
+            fm = cv2.moments(front, binaryImage=True)
+            fx, fy = fm["m10"] / fm["m00"], fm["m01"] / fm["m00"]
+            head = Blob(fx, fy, float(n))
+            # Heading: back marker -> front marker when the back colour shows inside the
+            # body (steady, even if the front marker sits near the middle); else
+            # centre -> front.
+            if tail is None:
+                tail = Blob(2 * cx - fx, 2 * cy - fy, 0.0)  # mirrored through the centre
         bx, by = self.to_cm(cx, cy)
         hx, hy = self.to_cm(fx, fy)
         tx, ty = self.to_cm(tail.x_px, tail.y_px)

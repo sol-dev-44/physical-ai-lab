@@ -82,3 +82,38 @@ def test_dry_runs_are_fenced_too(tmp_path):
         Request("robot.forward", {"seconds": 1}, "cli", automated=True)
     )
     assert not d.allow
+
+
+def test_fence_lets_a_stray_robot_come_back(tmp_path):
+    out = Fixed(Pose(-5, 40, 0, t=0.0))  # just past the left edge, facing into the arena
+    g = gate(tmp_path, out)
+    back_in = g.check(fwd(0.5))  # ends at x = 5: still inside the margin, but better
+    assert back_in.allow
+    further_out = g.check(Request("robot.reverse", {"seconds": 0.5}, "cli"))
+    assert not further_out.allow and further_out.reason.startswith("arena_fence:")
+
+
+def test_recovery_needs_a_real_gain(tmp_path):
+    # Near the top edge, driving along it: no closer to the middle, so still denied.
+    d = gate(tmp_path, Fixed(Pose(50, 75, 0, t=0.0))).check(fwd(0.5))
+    assert not d.allow
+
+
+def test_fixed_step_counts_even_for_short_moves(tmp_path):
+    # A toy that always moves ~16 cm: a 0.3 s forward from x = 78 ends near x = 98.
+    src = Fixed(Pose(78, 40, 0, t=0.0))
+    reg = Registry()
+    reg.add(Tool("robot.forward", "fwd", lambda _a: None, args_model=Secs))
+    reg.add_interlock(
+        ArenaFence(src, 100, 80, {"robot.forward": Motion(12, 0, 0.0, base_cm=16)}, margin_cm=5)
+    )
+    d = SafetyGate(reg, stop_file=tmp_path / "STOP").check(fwd(0.3))
+    assert not d.allow and d.reason.startswith("arena_fence:")
+
+
+def test_unknown_heading_allows_only_moves_safe_in_any_direction(tmp_path):
+    nan = float("nan")
+    middle = gate(tmp_path, Fixed(Pose(50, 40, nan, t=0.0)))
+    assert middle.check(fwd(0.5)).allow  # 10 cm (11.5 with error) from (50, 40) is fine
+    near = gate(tmp_path, Fixed(Pose(20, 40, nan, t=0.0))).check(fwd(0.5))
+    assert not near.allow and "heading unknown" in near.reason

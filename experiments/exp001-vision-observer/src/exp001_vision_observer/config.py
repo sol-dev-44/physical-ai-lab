@@ -59,7 +59,25 @@ class Background(BaseModel):
     light_threshold: int = 80
     min_robot_px: int = 2000  # smaller blobs are noise
     max_robot_px: int = 200_000  # bigger means a person, a hand, or a lighting change
-    min_front_px: int = 40  # front-marker pixels needed to trust the heading
+    min_front_px: int = 40  # marker pixels needed to trust the heading
+    #: "front": back (or mirrored centre) -> front marker. "back_to_body": back marker ->
+    #: body centre, for when the front marker is small or blends into the floor (dark
+    #: green on dark wood, 2026-11-11). Either way `heading` calibrates the offset.
+    #: "none": position only; the heading is learned from each move (stickers on a toy
+    #: whose head and body hide them from an angle proved unreliable, 2026-11-11).
+    heading_from: Literal["front", "back_to_body", "none"] = "front"
+    #: Also look this far beyond the tape, so a robot that strays out is still seen and
+    #: can be brought back (the fence's recovery rule).
+    look_beyond_cm: float = 15.0
+    #: Search for markers this far around the found body too (0 = only inside it). For a
+    #: dark robot on a dark floor; only when the floor has none of the marker colours.
+    marker_margin_cm: float = 0.0
+    #: Leave shiny tape (bright, colourless in the empty-arena picture) out of the
+    #: comparison: it changes the most when daylight moves.
+    ignore_tape: bool = False
+    #: With heading from motion: how much each move turns the robot (deg, + left), to
+    #: correct the heading its travel implies. Measured 2026-11-11: both turn right.
+    move_turn_deg: dict[str, float] = Field(default_factory=dict)
 
 
 class MotionCfg(BaseModel):
@@ -69,6 +87,7 @@ class MotionCfg(BaseModel):
     speed_cm_s: float = Field(gt=0)
     direction_deg: float
     slack: float = Field(ge=0)
+    base_cm: float = Field(default=0.0, ge=0)  # fixed step per command
 
 
 class Arena(BaseModel):

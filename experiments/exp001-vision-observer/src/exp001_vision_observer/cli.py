@@ -26,6 +26,7 @@ from lab_agent.runner import Runner, run_path
 
 from .config import ARENA_JSON, BACKGROUND, PRESETS, Arena, Markers
 from .judge import judge
+from .live import COAST_S
 from .tools import Rig, make_rig
 
 EXPERIMENT = "exp001-vision-observer"
@@ -85,6 +86,9 @@ def cmd_calibrate(a: argparse.Namespace) -> int:
         camera_name=a.camera_name or (base.camera_name if base else None),
         tracking=a.tracking or (base.tracking if base else "markers"),
     )
+    if base:  # a new arena keeps what was measured on the robot, not on the floor
+        keep = ("heading_offset_deg", "motions", "margin_cm", "background")
+        arena = arena.model_copy(update={k: getattr(base, k) for k in keep})
     arena.save()
     print(f"saved {ARENA_JSON} (tracking: {arena.tracking})")
     return 0
@@ -191,14 +195,14 @@ def cmd_heading(a: argparse.Namespace) -> int:
     rig.live.start()
     try:
         runner.start(EXPERIMENT, purpose="heading calibration", simulated=rig.simulated)
-        before = rig.live.settle(5)
+        before = rig.live.settle(3)
         result = runner.request("robot.forward", {"seconds": a.seconds}, actor="cli")
         if not result.allowed:
             print(f"denied: {getattr(result.checked.payload, 'reason', '')}")
             print("Put the robot near one end, facing the far end, and try again.")
             runner.end("aborted")
             return 1
-        after = rig.live.settle(5)
+        after = rig.live.settle(3, after_s=0 if rig.simulated else COAST_S)
         if before is None or after is None:
             runner.end("aborted")
             raise SystemExit("robot not tracked before or after the move")
@@ -225,7 +229,8 @@ def cmd_heading(a: argparse.Namespace) -> int:
 
 
 def cmd_collect(a: argparse.Namespace) -> int:
-    """Unattended motion data. Exit code 3 = robot looks asleep, 4 = needs re-centring."""
+    """Unattended motion data. Exit code 3 = robot looks asleep, 4 = needs re-centring,
+    5 = robot lost (not seen for a few seconds)."""
     import random
 
     from .collect import run_collect
@@ -241,7 +246,7 @@ def cmd_collect(a: argparse.Namespace) -> int:
     finally:
         rig.live.stop()
     print(f"{out['status']} after {out['moves']} moves: {log.path}")
-    return {"completed": 0, "asleep": 3, "stuck": 4}.get(out["status"], 1)
+    return {"completed": 0, "asleep": 3, "stuck": 4, "lost": 5}.get(out["status"], 1)
 
 
 def cmd_motion(a: argparse.Namespace) -> int:
@@ -286,7 +291,7 @@ def run_trials(
                 continue
             runner.end("aborted")
             return {"status": "aborted", "trials": done}
-        after = rig.live.settle(5)
+        after = rig.live.settle(3, after_s=0 if rig.simulated else COAST_S)
         v = judge(tool, before, after)
         parent = result.last.event_id
         human = None

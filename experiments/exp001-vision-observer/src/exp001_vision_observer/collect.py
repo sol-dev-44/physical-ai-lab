@@ -5,8 +5,16 @@ through the gate, so the fence decides what's allowed: it alternates direction, 
 move is denied it tries the other direction, then shorter. Each move is judged by the
 camera and logged with its displacement, so the logs are the dataset.
 
+Each move is steered: it picks, at random, among moves predicted to end comfortably
+inside the arena (alternating direction when it can), so the robot stays in the square
+while the data stays varied. When the robot is near or past an edge it switches to
+recovery: of every move and
+length, it sends the one predicted to end furthest from the edges (the fence allows a
+move there only if it can't make things worse). After RECOVERY_TRIES recovery moves in a
+row that don't get it back inside the margin, it stops as "stuck".
+
 It stops when the robot looks asleep (several sent moves in a row with no motion; the toy
-switches itself off when idle), when nothing is allowed (needs re-centring), or after n.
+switches itself off when idle), when nothing is allowed or recovery fails, or after n.
 """
 
 from __future__ import annotations
@@ -18,15 +26,55 @@ import time
 from pathlib import Path
 from typing import Any
 
+from lab_agent.interlocks import Pose
 from lab_agent.log import read_log
 from lab_agent.runner import Runner
 
-from .judge import judge
+from .judge import heading_from_move, judge
+from .live import COAST_S
 from .tools import Rig
 
 DURATIONS = (0.3, 0.5, 0.75, 1.0)
 STILL_CM = 1.5  # a sent move that shifts the robot less than this didn't happen
 ASLEEP_AFTER = 3  # consecutive still moves before we call it asleep
+RECOVERY_TRIES = 4  # recovery moves in a row before giving up
+LOST_WAIT_S = 4.0  # how long to wait for a lost robot to be seen again
+TOOLS = ("robot.forward", "robot.reverse")
+
+
+def recovery_moves(rig: Rig, pose: Pose) -> list[tuple[str, float]]:
+    """Every (tool, seconds), best first: predicted end furthest from the nearest edge."""
+    f = rig.fence
+    scored = []
+    for tool in TOOLS:
+        if tool not in f.motions:
+            continue
+        for secs in DURATIONS:
+            x, y, slack = f.predict(pose, tool, secs)
+            scored.append((f.room(x, y) - slack / 2, tool, secs))
+    return [(t, s) for _, t, s in sorted(scored, reverse=True)]
+
+
+COMFORT_CM = 8.0  # steer toward moves predicted to end at least this far inside the margin
+
+
+def steering_moves(rig: Rig, pose: Pose, last: str, rng: random.Random) -> list[tuple[str, float]]:
+    """Keep the robot in the square: moves predicted to end comfortably inside come first,
+    in random order but alternating direction when possible (varied data); then the rest,
+    most central first. The gate still has the final say on every one. With the heading
+    unknown, the shortest moves (the fence allows them only if safe in any direction)."""
+    f = rig.fence
+    if math.isnan(pose.heading_deg):
+        return [("robot.forward", min(DURATIONS)), ("robot.reverse", min(DURATIONS))]
+    ranked = recovery_moves(rig, pose)
+    comfy = []
+    for tool, secs in ranked:
+        x, y, slack = f.predict(pose, tool, secs)
+        if f.room(x, y) - slack >= f.margin_cm + COMFORT_CM:
+            comfy.append((tool, secs))
+    rng.shuffle(comfy)
+    comfy.sort(key=lambda m: m[0] == last)  # stable: the other direction first
+    return comfy + [m for m in ranked if m not in comfy]
 
 
 def run_collect(
@@ -40,17 +88,31 @@ def run_collect(
 ) -> dict[str, Any]:
     rng = rng or random.Random()
     runner.start(experiment, purpose="motion model data", n=n, simulated=rig.simulated)
-    moves, still, last = 0, 0, "robot.reverse"
+    moves, still, last, recovering = 0, 0, "robot.reverse", 0
     status = "completed"
     while moves < n:
         if moves and pause_s:
             time.sleep(pause_s)
         before = rig.live.settle(3)
-        first = "robot.forward" if last == "robot.reverse" else "robot.reverse"
-        second = "robot.reverse" if first == "robot.forward" else "robot.forward"
-        seconds = rng.choice(DURATIONS)
-        tries = [(t, s) for s in sorted({seconds, 0.5, 0.3}, reverse=True) if s <= seconds
-                 for t in (first, second)]  # fmt: skip
+        if before is None:
+            before = rig.live.settle(3, timeout_s=LOST_WAIT_S)  # a blink: give it a moment
+        if before is None:
+            status = "lost"  # not seen (marker hidden, robot out of view): don't move blind
+            break
+        stray = before is not None and (
+            rig.fence.room(before.x_cm, before.y_cm) < rig.fence.margin_cm
+        )
+        if stray and not math.isnan(before.heading_deg):
+            if recovering >= RECOVERY_TRIES:
+                status = "stuck"  # recovery didn't bring it back: move it by hand
+                break
+            recovering += 1
+            tries = recovery_moves(rig, before)
+            print(f"     recovering: robot at ({before.x_cm:.0f}, {before.y_cm:.0f}) cm,"
+                  f" try {recovering}", flush=True)  # fmt: skip
+        else:
+            recovering = 0
+            tries = steering_moves(rig, before, last, rng)
         result = None
         for tool, secs in tries:
             r = runner.request(tool, {"seconds": secs}, actor="cli", automated=True)
@@ -63,18 +125,30 @@ def run_collect(
         if not result.ok:
             status = "failed"
             break
-        after = rig.live.settle(5)
+        after = rig.live.settle(3, after_s=0 if rig.simulated else COAST_S)
         v = judge(last, before, after)
+        learned = None
+        if rig.live.motion_heading and before is not None and after is not None:
+            learned = heading_from_move(
+                last, before, after, turn_deg=rig.arena.background.move_turn_deg.get(last, 0.0)
+            )
+            if learned is not None:
+                rig.live.set_heading(learned)
         payload: dict[str, Any] = {
             "success": v.success,
             "method": "camera",
             "note": v.reason,
             "seconds": seconds,
         }
+        if learned is not None:
+            payload["heading_from_motion_deg"] = round(learned, 1)
+        if stray:
+            payload["note"] = f"recovery: {v.reason}"
         payload |= {k: val for k, val in v.payload().items() if k != "reason"}
         if before is not None:
-            payload |= {"x_cm": round(before.x_cm, 1), "y_cm": round(before.y_cm, 1),
-                        "heading_deg": round(before.heading_deg, 1)}  # fmt: skip
+            payload |= {"x_cm": round(before.x_cm, 1), "y_cm": round(before.y_cm, 1)}
+            if not math.isnan(before.heading_deg):  # unknown heading: left out, not NaN
+                payload["heading_deg"] = round(before.heading_deg, 1)
         runner.log.append(
             "outcome.observed", "system", payload, parent_id=result.last.event_id, tool=last
         )
@@ -137,9 +211,12 @@ def suggest_fence(fit: dict[str, dict[str, float]]) -> dict[str, dict[str, float
         speed = max(abs(f["speed_cm_s"]), f["max_speed_cm_s"]) * 1.2
         direction = math.degrees(math.atan2(f["lateral_cm_s"], f["speed_cm_s"]))
         slack = min(1.5, 0.3 + abs(f["turn_deg_s"]) / 90)
+        # A negative lag means a fixed step per command (the toy moves ~16 cm for any press).
+        base = max(0.0, -f["lag_s"]) * abs(f["speed_cm_s"])
         out[tool] = {
             "speed_cm_s": round(speed, 1),
             "direction_deg": round(direction, 1),
             "slack": round(slack, 2),
+            "base_cm": round(base * 1.1, 1),
         }
     return out

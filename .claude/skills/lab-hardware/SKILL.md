@@ -105,7 +105,12 @@ far, and a long gotchas list. The essentials:
 - Empty-arena `background` must be retaken whenever the mats move or lighting changes.
   Symptom: `blobs.py` shows one huge region and the tracker returns None.
 - Stop the agent before camera runs (one process). Restart it afterwards for /admin.
-- Tell the person when Wall-e needs switching on (`collect` exits 3, "asleep").
+- Tell the person when Wall-e needs switching on (`collect` exits 3 "asleep" or 5 "lost").
+- Give the person a heads-up and wait for "go" before every run that moves Wall-e, and
+  run `uv run lab discover` first to wake and check the RM4.
+- Heading comes from movement (`heading_from: none`), so Wall-e must start in the middle
+  of the tape; the first move is only allowed if it's safe in any direction.
+- Terminal truncates long `do script` commands: wrap long paths in a small shell script.
 
 ## If something's off
 

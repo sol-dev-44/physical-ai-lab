@@ -1,35 +1,35 @@
 {
-  "width_cm": 61.0,
-  "height_cm": 40.6,
+  "width_cm": 94.5,
+  "height_cm": 69.5,
   "corners_px": [
     [
-      174.0,
-      692.0
+      591.0,
+      907.0
     ],
     [
-      1205.0,
-      703.0
+      1749.0,
+      943.0
     ],
     [
-      1207.0,
-      32.0
+      1764.0,
+      95.0
     ],
     [
-      180.0,
-      27.0
+      632.0,
+      58.0
     ]
   ],
   "markers": {
     "head": {
       "lo": [
-        40,
-        60,
-        30
+        100,
+        150,
+        80
       ],
       "hi": [
-        90,
+        125,
         255,
-        200
+        255
       ]
     },
     "tail": {
@@ -48,27 +48,37 @@
   },
   "camera_index": 0,
   "camera_name": "HD Pro Webcam C920",
-  "zoom": 1.5,
+  "zoom": 1.0,
   "margin_cm": 5.0,
   "tracking": "background",
-  "heading_offset_deg": 28.4,
+  "heading_offset_deg": 53.7,
   "motions": {
     "robot.forward": {
-      "speed_cm_s": 16.0,
-      "direction_deg": 0.0,
-      "slack": 0.4
+      "speed_cm_s": 6.7,
+      "direction_deg": -14.9,
+      "slack": 0.35,
+      "base_cm": 18.5
     },
     "robot.reverse": {
-      "speed_cm_s": 18.0,
-      "direction_deg": 180.0,
-      "slack": 0.8
+      "speed_cm_s": 26.4,
+      "direction_deg": 168.9,
+      "slack": 0.35,
+      "base_cm": 10.0
     }
   },
   "background": {
     "chroma_threshold": 30,
     "light_threshold": 80,
     "min_robot_px": 2000,
-    "max_robot_px": 200000,
-    "min_front_px": 40
+    "max_robot_px": 60000,
+    "min_front_px": 30,
+    "heading_from": "none",
+    "look_beyond_cm": 15.0,
+    "marker_margin_cm": 6.0,
+    "ignore_tape": true,
+    "move_turn_deg": {
+      "robot.forward": -14.8,
+      "robot.reverse": -11.1
+    }
   }
 }

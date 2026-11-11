@@ -45,6 +45,7 @@ class Rig:
     live: LivePose
     arena: Arena
     simulated: bool
+    fence: ArenaFence
     robot: SimRobot | None = None
     camera: SimCamera | None = None
 
@@ -78,6 +79,9 @@ def make_rig(*, sim: bool | None = None, realtime: bool = False) -> Rig:
         camera = OpenCVCamera(arena.camera_index, zoom=arena.zoom)
 
     live = LivePose(camera, Tracker(arena) if sim else make_tracker(arena))
+    live.motion_heading = (
+        not sim and arena.tracking == "background" and (arena.background.heading_from == "none")
+    )
     reg = Registry()
 
     def hold(code: str):
@@ -104,14 +108,16 @@ def make_rig(*, sim: bool | None = None, realtime: bool = False) -> Rig:
         )
     reg.add_interlock(FreshPose(live, MOVES, max_age_s=1.0))
     motions = (
-        {k: Motion(m.speed_cm_s, m.direction_deg, m.slack) for k, m in arena.motions.items()}
+        {
+            k: Motion(m.speed_cm_s, m.direction_deg, m.slack, m.base_cm)
+            for k, m in arena.motions.items()
+        }
         if arena.motions
         else MOTIONS
     )
-    reg.add_interlock(
-        ArenaFence(live, arena.width_cm, arena.height_cm, motions, margin_cm=arena.margin_cm)
-    )
-    return Rig(reg, live, arena, sim, robot, sim_cam)
+    fence = ArenaFence(live, arena.width_cm, arena.height_cm, motions, margin_cm=arena.margin_cm)
+    reg.add_interlock(fence)
+    return Rig(reg, live, arena, sim, fence, robot, sim_cam)
 
 
 def build() -> Registry:

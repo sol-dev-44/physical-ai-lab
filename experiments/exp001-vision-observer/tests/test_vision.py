@@ -236,3 +236,83 @@ def test_background_tracker_survives_an_auto_exposure_shift():
     f[:, :, :] += np.array([25, 35, 15], np.int16)  # brighter and warmer, like auto exposure
     fix = tr.find(np.clip(f, 0, 255).astype(np.uint8))
     assert fix is not None and math.hypot(fix.x_cm - 50, fix.y_cm - 35) < 3
+
+
+def test_collect_brings_a_stray_robot_back(tmp_path):
+    import random
+
+    from exp001_vision_observer.collect import run_collect
+
+    rig = make_rig(sim=True)
+    rig.robot.x_cm, rig.robot.y_cm, rig.robot.heading_deg = 96.0, 35.0, 180.0  # at the edge
+    log = EventLog(tmp_path / "r.jsonl", "exp001-t-recover")
+    out = run_collect(rig, Runner(rig.registry, log), 6, rng=random.Random(1), pause_s=0)
+    assert out["status"] == "completed"
+    notes = [e.payload.note for e in read_log(log.path) if e.type == "outcome.observed"]
+    assert notes[0].startswith("recovery:")
+    r = rig.robot
+    assert 0 < r.x_cm < 100 and 0 < r.y_cm < 70
+
+
+def test_settle_never_returns_an_old_pose():
+    rig = make_rig(sim=True)
+    assert rig.live.settle(3) is not None
+    rig.camera.visible = False  # lost after a move: no fresh fix, so no pose at all
+    assert rig.live.settle(3, timeout_s=0.2) is None
+
+
+def test_settle_waits_for_the_background_thread():
+    rig = make_rig(sim=True)
+    rig.live.start(hz=50)
+    try:
+        pose = rig.live.settle(3)
+        assert pose is not None and abs(pose.x_cm - 50) < 1
+    finally:
+        rig.live.stop()
+
+
+def test_collect_stops_when_the_robot_is_lost(tmp_path, monkeypatch):
+    import random
+
+    from exp001_vision_observer import collect
+
+    monkeypatch.setattr(collect, "LOST_WAIT_S", 0.1)
+    rig = make_rig(sim=True)
+    rig.camera.visible = False
+    log = EventLog(tmp_path / "l.jsonl", "exp001-t-lost")
+    out = collect.run_collect(rig, Runner(rig.registry, log), 5, rng=random.Random(1), pause_s=0)
+    assert out == {"status": "lost", "moves": 0}
+    assert not [e for e in read_log(log.path) if e.type == "command.sent"]  # never moved blind
+
+
+def test_heading_from_move():
+    from exp001_vision_observer.judge import heading_from_move
+
+    assert heading_from_move("robot.forward", p(10, 10), p(10, 30)) == pytest.approx(90)
+    assert heading_from_move("robot.reverse", p(10, 10), p(30, 10)) == pytest.approx(-180)
+    assert heading_from_move("robot.reverse", p(10, 10), p(30, 10), turn_deg=-20) == (
+        pytest.approx(170)
+    )
+    assert heading_from_move("robot.forward", p(10, 10), p(11, 10)) is None  # too small
+
+
+def test_collect_learns_the_heading_from_motion(tmp_path):
+    import random
+
+    from exp001_vision_observer.collect import run_collect
+
+    rig = make_rig(sim=True)
+    rig.live.motion_heading = True  # ignore the simulated markers: start with no heading
+    rig.robot.heading_deg = 120.0
+    rig.robot.reverse_turn_deg_s = 0.0  # straight reverse, so heading is exact
+    log = EventLog(tmp_path / "m.jsonl", "exp001-t-motion")
+    out = run_collect(rig, Runner(rig.registry, log), 12, rng=random.Random(2), pause_s=0)
+    assert out["status"] == "completed"
+    obs = [e.payload for e in read_log(log.path) if e.type == "outcome.observed"]
+    assert "heading unknown" in obs[0].note
+    assert all(o.success for o in obs if o.moved_cm >= 5)  # sim reverse 0.3 s is 3.6 cm
+    learned = obs[-1].heading_from_motion_deg
+    assert abs((learned - rig.robot.heading_deg + 180) % 360 - 180) < 5
+    r = rig.robot
+    assert 0 < r.x_cm < 100 and 0 < r.y_cm < 70
+    assert validate_log(log.path.read_text().splitlines()) == []

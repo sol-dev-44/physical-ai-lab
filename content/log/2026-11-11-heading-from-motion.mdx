@@ -1,0 +1,47 @@
+---
+title: "Stop reading stickers, watch it move"
+date: 2026-11-11
+summary: A bigger taped arena, a timing bug, a toy that always takes the same step, and the switch that made the camera judge work - heading from motion instead of markers.
+tags: [vision, eval, safety, harness]
+draft: true
+---
+
+The second camera session moved off the puzzle mats onto a duct-tape rectangle on the
+floor: 94.5 x 69.5 cm, nothing to slide, and the webcam at full frame.
+
+## What the data said
+
+- **The toy takes a fixed step.** Every button press moves Wall-e about 20 cm, even a
+  0.3 second one; holding longer adds only a little. The fence assumed distance = speed x
+  time and under-predicted short moves about four times, which is how he reached the
+  edge. The fence model now has a fixed step per command.
+- **Both buttons turn him right**, about 15 degrees forward and 11 degrees reverse, every
+  press, with a few centimetres of sideways drift.
+- **A timing bug, not a radio bug.** Several moves read as exactly 0.0 cm. The cause was
+  the judge: when a frame wasn't tracked it quietly reused the previous pose. Now it waits
+  for the robot to stop and needs three fresh fixes that agree.
+
+## Stickers lost, motion won
+
+Dark green on dark wood vanished. Blue on the head swung with the head. Blue on the base
+hid under the overhanging head. Blue on the tracks gave headings that jumped by 110
+degrees once he moved. Still, every one was steady to a degree; moving, none was usable.
+
+Position, though, was steady to a millimetre throughout. So the heading now comes from
+movement: after a forward step he faces the way he went, after a reverse step the
+opposite way, corrected by the measured turn. The first move, with the heading unknown,
+is only allowed if it's safe in any direction.
+
+The next run: 30 moves, 29 tracked, 29 judged correctly, and the steering kept him in
+the middle third of the arena with no fence refusals and no recovery needed.
+
+## Also built
+
+- **Recovery** inside the gate: a stray robot may be moved only if even the worst case
+  ends further in than it is now.
+- **Steering**: each move is picked at random among those predicted to end comfortably
+  inside, so the data stays varied and the robot stays put.
+- **Privacy held**: an empty-floor picture that caught a foot at the frame's edge was
+  deleted at once and retaken.
+
+Next: does the camera agree with a person? Human-labelled trials and a null test.
