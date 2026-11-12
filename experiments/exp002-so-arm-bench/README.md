@@ -65,10 +65,24 @@ trials, no sync. Nothing here is published.
 - **Avoid USB hubs** (the wiki's advice). Both boards are plugged directly into the Mac.
 - **Power off or unplug the adapter before changing cables** (the wiki's rule). The USB cable carries no power.
 
+## Known issue: wrist roll offset between leader and follower
+
+- Teleop tracks accurately overall, but the two grippers don't line up. In the same hand pose, the
+  leader's jaws are vertical and the follower's are horizontal (about 90 degrees apart).
+- Cause, most likely: the wrist roll's "middle" pose was not set the same way on both arms during
+  calibration. Calibration sets each joint's zero from the middle pose, so a physical difference at
+  that step becomes a fixed offset in teleop.
+- Why it matters: a demonstration recorded with this offset teaches the policy a rotated wrist. It must be
+  fixed before recording data, not left as a known quirk.
+- Fix plan: at the next calibration, set both wrist rolls to the same physical orientation at the middle
+  pose (for example both jaws pointing the same way), then check the jaws line up in teleop.
+  If a small offset remains, correct the wrist roll `homing_offset` in the calibration file and note the value here.
+
 ## Open items for tomorrow
 
 1. Recalibrate the leader. Keep shoulder lift, wrist flex and elbow within their normal bend. Type `c` at the
-   first prompt. Check the saved file before any teleop.
+   first prompt. Check the saved file before any teleop. Set the wrist roll to match the follower at the middle pose
+   (see the known issue above).
 2. Re-check the follower's ranges, wrist roll included. Recalibrate if the wrist roll is still the default.
 3. Teleop with the speed cap, watching the elbow and wrist. Then remove the cap only when the ranges look right.
 4. Confirm the follower's bus stays stable over a few minutes of motion.
