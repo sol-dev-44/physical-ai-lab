@@ -2,44 +2,80 @@
 id: exp001-vision-observer
 title: "Experiment 1: a webcam as the judge"
 date: 2026-11-10
-status: planned
-summary: Replace the human who says "it worked" with an overhead webcam, and measure how often the two agree.
-hypothesis: An overhead webcam tracking two coloured stickers agrees with a human on at least 95% of robot trials, and scores the null test at zero.
+status: done
+summary: An overhead webcam tracks a toy robot, keeps it inside a taped arena and judges every move. Proof of concept - 29 of 29 tracked moves judged correctly.
+hypothesis: An overhead webcam can judge a robot's moves as well as a person, and keep it inside its arena, with no human in the loop.
 hardware:
   - BroadLink RM4 Mini
-  - Overhead webcam
-tags: [harness, vision, eval, ir]
+  - Logitech C920 webcam
+  - Two-button IR toy robot
+tags: [harness, vision, eval, safety, ir]
 runs: []
-draft: true
+draft: false
 ---
 
 ## Why
 
 In Experiment 0 a person watches every trial and types y or n. That doesn't scale, and it
 can't run while nobody is watching. If a cheap camera can judge as well as a person, every
-later experiment gets automatic evaluation, and the reinforcement learning experiment gets
-its reward signal.
+later experiment gets automatic evaluation, and reinforcement learning gets its reward.
 
 ## Setup
 
-A taped rectangle on the floor, a webcam looking straight down, and two stickers on the
-toy robot: green on its head, pink on its back. The lab tracks both stickers, works out
-where the robot is and which way it faces, and decides after each command whether it
-moved the way the command says.
+A 94.5 x 69.5 cm rectangle of duct tape on a wood floor, a webcam looking straight down,
+and the toy robot from Experiment 0. Every command goes through the lab's one path to
+hardware: tool registry, safety gate, IR blaster. Every step is logged.
 
-The camera also guards the robot. No fresh sighting, no motion, and a move that would end
-near the tape is refused before it's sent.
+## How the camera works
 
-## Protocol
-
-1. Calibrate the arena from one frame with nobody in it.
-2. Ten trials each of forward and reverse, judged by the camera and by a person, who
-   answers before seeing the camera's verdict.
-3. A null test: the same trials with nothing sent.
-4. Report agreement, both kinds of disagreement, and the null-test score.
+- **Where is the robot?** Whatever differs from a stored picture of the empty arena.
+  Colour change and brightness change are counted separately, so shadows don't count; the
+  webcam's own exposure shifts are subtracted out; shiny tape is ignored; a region bigger
+  than a robot (a hand, a person) reads as "not tracked", which stops motion.
+- **Which way is it facing?** Learned from motion. After a forward step the robot faces
+  the way it went; after a reverse step, the opposite way.
+- **Is the move safe?** Two rules in the safety gate, not in the camera code: no recent
+  sighting, no motion; and a move whose predicted end comes within 5 cm of the tape is
+  refused. A robot that strays may be moved only if even the worst case brings it back in.
+- **Did it work?** The judge compares where the robot was before and after: forward
+  means at least 5 cm ahead, reverse at least 5 cm back.
+- **Where next?** Each move is picked at random among those predicted to end comfortably
+  inside the arena, so the data stays varied and the robot stays put.
 
 <Callout>Frames are processed and dropped. Only numbers are kept, and no image from this experiment is published.</Callout>
 
 ## Results
 
-Pending.
+The final run: **30 moves, 29 of 29 tracked moves judged correctly** (the last move lost
+the robot, most likely because the toy switched itself off). It stayed in the middle of
+the arena, between 37 and 64 cm across and 25 and 55 cm deep. The safety fence never had
+to refuse a move, and recovery was never needed. A still robot is tracked to about 1 mm.
+
+| | Forward | Reverse |
+|---|---|---|
+| Distance per press | about 20 cm | about 18 cm |
+| Spread | ±1.6 cm | ±1.6 cm |
+| Turn per press | 15 deg right | 11 deg right |
+
+How long the button is held barely matters: every press is one step. So the robot's
+real action set is "step forward" and "step back", which makes it a tidy first
+reinforcement learning problem.
+
+## What didn't work
+
+- **Stickers for heading.** Green on dark wood vanished. On the head, it swivelled. On the
+  body, the head hid it. On the tracks, the readings jumped by up to 110 degrees while the
+  robot moved. Every placement was steady when still and unusable in motion.
+- **Measuring too eagerly.** Frames that failed to track were silently replaced by the
+  last good position, which looked like a robot that teleported or didn't move.
+- **A fence that assumed distance = speed x time.** Short presses went four times
+  further than predicted, until the motion model got a fixed step per press.
+
+## Status
+
+Concluded as a proof of concept. Not done: the formal person-versus-camera agreement
+trials and the null test. The camera, judge and safety rules carry over to the LeRobot
+arms in Phase 1.
+
+The full lab notebook, with every run and every gotcha, is in the repository under
+`experiments/exp001-vision-observer`.

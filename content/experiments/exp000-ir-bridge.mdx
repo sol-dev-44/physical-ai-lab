@@ -2,14 +2,15 @@
 id: exp000-ir-bridge
 title: "Experiment 0: IR bridge"
 date: 2026-11-09
-status: running
-summary: Control a toy robot and a TV through one typed tool registry and safety gate, log every step, and replay it.
+status: done
+summary: A $30 IR blaster drives a toy robot through one typed tool registry and safety gate, from the command line and from this site, with every step logged.
 hypothesis: A cheap IR blaster driven through the harness can hit at least 9 of 10 commands per device, and a null test (no IR sent) scores near zero.
 hardware:
   - BroadLink RM4 Mini
+  - Two-button IR toy robot
 tags: [harness, ir, home]
 runs: []
-draft: true
+draft: false
 ---
 
 ## Why
@@ -22,7 +23,7 @@ command in, safety gate, device, observed outcome, all in one event log.
 The RM4 Mini only hears infrared, so the first job was finding out which remotes are IR.
 A toy robot's two-button remote is. The ceiling fan's remote and a second robot remote are
 radio, and the smart TV remote is Bluetooth, though the TV itself still obeys standard IR
-codes. The device list isn't final yet.
+codes. The toy robot became the experiment's device, and later Experiment 1's robot.
 
 ## Protocol
 
@@ -41,4 +42,15 @@ code has to be trimmed to one clean frame or it can outlast the safety cap.
 
 ## Results
 
-Pending. Results on this page are computed from the published runs listed in the front matter.
+The harness works end to end on real hardware. The robot drives from the command line
+and from this site's admin page: the page only queues a request, and the lab machine's
+safety gate decides. Every request, decision, send and outcome is in the event log.
+
+The first moves came out as jerky surges, and the cause was Wi-Fi latency between
+per-frame sends. Timed moves are now played by the blaster itself, from one clean frame
+with a repeat count. That made the motion smooth and closed a gap where a long recorded
+code could outlast the gate's 3 second cap (ADR 0008).
+
+The formal 10-trial counts and the null test weren't run as published runs: the bench
+sessions mixed tuning with real commands. The camera judge in Experiment 1 replaced the
+person typing y or n.
