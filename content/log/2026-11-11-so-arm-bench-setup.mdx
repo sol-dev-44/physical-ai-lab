@@ -1,0 +1,47 @@
+---
+title: "Bench day one: a leader arm that stopped answering"
+date: 2026-11-11
+summary: Setting up a LeRobot SO-ARM101 Pro bench. Calibration rewrote the wrong file, the leader's joints went quiet, and the first teleop worked once the ranges were fixed.
+tags: [arm, bench, calibration, lerobot]
+draft: true
+---
+
+This is the first bench session with the SO-ARM101 Pro, a LeRobot arm kit with a
+black leader arm and a white follower. No experiment run, no camera, nothing synced.
+The full bench notes are in `experiments/exp002-so-arm-bench/README.md`.
+
+## What worked
+
+- Every motor answered on IDs 1 to 6 with no ID changes needed.
+- The follower calibrated and saved all six joints.
+- Teleop ran at 60 Hz with a speed cap. It worked in a rough sense, and the calibration still needs tuning.
+
+## What went wrong
+
+- **Pressing Enter at the calibration prompt reuses the old file.** The prompt offers
+  "Enter" to reuse or `c` to recalibrate. Enter alone rewrote the old file to the
+  motors and recorded nothing new. Type `c` first.
+- **A calibration run can only widen its min and max.** Once a joint was pushed past its
+  normal range, that extreme stayed in the saved file. Ctrl-C cancels a run safely, but
+  it can't undo values already recorded.
+- **Full-turn ranges are a warning sign.** Two leader joints were saved across nearly the
+  whole 0 to 4095 turn, which means the reading wrapped or the joint went past its normal bend.
+- **The leader's joints went quiet.** After one recalibration, the elbow, wrist flex and
+  gripper didn't change while the arm was moved by hand, though shoulder pan and wrist roll did.
+  Torque was off and the load was zero, so the motors weren't resisting. The next calibration
+  fixed the gripper. The cause isn't confirmed yet.
+- **One dropout on the follower.** Teleop failed to enable torque on the wrist roll,
+  before anything moved. A read-only check found every motor fine afterwards, and a clean
+  reconnect got teleop running.
+
+## Safety decision
+
+Teleop ran with a per-update speed cap (`max_relative_target=5`) because the leader's
+ranges weren't yet trustworthy. The cap is a deliberate change from the vendor command.
+Both arms were clamped to the bench, with the follower's power switch within reach.
+
+## Next session
+
+Recalibrate the leader while keeping each joint in its normal bend, check the follower's
+wrist roll, then run teleop again before removing the cap. The arm isn't in the lab harness
+yet: integration waits until the calibration is solid.
