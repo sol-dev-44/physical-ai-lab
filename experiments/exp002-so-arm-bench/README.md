@@ -78,6 +78,18 @@ trials, no sync. Nothing here is published.
   pose (for example both jaws pointing the same way), then check the jaws line up in teleop.
   If a small offset remains, correct the wrist roll `homing_offset` in the calibration file and note the value here.
 
+## Known issue: wrist roll wrap-around in teleop
+
+- A full roll of the leader's wrist makes the follower stop midway and reverse.
+- Cause, most likely: the wrist roll is a full-turn joint (LeRobot records it with `full_turn_motors`),
+  so its raw reading wraps from 4095 to 0. When the leader crosses that point, the goal jumps by almost
+  a full turn in the opposite direction. The follower's speed cap (`max_relative_target`) moves it toward
+  the new goal the long way round, which looks like a reversal.
+- Workaround for now: keep the leader's wrist roll within about 150 degrees either side of the middle.
+- Fix (for the harness, not the bench): make the speed cap wrap-aware, so the goal is taken as the nearest
+  equivalent angle to the present position. Implement this when the arm adapter is built in
+  `lab_agent/devices/`, before any autonomous motion. The stop path and the joint limits go in the same change.
+
 ## Open items for tomorrow
 
 1. Recalibrate the leader. Keep shoulder lift, wrist flex and elbow within their normal bend. Type `c` at the
