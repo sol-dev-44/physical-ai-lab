@@ -1,6 +1,6 @@
 # 0009: Arm bench camera frames may show adults, never children
 
-Status: Accepted (approved by owner, 2026-11-12)
+Status: Superseded by 0010
 
 **Context.** exp002 is the SO-ARM bench. Imitation learning needs camera frames of the arm and the
 workspace, and the operator's hands and body often appear in them during teleop. The rule in AGENTS.md
