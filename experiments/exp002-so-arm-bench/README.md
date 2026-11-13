@@ -100,6 +100,52 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
    stops short. Test: hold the leader fully closed for 10 seconds, stop, then read the follower.
 3. **Shoulder pan right stop.** The right end of the pan is likely a physical limit. Confirm before relying on it.
 
+## Plan and next steps (2026-11-13)
+
+Status: teleop works, a 5-episode test dataset is recorded, and a 5,000-step ACT checkpoint ran on the
+arm for 30 seconds. It moved but never reached down to the Lego, so the next work is about data and reach,
+not new hardware.
+
+### Why it stalled (from the saved demos)
+
+- Wrist flex: commands reached 117 degrees, but the follower only reached about 89.5. 1,445 of 4,500 frames
+  asked for more than 94.5 degrees, which is past what the follower can reach.
+- Wrist roll and elbow: the same pattern, a smaller gap (wrist roll commanded 121, reached 108; elbow
+  commanded 96.5, reached 88).
+- The policy learned targets the arm can't follow, so it stalls near the edge of its range.
+
+### Plan (from the video walkthrough, adapted to this bench)
+
+1. **Match the arms.** Recalibrate both arms. Sweep each joint through the follower's reachable range, not
+   the full 0 to 4095 range. Keep demo commands inside what the follower can reach.
+2. **Better data (30 to 50 episodes).** Vary the Lego's position and orientation each episode. Keep lighting
+   fixed. Orientation mattered more than episode count in the video.
+3. **Add a top-down camera.** It shows the whole table, so the policy can locate the Lego. A wrist camera
+   helps with the grasp itself. Both need mounts and a recording check.
+4. **Check the dataset before training.** Run `lerobot-dataset-viz` on the dataset to confirm the camera view
+   and the joint traces look right.
+5. **Train on a GPU.** ACT with the device set to `cuda`. Expect 40 to 60 minutes on a mid-range card. The
+   Mac's 5,000-step run stays as a baseline.
+6. **Evaluate in a fixed way.** 10 trials per checkpoint, same Lego position and lighting, count successful
+   grasps. Count a stuck retry as a miss after a hand reset.
+7. **Iterate.** Record more demos where the policy fails. Then try SmolVLA, which generalizes better but needs
+   the GPU.
+
+### Next steps (start here tomorrow)
+
+1. Recalibrate the leader and follower (go-ahead needed, the arms move). Check the saved ranges, and confirm
+   the demo wrist commands stay under the follower's reach.
+2. Run `lerobot-dataset-viz` on `/Users/alancampbell/lerobot_data/exp002-red-lego-test` and check the camera view.
+3. Record about 30 demos with the Lego in different positions and orientations. Use `--resume=true` to append.
+4. Choose the GPU provider and name it in these notes before any upload (ADR 0010). Check its live price.
+5. Mount the top-down camera. Keep the privacy rules in ADR 0009 and 0010 for every saved frame.
+
+### Data and file locations (outside the repo, never committed)
+
+- Dataset: `/Users/alancampbell/lerobot_data/exp002-red-lego-test` (5 episodes, 4,500 frames at the moment).
+- Mac training outputs: `/Users/alancampbell/lerobot_outputs/` (timing run at 100 steps, run at 5,000 steps).
+- Checkpoint for the arm trial: `/Users/alancampbell/lerobot_outputs/exp002-act-5k/checkpoints/005000/pretrained_model`.
+
 ## Harness work (later, not started)
 
 - Build the arm adapter in `lab_agent/devices/` with no safety logic in it.
