@@ -120,8 +120,10 @@ not new hardware.
    the full 0 to 4095 range. Keep demo commands inside what the follower can reach.
 2. **Better data (30 to 50 episodes).** Vary the Lego's position and orientation each episode. Keep lighting
    fixed. Orientation mattered more than episode count in the video.
-3. **Add a top-down camera.** It shows the whole table, so the policy can locate the Lego. A wrist camera
-   helps with the grasp itself. Both need mounts and a recording check.
+3. **Add two cameras.** A top-down box camera shows the whole table, so the policy can locate the Lego.
+   The small wrist camera from the Seeed kit mounts in the slot at the end of the follower arm and shows
+   the grasp itself. Both need mounts and a recording check. The wrist camera needs its own USB connection,
+   so check that two cameras and both arms run on the Mac before recording.
 4. **Check the dataset before training.** Run `lerobot-dataset-viz` on the dataset to confirm the camera view
    and the joint traces look right.
 5. **Train on a GPU.** ACT with the device set to `cuda`. Expect 40 to 60 minutes on a mid-range card. The
@@ -138,7 +140,8 @@ not new hardware.
 2. Run `lerobot-dataset-viz` on `/Users/alancampbell/lerobot_data/exp002-red-lego-test` and check the camera view.
 3. Record about 30 demos with the Lego in different positions and orientations. Use `--resume=true` to append.
 4. Choose the GPU provider and name it in these notes before any upload (ADR 0010). Check its live price.
-5. Mount the top-down camera. Keep the privacy rules in ADR 0009 and 0010 for every saved frame.
+5. Mount the top-down box camera and the wrist camera. Check both cameras run together. Keep the privacy
+   rules in ADR 0009 and 0010 for every saved frame.
 
 ### Data and file locations (outside the repo, never committed)
 
