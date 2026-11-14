@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { RunBoundary } from "@/components/run-boundary";
 import { RunResults } from "@/components/run-results";
 import { collectionDetail } from "@/lib/content/pages";
 
@@ -37,9 +38,11 @@ const { generateStaticParams, generateMetadata, Detail } = collectionDetail("exp
       {fm.runs.length ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {fm.runs.map((id) => (
-            <Suspense key={id} fallback={<p className="text-sm text-muted">Loading {id}…</p>}>
-              <RunResults runId={id} />
-            </Suspense>
+            <RunBoundary key={id} runId={id}>
+              <Suspense fallback={<p className="text-sm text-muted">Loading {id}…</p>}>
+                <RunResults runId={id} />
+              </Suspense>
+            </RunBoundary>
           ))}
         </div>
       ) : null}
