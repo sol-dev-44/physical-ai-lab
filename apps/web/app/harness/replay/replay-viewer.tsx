@@ -139,7 +139,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           ) : null}
 
           <div className="flex items-center gap-3">
-            <button type="button" className="rounded border border-line px-2" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
+            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
               ‹
             </button>
             <input
@@ -151,7 +151,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
               className="flex-1"
               aria-label="Position in run"
             />
-            <button type="button" className="rounded border border-line px-2" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
+            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
               ›
             </button>
             <span className="w-24 text-right font-mono text-sm">

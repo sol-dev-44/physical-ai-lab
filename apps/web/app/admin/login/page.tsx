@@ -26,7 +26,11 @@ export default function LoginPage({ searchParams }: PageProps<"/admin/login">) {
         <Status searchParams={searchParams} />
       </Suspense>
       <form action={sendMagicLink} className="flex gap-2">
+        <label htmlFor="admin-email" className="sr-only">
+          Email
+        </label>
         <input
+          id="admin-email"
           name="email"
           type="email"
           required
