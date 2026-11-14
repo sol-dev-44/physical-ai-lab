@@ -1,6 +1,7 @@
 import "server-only";
 
 import { sessionClient } from "@/lib/supabase/server";
+import { rowsOrThrow } from "./rows";
 
 export type ToolRow = { name: string; description: string; requires_confirmation: boolean; args_schema: unknown };
 export type CommandRow = {
@@ -16,17 +17,17 @@ export type CommandRow = {
 export async function listTools(): Promise<ToolRow[]> {
   const db = await sessionClient();
   if (!db) return [];
-  const { data } = await db.from("tools").select("name, description, requires_confirmation, args_schema").order("name");
-  return (data ?? []) as ToolRow[];
+  const res = await db.from("tools").select("name, description, requires_confirmation, args_schema").order("name");
+  return rowsOrThrow<ToolRow>("tools", res);
 }
 
 export async function listRecentCommands(limit = 20): Promise<CommandRow[]> {
   const db = await sessionClient();
   if (!db) return [];
-  const { data } = await db
+  const res = await db
     .from("commands")
     .select("id, tool, args, status, created_at, result")
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as CommandRow[];
+  return rowsOrThrow<CommandRow>("commands", res);
 }

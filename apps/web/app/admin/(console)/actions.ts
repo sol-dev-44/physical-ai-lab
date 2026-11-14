@@ -38,7 +38,12 @@ export async function requestCommand(_prev: ActionResult | null, formData: FormD
 
   const db = await sessionClient();
   if (!db) return { ok: false, message: "Supabase not configured" };
-  const { data: tool } = await db.from("tools").select("requires_confirmation").eq("name", input.data.tool).maybeSingle();
+  const { data: tool, error: lookupError } = await db
+    .from("tools")
+    .select("requires_confirmation")
+    .eq("name", input.data.tool)
+    .maybeSingle();
+  if (lookupError) return { ok: false, message: `Could not check ${input.data.tool}: ${lookupError.message}` };
   if (!tool) return { ok: false, message: `Unknown tool ${input.data.tool}. Is the lab-agent running?` };
   if (tool.requires_confirmation && !input.data.confirmed) {
     return { ok: false, message: `${input.data.tool} requires confirmation` };
@@ -61,8 +66,11 @@ export async function setRunPublished(formData: FormData): Promise<void> {
   const runId = RunId.parse(formData.get("run_id"));
   const published = formData.get("published") === "true";
   const db = await sessionClient();
-  if (!db) return;
-  await db.from("runs").update({ published }).eq("run_id", runId);
+  if (!db) throw new Error("Supabase is not configured for this deployment.");
+  // RLS turns a refused update into zero rows with no error, so ask for the row back.
+  const { data, error } = await db.from("runs").update({ published }).eq("run_id", runId).select("run_id");
+  if (error) throw new Error(`Could not update ${runId}: ${error.message}`);
+  if (!data?.length) throw new Error(`Run ${runId} was not updated. It may not exist, or this account may not be allowed to change it.`);
   revalidateTag(runTag(runId), { expire: 0 });
   revalidatePath("/admin");
 }
