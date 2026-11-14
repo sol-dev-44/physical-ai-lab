@@ -51,16 +51,26 @@ export function ReplayViewer({ sample }: { sample: string }) {
   async function compare() {
     if (!loaded) return;
     setBusy(true);
+    setError(null);
     const t: Partial<Timing> = {};
-    for (const name of ["ts", "wasm"] as const) {
-      const { run, ms } = await open(name, loaded.text);
-      const s = performance.now();
-      run.summaryAt(run.length);
-      t[name] = ms + (performance.now() - s);
-      run.free();
+    try {
+      for (const name of ["ts", "wasm"] as const) {
+        const { run, ms } = await open(name, loaded.text);
+        try {
+          const s = performance.now();
+          run.summaryAt(run.length);
+          t[name] = ms + (performance.now() - s);
+        } finally {
+          run.free();
+        }
+      }
+      setTiming(t as Timing);
+    } catch (e) {
+      // e.g. the WASM engine failed to download. Without this the viewer stayed disabled.
+      setError(`Timing failed: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setBusy(false);
     }
-    setTiming(t as Timing);
-    setBusy(false);
   }
 
   const run = loaded?.run;

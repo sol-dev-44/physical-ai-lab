@@ -56,7 +56,11 @@ let wasm: Promise<Engine> | undefined;
 export function loadWasmEngine(): Promise<Engine> {
   wasm ??= import("@lab/events-wasm")
     .then((m) => m.loadLab())
-    .then((lab) => ({ name: "wasm" as const, label: "Rust (WASM)", open: (text: string) => lab.openRun(text) }));
+    .then((lab) => ({ name: "wasm" as const, label: "Rust (WASM)", open: (text: string) => lab.openRun(text) }))
+    .catch((e: unknown) => {
+      wasm = undefined; // a failed download is retried on the next use, not cached for the visit
+      throw e;
+    });
   return wasm;
 }
 
