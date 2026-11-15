@@ -133,7 +133,8 @@ Supabase setup: [supabase/README.md](supabase/README.md).
 ## Checks
 
 CI runs all of these on every push (six jobs: TypeScript, Python, Rust, WASM, database,
-cross-language):
+cross-language). On pull requests, `claude-review` also leaves Claude review comments; it
+needs the `ANTHROPIC_API_KEY` repository secret and skips without it.
 
 ```bash
 pnpm check                        # TS: lint, typecheck, tests (incl. contract), build
