@@ -6,3 +6,12 @@ export function formatDate(iso: string): string {
   const month = months[Number(m) - 1];
   return month ? `${Number(d)} ${month} ${y}` : iso;
 }
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "2026-11" to "November 2026". */
+export function formatMonth(yearMonth: string): string {
+  const [y, m] = yearMonth.split("-");
+  const name = monthNames[Number(m) - 1];
+  return name ? `${name} ${y}` : yearMonth;
+}

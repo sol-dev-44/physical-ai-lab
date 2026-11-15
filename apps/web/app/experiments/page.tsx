@@ -1,5 +1,4 @@
 import { ExperimentCard } from "@/components/experiment-card";
-import { RevealItem, RevealList } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/page-header";
 import { getCollection } from "@/lib/content/loader";
 
@@ -18,13 +17,13 @@ export default async function Page() {
         intro="Each one has a hypothesis, a protocol, logged runs, and results computed from those logs."
       />
       {experiments.length ? (
-        <RevealList className="grid gap-5 md:grid-cols-2">
+        <ul className="grid gap-5 md:grid-cols-2">
           {experiments.map((e) => (
-            <RevealItem key={e.slug}>
+            <li key={e.slug}>
               <ExperimentCard entry={e} />
-            </RevealItem>
+            </li>
           ))}
-        </RevealList>
+        </ul>
       ) : (
         <p className="text-muted">No experiments yet.</p>
       )}
