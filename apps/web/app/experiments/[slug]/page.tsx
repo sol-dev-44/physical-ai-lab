@@ -1,34 +1,45 @@
 import { Suspense } from "react";
 import { RunBoundary } from "@/components/run-boundary";
 import { RunResults } from "@/components/run-results";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { collectionDetail } from "@/lib/content/pages";
 
 const { generateStaticParams, generateMetadata, Detail } = collectionDetail("experiments", (entry) => {
   const fm = entry.frontmatter;
   return (
-    <section className="mb-10 space-y-4">
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
-        <dt className="text-muted">ID</dt>
-        <dd className="font-mono">{fm.id}</dd>
-        <dt className="text-muted">Status</dt>
-        <dd>{fm.status}</dd>
+    <section className="mb-12 space-y-6">
+      <dl className="grid gap-x-6 gap-y-4 rounded-card border border-line bg-surface p-6 text-sm shadow-card sm:grid-cols-[7rem_1fr]">
+        <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">Status</dt>
+        <dd>
+          <StatusBadge status={fm.status} />
+        </dd>
         {fm.hypothesis ? (
           <>
-            <dt className="text-muted">Hypothesis</dt>
-            <dd>{fm.hypothesis}</dd>
+            <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">Hypothesis</dt>
+            <dd className="text-fg">{fm.hypothesis}</dd>
           </>
         ) : null}
         {fm.hardware.length ? (
           <>
-            <dt className="text-muted">Hardware</dt>
-            <dd>{fm.hardware.join(", ")}</dd>
+            <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">Hardware</dt>
+            <dd>
+              <ul className="flex flex-wrap gap-1.5">
+                {fm.hardware.map((h) => (
+                  <li key={h} className="rounded-full border border-line px-2.5 py-0.5 text-xs text-muted">
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </dd>
           </>
         ) : null}
+        <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">ID</dt>
+        <dd className="font-mono text-muted">{fm.id}</dd>
         {fm.app_url ? (
           <>
-            <dt className="text-muted">App</dt>
+            <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">App</dt>
             <dd>
-              <a href={fm.app_url} className="underline">
+              <a href={fm.app_url} className="text-accent underline">
                 {fm.app_url}
               </a>
             </dd>

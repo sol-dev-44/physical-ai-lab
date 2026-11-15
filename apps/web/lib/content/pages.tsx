@@ -5,20 +5,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
+import Link from "next/link";
 import { EntryList } from "@/components/entry-list";
 import { PageHeader } from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format";
 import type { CollectionName } from "./collections";
 import { type Entry, getCollection, getEntry } from "./loader";
 import { Mdx } from "./render";
 
 const EMPTY_SLUG = "_empty";
+const eyebrows: Record<CollectionName, string> = { experiments: "Experiments", log: "Lab log", builds: "Builds" };
+const indexRoutes: Record<CollectionName, string> = { experiments: "/experiments", log: "/log", builds: "/builds" };
 
 export function collectionIndex(collection: CollectionName, title: string, intro: string, empty: string) {
   return async function Index() {
     const entries = await getCollection(collection);
     return (
       <>
-        <PageHeader title={title} intro={intro} />
+        <PageHeader eyebrow={eyebrows[collection]} title={title} intro={intro} />
         <EntryList entries={entries} empty={empty} />
       </>
     );
@@ -45,7 +50,7 @@ export function collectionDetail<C extends CollectionName>(
   // so client navigations stay instant.
   function Detail({ params }: { params: Promise<{ slug: string }> }) {
     return (
-      <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}>
+      <Suspense fallback={<p className="mx-auto max-w-prose text-sm text-muted">Loading…</p>}>
         <Article params={params} />
       </Suspense>
     );
@@ -56,14 +61,22 @@ export function collectionDetail<C extends CollectionName>(
     if (!entry) notFound();
     const fm = entry.frontmatter;
     return (
-      <article>
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold">{fm.title}</h1>
-          <p className="mt-1 text-sm text-muted">
-            <time dateTime={fm.date}>{fm.date}</time>
-            {fm.draft ? " · draft" : null}
+      <article className="mx-auto max-w-prose">
+        <header className="mb-10">
+          <Link
+            href={indexRoutes[collection]}
+            className="inline-flex min-h-11 items-center font-mono text-xs tracking-[0.14em] text-accent uppercase hover:underline"
+          >
+            ← {eyebrows[collection]}
+          </Link>
+          <h1 className="mt-2 text-title font-semibold">{fm.title}</h1>
+          <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-subtle">
+            <time dateTime={fm.date} className="font-mono">
+              {formatDate(fm.date)}
+            </time>
+            {fm.draft ? <Badge tone="warn">Draft</Badge> : null}
           </p>
-          <p className="mt-3">{fm.summary}</p>
+          <p className="mt-6 text-lg text-muted">{fm.summary}</p>
         </header>
         {aside?.(entry)}
         <Mdx source={entry.body} />

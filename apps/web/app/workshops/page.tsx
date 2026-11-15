@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 
-export const metadata = { title: "Workshops" };
+// Not in the menu or the sitemap until it has content.
+export const metadata = { title: "Workshops", robots: { index: false } };
 
 export default function Page() {
   return (

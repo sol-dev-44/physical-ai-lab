@@ -1,0 +1,97 @@
+---
+id: exp002-so-arm-bench
+title: "Experiment 2: teaching an arm to pick up a Lego"
+date: 2026-11-11
+status: running
+summary: A low-cost leader and follower arm pair, 65 recorded demonstrations and an ACT policy that now picks a red Lego into a bowl on some placements. Next, a fixed-placement comparison of whether covering more orientations in the data helps.
+hypothesis: Adding demonstrations that cover the placements a policy misses (vertical and rotated blocks) raises its grasp success on those placements, without losing the ones it already gets.
+hardware:
+  - Seeed SO-ARM101 Pro (leader and follower)
+  - Overhead Logitech webcam
+  - Wrist camera
+tags: [arm, imitation-learning, act, lerobot, eval]
+runs: []
+draft: false
+---
+
+## Why
+
+Experiments 0 and 1 proved the harness on a toy: one gated path to hardware, one event log, and a camera
+that judges the result. A toy with two buttons cannot learn anything, though. This experiment moves to a
+real manipulator and a learned policy, and asks the question every robot-learning project runs into:
+when the policy fails, is more data the fix, and which data?
+
+The task is deliberately small. A red Lego block sits somewhere on a mat, two other blocks sit nearby as
+distractors, and the arm has to put the red one in a bowl and return to rest.
+
+## Setup
+
+- **Arms.** A Seeed SO-ARM101 Pro pair. The black leader arm is moved by hand and only read; the white
+  follower arm copies it during teleoperation and runs the policy afterwards.
+- **Cameras.** An overhead webcam and a wrist camera, both recorded at 640x480 and 30 fps.
+- **Software.** LeRobot 0.7.1 (Seeed's fork), kept outside the lab's own Python workspace.
+- **Policy.** ACT (Action Chunking with Transformers), about 52M parameters. ACT does not read the task
+  text, so the distractor blocks are what teach it to pick by colour.
+- **Speed cap.** Every follower step is capped (`max_relative_target=5`) during teleoperation and rollouts.
+  The policy often asks for bigger steps, and the logs record each clamp.
+
+<Callout>
+  The arm does not run through the lab's safety gate yet. Teleoperation and rollouts use LeRobot directly,
+  with the speed cap as the only limit. Moving rollouts onto the harness (logged, gated and scored like
+  Experiments 0 and 1) is the next piece of harness work.
+</Callout>
+
+## Data
+
+Every episode is 30 seconds with a 15 second reset, and starts and ends with the arm at rest.
+
+| | |
+| --- | --- |
+| Dataset | `exp002-bowl-p32`, 65 episodes, 57,252 frames at 30 fps |
+| Bowl batch | 40 episodes, the Lego moved each time (episode 0 excluded as a failure) |
+| Orientation batch | 25 episodes on 15 November: 6 flat, 6 vertical, 6 rotated, 4 stacked, 3 near the bowl or an edge |
+| Follower gain | 32. At the default 16 the shoulder lagged the leader by up to 100 to 155 degrees; at 32 the mean lag was about 3 |
+
+The orientation batch exists because of what the first policy got wrong.
+
+## First policy and what it did
+
+The first policy trained for 50,000 steps on episodes 1 to 39, on the Mac's GPU (MPS), in 7 hours 44
+minutes. These nine rollouts were exploratory, run to learn what to test next. They were not a fixed
+protocol, so they are not a success rate.
+
+| # | Settings | Lego placement | Outcome | Attempts | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 1 | default | not recorded | grasped after a retry | 2 | bumped it, regrasped, into the bowl |
+| 2 | default | flat, horizontal | missed | about 2 | |
+| 3 | default | flat, horizontal | grasped first try | 1 | |
+| 4 | default | vertical | missed | 3 | |
+| 5 | default | stacked on the other blocks | grasped first try | 1 | |
+| 6 | default | rotated to 12 o'clock | missed | 3 | the wrist did not rotate |
+| 7 | default | flat, horizontal | missed | about 4 | overshot left twice |
+| 8 | 10-step chunks | not recorded | missed | 0 | barely moved, shook |
+| 9 | temporal ensembling | not recorded | missed | 3 | held 30 Hz, wrist under-rolled |
+
+"Default" is ACT's 100-action chunks. Where the placement was recorded, the grasps came on flat and stacked blocks. Every vertical and
+rotated block was missed, and those placements were rare in the training data.
+
+## What it taught
+
+- **The misses look like a data problem.** The policy works on placements it saw often and fails where the
+  wrist has to roll. Rollout settings change how a policy runs, not what it learned, so better grasps need
+  more of the right data and a retrain.
+- **Smoother is not better.** Temporal ensembling held the control loop at 30 Hz (100-action chunks dip to
+  about 16 Hz) and moved more smoothly, but grasped nothing.
+- **Inference is fast enough.** About 50 to 60 ms per step on the Mac, with spikes near 200 ms.
+- **The jerkiness has a likely cause.** The speed cap clamps many steps. A higher cap has not been tested.
+
+## Next
+
+1. A second policy, trained from scratch on episodes 1 to 64 (with the orientation batch), is training now.
+2. Compare its checkpoints on the same fixed placements, about 10 trials each, and keep the one with more
+   successful grasps, not the one with the lowest training loss.
+3. Keep adding batches toward 100 episodes, then retrain and compare again.
+4. Log rollouts through the harness, so results on this page are computed from runs instead of typed in.
+
+Bench notes, every calibration gotcha and the scripts are in the
+[experiment folder](https://github.com/sol-dev-44/physical-ai-lab/tree/main/experiments/exp002-so-arm-bench).

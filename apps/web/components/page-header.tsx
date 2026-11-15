@@ -1,8 +1,12 @@
-export function PageHeader({ title, intro }: { title: string; intro?: string }) {
+import type { ReactNode } from "react";
+import { Eyebrow } from "./ui/eyebrow";
+
+export function PageHeader({ title, intro, eyebrow }: { title: string; intro?: ReactNode; eyebrow?: string }) {
   return (
-    <div className="mb-8">
-      <h1 className="text-2xl font-semibold">{title}</h1>
-      {intro ? <p className="mt-2 text-muted">{intro}</p> : null}
-    </div>
+    <header className="mb-12 max-w-3xl">
+      {eyebrow ? <Eyebrow className="mb-4">{eyebrow}</Eyebrow> : null}
+      <h1 className="text-title font-semibold">{title}</h1>
+      {intro ? <p className="mt-4 text-lg text-muted">{intro}</p> : null}
+    </header>
   );
 }
