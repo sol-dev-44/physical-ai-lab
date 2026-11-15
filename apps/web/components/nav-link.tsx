@@ -1,10 +1,8 @@
 "use client";
 
-import { m } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/design/cn";
-import { spring } from "@/lib/design/motion";
 
 export function isCurrent(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -24,12 +22,7 @@ export function NavLink({ href, label }: { href: string; label: string }) {
     >
       {label}
       {current ? (
-        <m.span
-          layoutId="nav-underline"
-          transition={spring}
-          aria-hidden
-          className="absolute inset-x-3 bottom-1.5 h-0.5 rounded-full bg-accent"
-        />
+        <span aria-hidden className="absolute inset-x-3 bottom-1.5 h-0.5 rounded-full bg-accent" />
       ) : null}
     </Link>
   );
