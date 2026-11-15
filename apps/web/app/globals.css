@@ -157,6 +157,15 @@
   }
 }
 
+/* Lab-notebook graph paper, fading out from the top. Decorative backdrop for hero areas. */
+@utility bg-graph {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--line) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--line) 70%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 20%, #000 35%, transparent 75%);
+}
+
 /* Long-form text in the lab's tokens. Used by MDX write-ups. */
 @utility prose-lab {
   --tw-prose-body: var(--fg);

@@ -40,7 +40,8 @@ export default async function Home() {
 
   return (
     <div className="space-y-28 sm:space-y-36">
-      <section className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+      <section className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <div aria-hidden className="bg-graph pointer-events-none absolute -inset-x-8 -top-16 -bottom-10 -z-10 sm:-inset-x-16" />
         <div>
           <Eyebrow className="mb-5">{site.name}</Eyebrow>
           <h1 className="text-display font-semibold">{site.tagline}</h1>
