@@ -3,8 +3,11 @@
 [![ci](https://github.com/sol-dev-44/physical-ai-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/sol-dev-44/physical-ai-lab/actions/workflows/ci.yml)
 
 A home robotics lab built like production infrastructure, and documented from day one.
-Cheap hardware first (a toy robot, an IR blaster, a webcam) to prove the harness; two
-LeRobot arms next.
+Cheap hardware first (a toy robot, an IR blaster, a webcam) proved the harness; a LeRobot
+arm pair is learning its first task now.
+
+**Site:** [physical-ai-lab-zeta.vercel.app](https://physical-ai-lab-zeta.vercel.app) ·
+**Research write-up:** [Safe, logged, automatically evaluated robot learning at home](https://physical-ai-lab-zeta.vercel.app/research/safe-logged-robot-learning)
 
 **The idea:** every experiment, in any language, writes to one append-only event log.
 Every hardware command goes through one gated path. Replay, evals, the website and the
@@ -17,6 +20,7 @@ commands, safety decisions and observations behind it.
 |---|---|---|
 | [exp000: IR bridge](experiments/exp000-ir-bridge/README.md) | Can a $30 IR blaster drive real devices safely through the harness? | A toy robot driven from the CLI and from the website through a queue. Jerky motion traced to Wi-Fi latency; fixed by having the device play each timed move from one frame, which also closed a safety-cap gap ([ADR 0008](docs/adr/0008-device-played-holds.md)). |
 | [exp001: vision observer](experiments/exp001-vision-observer/README.md) | Can a webcam replace the human judge, and keep the robot safe? | 30 steered moves, **29 of 29 tracked moves judged correctly**, robot kept in the middle of a 95 × 70 cm arena with **zero safety refusals**. Position to about 1 mm; heading learned from motion. |
+| [exp002: SO-ARM bench](experiments/exp002-so-arm-bench/README.md) | Can a small home dataset teach a low-cost arm to put a block in a bowl, and does targeted data fix its misses? | In progress. An ACT policy trained on 39 demonstrations grasps flat and stacked blocks and misses vertical and rotated ones (exploratory runs). 25 targeted demonstrations added; the fixed-placement comparison is next. |
 | [Rust in the browser](content/log/2026-11-10-wasm-replay-viewer.mdx) | Should the replay viewer be Rust/WASM? | Measured **2.6× slower to load, 1.8× slower to scrub** than TypeScript, so TypeScript stays ([ADR 0004](docs/adr/0004-rust-policy.md)). |
 
 Lab notes and write-ups: [`content/log`](content/log), [`content/experiments`](content/experiments).
