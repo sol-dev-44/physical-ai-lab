@@ -24,6 +24,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Admin reads throw on a Supabase error (`rowsOrThrow`) so the console shows the error
   boundary instead of an empty table that looks like "no data yet".
 - Tailwind v4 `focus:not-sr-only` resets padding; add `focus:px-* focus:py-*` after it.
+- Share images (`opengraph-image.tsx`) go through `lib/og.tsx`. Reading files inside the handler
+  counts as uncached data and makes the route dynamic (ƒ); read fonts at module load instead, and give
+  `[slug]` image routes their own `generateStaticParams`. Check the build output shows ○ or ●.
+- `export const dynamicParams` (and other route segment configs) fail the build under Cache Components.
+- Above-the-fold animation is CSS (see `animate-log-line`), so it paints before hydration. A `motion`
+  animation that starts at `opacity: 0` stays invisible until JavaScript runs.
 - The admin console needs a real Supabase sign-in, so local checks cannot reach it.
   Test its data layer with mocks (`test/admin-data.test.ts`).
 

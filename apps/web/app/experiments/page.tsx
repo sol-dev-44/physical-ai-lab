@@ -20,7 +20,7 @@ export default async function Page() {
         <ul className="grid gap-5 md:grid-cols-2">
           {experiments.map((e) => (
             <li key={e.slug}>
-              <ExperimentCard entry={e} />
+              <ExperimentCard entry={e} headingLevel={2} />
             </li>
           ))}
         </ul>
