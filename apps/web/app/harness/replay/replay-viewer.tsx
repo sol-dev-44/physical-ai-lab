@@ -206,7 +206,8 @@ const tickColor: Record<TickKind, string> = {
   allow: "bg-ok",
   deny: "bg-danger",
   sent: "bg-accent-solid",
-  failed: "bg-danger",
+  // A device error, not a safety refusal: amber, so it reads differently from a denial.
+  failed: "bg-warn",
   observed: "bg-ok",
   miss: "bg-warn",
   note: "bg-info",
