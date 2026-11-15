@@ -13,7 +13,7 @@ const messages: Record<string, string> = {
 async function Status({ searchParams }: { searchParams: PageProps<"/admin/login">["searchParams"] }) {
   const sp = await searchParams;
   const error = typeof sp.error === "string" ? messages[sp.error] : undefined;
-  if (error) return <p className="mb-4 text-sm text-red-600">{error}</p>;
+  if (error) return <p className="mb-4 text-sm text-danger">{error}</p>;
   if (sp.sent) return <p className="mb-4 text-sm">If that email is an admin, a sign-in link is on its way.</p>;
   return null;
 }

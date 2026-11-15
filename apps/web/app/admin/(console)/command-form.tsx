@@ -33,7 +33,7 @@ export function CommandForm({ tools }: { tools: ToolRow[] }) {
       <button type="submit" disabled={pending} className="rounded border border-line px-3 py-2">
         {pending ? "Queuing…" : "Queue command"}
       </button>
-      {state ? <p className={state.ok ? "" : "text-red-600"}>{state.message}</p> : null}
+      {state ? <p className={state.ok ? "" : "text-danger"}>{state.message}</p> : null}
     </form>
   );
 }

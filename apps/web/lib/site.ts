@@ -1,17 +1,21 @@
-/** Site-wide settings. The domain is a placeholder until decided. */
+/** Site-wide settings. */
+const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
 export const site = {
   name: "Physical AI Lab",
+  tagline: "Robot learning at home, built like production.",
   description:
-    "A home robotics lab built like production infrastructure, documented from day one: experiments, harness, and results.",
+    "A one-person robotics lab teaching low-cost robots new skills: one gated path to hardware, one append-only event log, and results computed from the logs. Failures included.",
   repo: "https://github.com/sol-dev-44/physical-ai-lab",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  /** Canonical origin: explicit override, else Vercel's production domain, else local dev. */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? (productionHost ? `https://${productionHost}` : "http://localhost:3000"),
+  /** Sections with published content. Pages without content stay out of the menu until they have some. */
   nav: [
-    { href: "/log", label: "Log" },
     { href: "/experiments", label: "Experiments" },
-    { href: "/builds", label: "Builds" },
+    { href: "/log", label: "Log" },
     { href: "/harness", label: "Harness" },
-    { href: "/learning", label: "Learning Together" },
-    { href: "/workshops", label: "Workshops" },
     { href: "/about", label: "About" },
   ],
 } as const;
+
+export type NavItem = (typeof site.nav)[number];

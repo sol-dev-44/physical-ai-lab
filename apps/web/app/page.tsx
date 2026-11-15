@@ -1,70 +1,128 @@
 import Link from "next/link";
 import { EntryList } from "@/components/entry-list";
+import { EventStream } from "@/components/event-stream";
+import { ExperimentCard } from "@/components/experiment-card";
+import { Reveal, RevealItem, RevealList } from "@/components/motion/reveal";
+import { ButtonLink } from "@/components/ui/button-link";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { getCollection } from "@/lib/content/loader";
+import { getSampleLines } from "@/lib/sample-run";
 import { site } from "@/lib/site";
 
-const now = [
+const principles = [
   {
-    label: "Experiment 0",
-    href: "/experiments/exp000-ir-bridge",
-    text: "A $30 IR blaster drives a toy robot through the harness, from the command line and from this site.",
+    title: "One path to hardware",
+    text: "Every command goes through one tool registry and one safety gate. Refusals are logged with the rule that made them.",
   },
   {
-    label: "Experiment 1",
-    href: "/experiments/exp001-vision-observer",
-    text: "An overhead webcam tracks, fences, steers and judges the robot: 29 of 29 tracked moves judged correctly.",
+    title: "Everything is an event",
+    text: "Each run is an append-only log in one format, shared by TypeScript, Python and Rust. Results are computed from it, never typed in.",
   },
   {
-    label: "Next",
-    href: "/log/2026-11-11-heading-from-motion",
-    text: "Phase 1 with two LeRobot arms: a real stop path, recorded demonstrations, camera evals, a first learned policy.",
+    title: "Measured, including failures",
+    text: "Write-ups report what broke and what lost. Rust in the browser was benchmarked, lost, and the post says so.",
   },
 ];
 
+const order = { running: 0, planned: 1, done: 2, abandoned: 3 } as const;
+
 export default async function Home() {
-  const [log, experiments] = await Promise.all([getCollection("log"), getCollection("experiments")]);
+  const [log, experiments, lines] = await Promise.all([
+    getCollection("log"),
+    getCollection("experiments"),
+    getSampleLines(),
+  ]);
+  // Work in progress first, then newest. The first one is the lab's current focus.
+  const ranked = [...experiments].sort((a, b) => order[a.frontmatter.status] - order[b.frontmatter.status]);
+
   return (
-    <div className="space-y-12">
-      <section>
-        <h1 className="text-2xl font-semibold">{site.name}</h1>
-        <p className="mt-2 text-muted">{site.description}</p>
-        <p className="mt-2 text-muted">
-          Every experiment writes to one append-only event log, and every hardware command goes through one safety
-          gate.{" "}
-          <Link href="/harness" className="underline">
-            How the harness works
-          </Link>{" "}
-          ·{" "}
-          <a href={site.repo} className="underline">
-            Code on GitHub
-          </a>
-        </p>
+    <div className="space-y-28 sm:space-y-36">
+      <section className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <div>
+          <Eyebrow className="mb-5">{site.name}</Eyebrow>
+          <h1 className="text-display font-semibold">{site.tagline}</h1>
+          <p className="mt-6 max-w-xl text-lg text-muted">{site.description}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <ButtonLink href="/experiments">See the experiments</ButtonLink>
+            <ButtonLink href="/harness" variant="secondary">
+              How the harness works
+            </ButtonLink>
+          </div>
+        </div>
+        <EventStream lines={lines} />
       </section>
-      <section>
-        <h2 className="mb-3 text-lg font-semibold">Where things stand</h2>
-        <ul className="space-y-2">
-          {now.map((item) => (
-            <li key={item.label}>
-              <Link href={item.href} className="font-medium">
-                {item.label}
-              </Link>
-              <span className="text-muted">: {item.text}</span>
-            </li>
+
+      <section aria-labelledby="principles">
+        <h2 id="principles" className="sr-only">
+          How the lab works
+        </h2>
+        <RevealList className="grid gap-8 sm:grid-cols-3">
+          {principles.map((p, i) => (
+            <RevealItem key={p.title} className="border-t border-line-strong pt-5">
+              <p className="font-mono text-xs text-accent">0{i + 1}</p>
+              <h3 className="mt-3 font-semibold tracking-tight">{p.title}</h3>
+              <p className="mt-2 text-sm text-muted">{p.text}</p>
+            </RevealItem>
           ))}
-        </ul>
+        </RevealList>
       </section>
+
       <section>
-        <h2 className="mb-3 text-lg font-semibold">
-          <Link href="/log">Latest from the log</Link>
-        </h2>
-        <EntryList entries={log.slice(0, 5)} empty="No entries yet." />
+        <SectionHeading
+          eyebrow="Experiments"
+          title="What the lab is testing"
+          intro="Each experiment states a hypothesis and a protocol, logs every run, and reports what happened."
+          href="/experiments"
+          linkLabel="All experiments"
+        />
+        <RevealList className="grid gap-5 md:grid-cols-2">
+          {ranked.slice(0, 4).map((e, i) => (
+            <RevealItem key={e.slug} className={i === 0 ? "md:col-span-2" : undefined}>
+              <ExperimentCard entry={e} featured={i === 0} />
+            </RevealItem>
+          ))}
+        </RevealList>
       </section>
+
       <section>
-        <h2 className="mb-3 text-lg font-semibold">
-          <Link href="/experiments">Experiments</Link>
-        </h2>
-        <EntryList entries={experiments.slice(0, 5)} empty="No experiments yet." />
+        <SectionHeading
+          eyebrow="Lab log"
+          title="Latest from the bench"
+          intro="A build diary in order: wins, failures and dead ends."
+          href="/log"
+          linkLabel="Full log"
+        />
+        <Reveal>
+          <EntryList entries={log.slice(0, 5)} empty="No entries yet." />
+        </Reveal>
       </section>
+
+      <Reveal>
+        <section className="rounded-card border border-line bg-surface-2 p-8 sm:p-12">
+          <div className="max-w-2xl">
+            <Eyebrow className="mb-4">Open by default</Eyebrow>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              The code, the decisions and the safety rules are public.
+            </h2>
+            <p className="mt-4 text-muted">
+              The decision records explain why the lab is built the way it is. The architecture page lists every
+              safety rule and where it is enforced, including the known gaps.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+              <Link href={`${site.repo}/blob/main/docs/architecture.md`} className="text-accent hover:underline">
+                Architecture →
+              </Link>
+              <Link href={`${site.repo}/blob/main/docs/adr/README.md`} className="text-accent hover:underline">
+                Decision records →
+              </Link>
+              <Link href={site.repo} className="text-accent hover:underline">
+                Code on GitHub →
+              </Link>
+            </div>
+          </div>
+        </section>
+      </Reveal>
     </div>
   );
 }
