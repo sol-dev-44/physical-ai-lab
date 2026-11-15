@@ -3,7 +3,7 @@ id: exp002-so-arm-bench
 title: "Experiment 2: teaching an arm to pick up a Lego"
 date: 2026-11-11
 status: running
-summary: A low-cost leader and follower arm pair, 65 recorded demonstrations and an ACT policy that now picks a red Lego into a bowl on some placements. Next, a fixed-placement comparison of whether covering more orientations in the data helps.
+summary: A low-cost leader and follower arm pair, 65 recorded episodes and an ACT policy that now picks a red Lego into a bowl on some placements. Next, a fixed-placement comparison of whether covering more orientations in the data helps.
 hypothesis: Adding demonstrations that cover the placements a policy misses (vertical and rotated blocks) raises its grasp success on those placements, without losing the ones it already gets.
 hardware:
   - Seeed SO-ARM101 Pro (leader and follower)
@@ -42,6 +42,13 @@ distractors, and the arm has to put the red one in a bowl and return to rest.
 </Callout>
 
 ## Data
+
+<Stats>
+  <Stat value="65" label="recorded episodes" note="64 used for training" />
+  <Stat value="57,252" label="frames at 30 fps" />
+  <Stat value="~52M" label="policy parameters (ACT)" />
+  <Stat value="50 to 60 ms" label="inference per step" note="spikes near 200 ms" />
+</Stats>
 
 Every episode is 30 seconds with a 15 second reset, and starts and ends with the arm at rest.
 
