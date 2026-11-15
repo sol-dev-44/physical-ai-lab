@@ -2,6 +2,7 @@ import { Children, type ReactNode, isValidElement } from "react";
 import { Suspense } from "react";
 import { slugify } from "../lib/content/headings";
 import { Figure } from "./figure";
+import { Stat } from "./ui/stat";
 import { HarnessDiagram } from "./harness-diagram";
 import { RunBoundary } from "./run-boundary";
 import { RunResults } from "./run-results";
@@ -43,4 +44,9 @@ function H2({ children }: { children?: ReactNode }) {
   );
 }
 
-export const mdxComponents = { Callout, Run, Figure, HarnessDiagram, h2: H2 };
+/** A row of headline numbers. Only numbers already stated in the write-up's own text belong here. */
+function Stats({ children }: { children: ReactNode }) {
+  return <div className="not-prose my-10 grid grid-cols-2 gap-6 sm:grid-cols-4">{children}</div>;
+}
+
+export const mdxComponents = { Callout, Run, Figure, HarnessDiagram, Stats, Stat, h2: H2 };
