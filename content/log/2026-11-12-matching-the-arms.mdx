@@ -1,0 +1,59 @@
+---
+title: "Matching two arms, and a policy that never reached down"
+date: 2026-11-12
+summary: The leader and follower grippers faced 90 degrees apart until both wrist rolls were set the same way. The first learned policy moved, then stalled above the Lego, because it had learned targets the follower can't reach.
+tags: [arm, bench, calibration, lerobot, act, privacy]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+Day two on the SO-ARM101 bench. The goal was a calibration good enough to record
+demonstrations from, then a first learned policy, however rough.
+
+## The 90-degree gripper
+
+In teleop the follower's jaws pointed about 90 degrees away from the leader's. The cause
+was the calibration's middle pose. Wrist roll is a full-turn joint, so calibration records
+it as the whole 0 to 4095 turn and takes its zero only from the pose at the middle step.
+The two arms had been put in that pose with their wrists turned differently.
+
+The fix: at the middle step, put both wrist rolls at the same physical orientation, jaws
+pointing the same way. After that recalibration, shoulder lift, elbow, wrist flex and
+wrist roll all tracked the leader smoothly.
+
+## A wrist that turns back
+
+A full roll of the leader's wrist makes the follower stop halfway and reverse. The raw
+reading wraps from 4095 to 0, so the goal jumps by nearly a full turn the other way, and
+the speed cap walks the follower toward it the long way round. For now the leader's wrist
+stays within about 150 degrees of the middle. The real fix, a wrap-aware speed cap that
+picks the nearest equivalent angle, belongs in the lab harness, not the bench.
+
+## Camera rules first
+
+Imitation learning needs camera frames, and the operator's hands are in them. Two
+decisions went in before any recording:
+
+- **ADR 0009:** arm bench frames may show adults, including the operator. Never a child.
+- **ADR 0010:** for this experiment only, recordings may go to an external GPU for training,
+  with strict conditions: a named provider, encrypted transfer, every episode checked for
+  children first, and the provider's copy deleted after each run. Raw frames are never
+  published or committed.
+
+No upload has happened yet.
+
+## The first policy
+
+Five demonstrations, then 5,000 steps of ACT (Action Chunking with Transformers) on the
+Mac. On the arm it moved, but never reached down to the Lego.
+
+The demonstrations explained why. Wrist flex was commanded up to 117 degrees, but the
+follower only reached about 89.5. In 1,445 of the 4,500 recorded frames the command was
+past what the follower could reach. Wrist roll and elbow showed the same gap, smaller.
+The policy learned targets the arm can't follow, so it stalled near the edge of its range.
+
+## Next
+
+The problem is data and reach, not hardware: recalibrate both arms within the follower's
+reachable range, add an overhead camera and a wrist camera, then record 30 to 50
+demonstrations with the Lego in different positions and orientations.

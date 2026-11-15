@@ -1,0 +1,39 @@
+---
+title: "Making the site fail politely"
+date: 2026-11-14
+summary: A pass over the website. Failures now say what went wrong instead of showing an empty page, the admin console works on a phone, the basics of accessibility are in, and every pull request gets an automated review.
+tags: [site, harness, accessibility, ci]
+draft: false
+---
+
+Alongside the arm work, the website got a pass. Most of it is about what happens
+when something breaks. Merged on 2026-11-15 as four pull requests.
+
+## Failures that say what they are
+
+- **Admin reads.** A failed database read used to come back as an empty list, so a refused
+  query showed "No runs synced yet", which points at the wrong problem. Reads now fail
+  loudly, and the console shows the error with a retry. Refused publishes are reported too.
+- **Error pages.** A page that crashed fell back to a bare framework screen with no way
+  back. The site now has its own error page, with the header, a retry and a link home.
+- **One bad run, one small notice.** Run result cards sit in their own error boundary, so a
+  run whose events fail to load shows a notice instead of taking down the whole write-up.
+- **Replay viewer.** If the Rust engine's download failed, the viewer locked up with no
+  message, and the failure was cached for the whole visit. It now reports the error, frees
+  what it opened, and retries the download next time.
+- **Cached failures.** A failed read of a published run was cached as "not published" for up
+  to 30 days. Now a failure is cached for one minute and says the results are unavailable.
+
+## Phones and accessibility
+
+- The admin tables widened a phone screen to about 640 px. They now scroll inside their own
+  box, with column headers.
+- A skip-to-content link, the current page marked in the navigation, labels on form fields
+  that only had placeholders, and 44 px touch targets on the replay viewer's step buttons.
+
+## Reviews
+
+Every pull request now gets an automated Claude review in CI. It reads the diff against
+the repo's rules (the website never talks to devices, hardware only through the agent, no
+camera frames or children's data committed) and leaves comments. It can read and comment,
+nothing else.

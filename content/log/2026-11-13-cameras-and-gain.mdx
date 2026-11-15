@@ -1,0 +1,53 @@
+---
+title: "Two cameras, and a shoulder that lagged 150 degrees"
+date: 2026-11-13
+summary: An overhead camera and a wrist camera went on the bench. The follower's shoulder trailed the leader by up to 155 degrees until the motor gain doubled, and a new bowl dataset started with every episode beginning and ending at rest.
+tags: [arm, bench, lerobot, vision, data]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+The plan from yesterday: better reach, two cameras, better data. All three moved today.
+
+## Two cameras
+
+- **Overhead:** a Logitech webcam about 50 to 70 cm above the mat, so the policy can find
+  the Lego anywhere on it. Zoom and focus are set in Logitech's own app, because OpenCV
+  can't control them on this Mac.
+- **Wrist:** the small camera from the arm kit, mounted in the slot at the end of the
+  follower, so the policy sees the grasp itself.
+
+Both record at 640x480 and 30 frames a second. Camera numbers can change after a replug, so
+a short probe runs before every recording.
+
+## The lag
+
+Both arms were recalibrated again. Then a gap showed up: on a quick
+swing, the follower's shoulder lift trailed the leader by 100 to 155 degrees at the default
+motor gain of 16. A policy trained on that learns a lagging arm.
+
+Short arm-only tests compared gains:
+
+| Gain | Result |
+|---|---|
+| 16 (default) | Shoulder lift up to 100 to 155 degrees behind on some runs |
+| 32 | Mean lag about 3 degrees over a bowl episode, worst about 48 |
+| 48 | No better than 32 on the quick swing |
+
+Gain 32 is now the setting for recording and for running policies. The speed cap stays on.
+
+## The task and the data
+
+The task got a goal: pick up the red Lego from the mat and put it in a blue bowl. The bowl
+stays in one place; the Lego moves every episode. Each episode is 30 seconds with a
+15-second reset.
+
+From episode 10 on, every demonstration starts and ends with the arm retracted at the same
+rest pose. A policy then always starts from a pose it has seen, and learns to finish
+by going home.
+
+## A first look
+
+A 5,000-step policy trained on the first nine episodes of the new dataset moved jerkily
+and still never reached the Lego. Nine episodes and 5,000 steps is a smoke test, not a
+result. The next step is more episodes and a much longer training run.

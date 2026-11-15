@@ -2,7 +2,7 @@
 
 Status (2026-11-15): both arms calibrated, teleop working, two cameras recording. A 50k-step ACT policy runs on the arm and grasps the Lego on flat placements, but misses rotated and vertical ones and moves jerkily. A 25-episode orientation batch is recorded (65 episodes total) and a second 50k retrain on episodes 1 to 64 is running. See the progress log below. Nothing here is published.
 
-Run scripts for recording, training and rollout are in `scripts/`. They hold this Mac's ports, camera indexes and paths, so check those before running one.
+Run scripts for recording, training and rollout are in `scripts/`. Every rollout goes in `trials.md`, one row per trial. They hold this Mac's ports, camera indexes and paths, so check those before running one.
 
 ## Kit
 
@@ -239,4 +239,4 @@ not new hardware.
 
 - Each episode in the bowl batch (gain 32, bowl fixed) starts and ends with the arm retracted to its rest pose.
   The operator returns the arm to rest after dropping the Lego in the bowl, so every episode begins and ends at the same pose.
-- Episodes 10 to 39 were recorded this way. Episode 37 had a brief fumble and recovery, and is kept.
+- Episodes 10 to 64 were recorded this way. Episode 37 had a brief fumble and recovery, and is kept.

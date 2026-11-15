@@ -1,0 +1,51 @@
+---
+title: "Teaching it the hard placements"
+date: 2026-11-15
+summary: "25 new demonstrations with the Lego vertical, rotated, stacked and near the edges, and a fresh 50,000-step training run on all 64 good episodes. The question: does covering more orientations raise grasp success?"
+tags: [arm, lerobot, act, imitation-learning, data]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+Yesterday's policy grasped flat placements and missed the rest. The cheapest explanation is
+the data, so today was more data, aimed at exactly what it missed.
+
+## The batch
+
+The dataset was copied first, then 25 episodes were added to it with the same settings as
+before: gain 32, speed cap on, both cameras, 30-second episodes, rest to rest. The Lego's
+placements followed a fixed schedule:
+
+| Placement | Episodes |
+|---|---|
+| Flat, horizontal, spread across the mat | 6 |
+| Vertical | 6 |
+| Rotated to about 3, 6, 9 and 12 o'clock | 6 |
+| Stacked on the other two blocks | 4 |
+| Near the bowl or the mat's edges | 3 |
+
+All 25 were clean demonstrations; none are left out. The dataset is now 65 episodes,
+about 57,000 frames.
+
+## Why the other blocks stay
+
+Two other Lego blocks sit on the mat in every episode. ACT doesn't read the task's text, so
+it can't be told "red". It goes for the red block because every demonstration does. The
+other blocks are what make color the thing to learn, so they stay in the scene, flat, moved
+to a new spot each episode.
+
+## The retrain
+
+A fresh 50,000-step run on episodes 1 to 64, from scratch, with the same settings as the
+first. On the Mac that's about eight hours, so it runs in the background, saving a
+checkpoint every 5,000 steps.
+
+## How it will be judged
+
+Not by training loss. The 30,000-step and 50,000-step checkpoints each get about 10 trials
+on the same fixed placements, with the Lego reset by hand between runs, and the one with
+more successful grasps is kept. Every trial goes into the per-trial table in
+`experiments/exp002-so-arm-bench/trials.md`: checkpoint, settings, placement, outcome and
+attempts.
+
+Results in the next entry.
