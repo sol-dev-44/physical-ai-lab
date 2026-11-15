@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { RunSummary } from "@lab/schema";
 import { type EngineName, type OpenRun, getEngine } from "@/lib/replay/engines";
+import { type TickKind, bucket, tickKind, tickLabel } from "@/lib/replay/timeline";
+import { cn } from "@/lib/design/cn";
 
 type Loaded = { name: string; text: string; run: OpenRun; engine: EngineName; ms: number };
 type Timing = Record<EngineName, number>;
@@ -74,6 +76,15 @@ export function ReplayViewer({ sample }: { sample: string }) {
   }
 
   const run = loaded?.run;
+  const ticks = useMemo(() => {
+    if (!run) return [];
+    const kinds: TickKind[] = [];
+    for (let i = 0; i < run.length; i++) {
+      const e = run.event(i);
+      kinds.push(e ? tickKind(e) : "neutral");
+    }
+    return bucket(kinds);
+  }, [run]);
   const event = run && pos > 0 ? run.event(pos - 1) : undefined;
   const summary = run ? run.summaryAt(pos) : null;
 
@@ -138,6 +149,8 @@ export function ReplayViewer({ sample }: { sample: string }) {
             </ul>
           ) : null}
 
+          <Timeline ticks={ticks} pos={pos} onPick={setPos} />
+
           <div className="flex items-center gap-3">
             <button type="button" className="min-h-11 min-w-11 rounded-control border border-line-strong bg-surface text-lg transition-colors duration-fast hover:border-fg" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
               ‹
@@ -183,6 +196,62 @@ export function ReplayViewer({ sample }: { sample: string }) {
       ) : (
         <p className="text-sm text-muted">Open a log written by the lab-agent, or try the sample.</p>
       )}
+    </div>
+  );
+}
+
+const tickColor: Record<TickKind, string> = {
+  neutral: "bg-line-strong",
+  request: "bg-subtle",
+  allow: "bg-ok",
+  deny: "bg-danger",
+  sent: "bg-accent-solid",
+  failed: "bg-danger",
+  observed: "bg-ok",
+  miss: "bg-warn",
+  note: "bg-info",
+};
+
+const legend: TickKind[] = ["request", "allow", "deny", "sent", "failed", "observed", "note"];
+
+/**
+ * The whole run at a glance, one tick per event (or per bucket in long runs). Clicking a tick
+ * jumps there. The slider below stays the keyboard and screen-reader control, so the ticks are
+ * hidden from assistive tech and out of the tab order.
+ */
+function Timeline({ ticks, pos, onPick }: { ticks: ReturnType<typeof bucket>; pos: number; onPick: (p: number) => void }) {
+  if (!ticks.length) return null;
+  return (
+    <div>
+      <div aria-hidden className="flex h-9 items-stretch gap-px rounded-control border border-line bg-surface p-1">
+        {ticks.map((t) => {
+          const here = pos > t.from && pos <= t.to;
+          const seen = pos >= t.to;
+          return (
+            <button
+              key={t.from}
+              type="button"
+              tabIndex={-1}
+              title={`${t.to - t.from > 1 ? `Events ${t.from}-${t.to - 1}` : `Event ${t.from}`}: ${tickLabel[t.kind]}`}
+              onClick={() => onPick(t.to)}
+              className={cn(
+                "min-w-0.5 flex-1 rounded-[2px] transition-opacity duration-fast hover:opacity-100",
+                tickColor[t.kind],
+                seen || here ? "opacity-100" : "opacity-35",
+                here && "ring-2 ring-fg ring-offset-1 ring-offset-surface",
+              )}
+            />
+          );
+        })}
+      </div>
+      <ul aria-hidden className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        {legend.map((k) => (
+          <li key={k} className="flex items-center gap-1.5">
+            <span className={cn("size-2 rounded-[2px]", tickColor[k])} />
+            {tickLabel[k]}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
