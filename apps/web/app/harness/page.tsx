@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HarnessDiagram } from "@/components/harness-diagram";
 import { RevealItem, RevealList } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/page-header";
+import { contractRows } from "@/lib/contract";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -68,6 +69,37 @@ export default function Page() {
           </RevealItem>
         ))}
       </RevealList>
+      <section aria-labelledby="contract" className="mt-20">
+        <h2 id="contract" className="text-2xl font-semibold tracking-tight">The event contract</h2>
+        <p className="mt-3 max-w-2xl text-muted">
+          Every event shares an envelope (run, sequence number, timestamp, actor, optional parent) and adds one of these
+          types. This table is read from the schema the lab runs on, so it can&apos;t drift from the code.
+        </p>
+        <div className="mt-6 overflow-x-auto rounded-card border border-line bg-surface shadow-card">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-line bg-surface-2 font-mono text-xs tracking-wider text-subtle uppercase">
+              <tr>
+                <th scope="col" className="px-4 py-3 font-medium">Type</th>
+                <th scope="col" className="px-4 py-3 font-medium">Written when</th>
+                <th scope="col" className="px-4 py-3 font-medium">Payload</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {contractRows().map((r) => (
+                <tr key={r.type} className="align-top">
+                  <td className="px-4 py-3 font-mono text-xs whitespace-nowrap text-fg">
+                    {r.type}
+                    {r.toolCall ? <span className="block text-subtle">+ tool, args</span> : null}
+                  </td>
+                  <td className="min-w-56 px-4 py-3 text-muted">{r.description}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted">{r.fields.length ? r.fields.join(", ") : "none"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <div className="mt-16 grid gap-4 md:grid-cols-3">
         {more.map((m) => (
           <Link
