@@ -5,6 +5,13 @@ const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%
 /** Results for one published run, computed from its events. Render inside <Suspense>. */
 export async function RunResults({ runId }: { runId: string }) {
   const run = await getPublishedRun(runId);
+  if (run === "unavailable") {
+    return (
+      <p className="text-sm text-muted">
+        Results for <code>{runId}</code> are unavailable right now. Check back in a few minutes.
+      </p>
+    );
+  }
   if (!run) {
     return (
       <p className="text-sm text-muted">
