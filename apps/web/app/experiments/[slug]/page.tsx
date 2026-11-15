@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { RunBoundary } from "@/components/run-boundary";
 import { RunResults } from "@/components/run-results";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EntryList } from "@/components/entry-list";
+import { getCollection } from "@/lib/content/loader";
 import { collectionDetail } from "@/lib/content/pages";
 
 const { generateStaticParams, generateMetadata, Detail } = collectionDetail("experiments", (entry) => {
@@ -59,7 +61,19 @@ const { generateStaticParams, generateMetadata, Detail } = collectionDetail("exp
       ) : null}
     </section>
   );
-});
+}, (entry) => <RelatedLog experimentId={entry.frontmatter.id} />);
+
+/** Log entries that name this experiment in their front matter. */
+async function RelatedLog({ experimentId }: { experimentId: string }) {
+  const log = (await getCollection("log")).filter((e) => e.frontmatter.experiment === experimentId);
+  if (!log.length) return null;
+  return (
+    <section className="mt-16">
+      <h2 className="mb-4 font-mono text-xs tracking-[0.14em] text-subtle uppercase">From the lab log</h2>
+      <EntryList entries={log} empty="" />
+    </section>
+  );
+}
 
 export { generateMetadata, generateStaticParams };
 export default Detail;
