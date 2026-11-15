@@ -20,7 +20,7 @@ export type LogLine = {
   type: string;
   tool: string | null;
   detail: string;
-  tone: "neutral" | "ok" | "danger" | "accent";
+  tone: "neutral" | "ok" | "danger" | "warn" | "accent";
 };
 
 function describe(e: Event): Pick<LogLine, "detail" | "tone"> {
@@ -33,7 +33,7 @@ function describe(e: Event): Pick<LogLine, "detail" | "tone"> {
     case "command.sent":
       return { detail: p.latency_ms ? `${String(p.latency_ms)} ms` : "", tone: "accent" };
     case "command.failed":
-      return { detail: String(p.error ?? "failed"), tone: "danger" };
+      return { detail: String(p.error ?? "failed"), tone: "warn" };
     case "outcome.observed":
       return { detail: p.success ? "success" : "no effect", tone: p.success ? "ok" : "danger" };
     case "note":

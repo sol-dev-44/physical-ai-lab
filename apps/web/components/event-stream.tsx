@@ -7,6 +7,7 @@ const toneClass: Record<LogLine["tone"], string> = {
   neutral: "text-muted",
   ok: "text-ok",
   danger: "text-danger",
+  warn: "text-warn",
   accent: "text-accent",
 };
 
