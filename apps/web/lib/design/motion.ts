@@ -4,13 +4,11 @@
  * animations feel like one system. Use CSS for hover and focus states; use these
  * for enter, reveal and layout animations.
  */
-import type { Transition, Variants } from "motion/react";
+import type { Variants } from "motion/react";
 
 export const easeOutQuint = [0.22, 1, 0.36, 1] as const;
 
 export const duration = { fast: 0.15, base: 0.25, slow: 0.5 } as const;
-
-export const spring: Transition = { type: "spring", stiffness: 420, damping: 36, mass: 0.8 };
 
 /** Fade and rise a few pixels. Reduced motion (MotionConfig "user") keeps the fade only. */
 export const rise: Variants = {

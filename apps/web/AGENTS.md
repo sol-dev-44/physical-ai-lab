@@ -43,7 +43,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Reuse `components/ui/*` (Container, Badge, StatusBadge, Eyebrow, SectionHeading, ButtonLink, Stat)
   before writing new markup. Join classes with `cn` from `lib/design/cn.ts`.
 - Animation uses `motion` (the framer-motion successor) through `LazyMotion`: import `m` from
-  `motion/react`, never `motion.div`, or the full bundle ships. Timings come from `lib/design/motion.ts`.
+  `motion/react`, never `motion.div`, or the full bundle ships. The features load in their own chunk
+  (`components/motion/features.ts`); `layoutId` and other layout animations need the bigger feature
+  set, so don't use them. Timings come from `lib/design/motion.ts`.
   CSS transitions for hover and focus; `motion` for enter, reveal and layout animation.
 - `Reveal`/`RevealList` only below the fold. The hero and a page's main text render without it so
   they paint immediately. `MotionConfig reducedMotion="user"` already honors reduced motion.
