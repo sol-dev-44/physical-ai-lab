@@ -67,6 +67,18 @@ to 65 recorded episodes (57,252 frames). Nine
 exploratory rollouts of the first policy showed the shape of the problem: grasps on flat and stacked
 blocks, misses on every vertical and rotated block. Those placements were rare in the data.
 
+### Where each claim stands
+
+| Claim | Evidence | Status |
+| --- | --- | --- |
+| One gated path to hardware works on real devices | Experiment 0: CLI and website both drive the robot through the gate | Shown |
+| Every decision is logged, refusals included | Event logs from Experiments 0 and 1; the replay viewer | Shown |
+| Sensor-based safety rules can live in the gate | Experiment 1: fresh-pose and arena-fence interlocks, with unit tests | Shown |
+| A camera can judge outcomes as well as a person | Experiment 1: 29 of 29 tracked moves, on a toy robot | Shown for a toy, not yet for grasps |
+| A small home dataset can teach an arm the task | Experiment 2: grasps on flat and stacked blocks | Partial, exploratory runs only |
+| Targeted demonstrations fix the placements a policy misses | Experiment 2 fixed-placement comparison | Pending |
+| The arm runs through the same gate | Not started | Pending |
+
 ## 4. The arm study
 
 **Question.** When a policy misses a class of placements, do demonstrations that target that class fix it,
