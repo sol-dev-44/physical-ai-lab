@@ -1,8 +1,13 @@
 import Link from "next/link";
+import { HarnessDiagram } from "@/components/harness-diagram";
+import { RevealItem, RevealList } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/page-header";
 import { site } from "@/lib/site";
 
-export const metadata = { title: "Harness" };
+export const metadata = {
+  title: "Harness",
+  description: "The event-sourced harness behind every experiment: one log format, one gated path to hardware, replays and evals.",
+};
 
 const rules = [
   {
@@ -27,7 +32,21 @@ const rules = [
   },
   {
     title: "Privacy by default",
-    text: "Camera frames are tracked and dropped; only numbers are kept. Saving a frame needs an explicit nobody-in-frame flag and never leaves the lab machine.",
+    text: "Camera frames are tracked and dropped; only numbers are kept. Saving a frame needs an explicit nobody-in-frame flag and never leaves the lab machine. Published arm clips are hand-reviewed (ADR 0011).",
+  },
+];
+
+const more = [
+  { href: "/harness/replay", title: "Replay viewer", text: "Open a run log and step through it in your browser." },
+  {
+    href: `${site.repo}/blob/main/docs/architecture.md`,
+    title: "Architecture and invariants",
+    text: "The diagram, each rule and where it is enforced, and the known gaps.",
+  },
+  {
+    href: `${site.repo}/blob/main/docs/adr/README.md`,
+    title: "Decision records",
+    text: "The decisions that shaped the lab, and why.",
   },
 ];
 
@@ -35,35 +54,32 @@ export default function Page() {
   return (
     <>
       <PageHeader
-        title="Harness"
+        eyebrow="Harness"
+        title="One way in, one log, every decision on the record"
         intro="The event-sourced harness behind every experiment: one log format, one gated path to hardware, replays and evals."
       />
-      <div className="space-y-6">
-        {rules.map((r) => (
-          <section key={r.title}>
-            <h2 className="font-semibold">{r.title}</h2>
-            <p className="mt-1 text-muted">{r.text}</p>
-          </section>
+      <HarnessDiagram />
+      <RevealList className="mt-16 grid gap-x-10 gap-y-10 md:grid-cols-2">
+        {rules.map((r, i) => (
+          <RevealItem key={r.title} className="border-t border-line-strong pt-5">
+            <p className="font-mono text-xs text-accent">{String(i + 1).padStart(2, "0")}</p>
+            <h2 className="mt-3 text-lg font-semibold tracking-tight">{r.title}</h2>
+            <p className="mt-2 text-sm text-muted">{r.text}</p>
+          </RevealItem>
+        ))}
+      </RevealList>
+      <div className="mt-16 grid gap-4 md:grid-cols-3">
+        {more.map((m) => (
+          <Link
+            key={m.href}
+            href={m.href}
+            className="group rounded-card border border-line bg-surface p-6 shadow-card transition duration-base ease-out-quint hover:-translate-y-0.5 hover:shadow-lift"
+          >
+            <p className="font-semibold tracking-tight group-hover:text-accent">{m.title} →</p>
+            <p className="mt-2 text-sm text-muted">{m.text}</p>
+          </Link>
         ))}
       </div>
-      <p className="mt-10">
-        <Link className="underline" href="/harness/replay">
-          Replay viewer
-        </Link>
-        <span className="text-muted">: open a run log and step through it in your browser.</span>
-      </p>
-      <p className="mt-2">
-        <a className="underline" href={`${site.repo}/blob/main/docs/architecture.md`}>
-          Architecture and invariants
-        </a>
-        <span className="text-muted">: the diagram, each rule and where it is enforced, and the known gaps.</span>
-      </p>
-      <p className="mt-2">
-        <a className="underline" href={`${site.repo}/blob/main/docs/adr/README.md`}>
-          Decision records
-        </a>
-        <span className="text-muted">: the decisions that shaped the lab, and why.</span>
-      </p>
     </>
   );
 }

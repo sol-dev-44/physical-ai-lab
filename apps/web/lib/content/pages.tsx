@@ -15,8 +15,18 @@ import { type Entry, getCollection, getEntry } from "./loader";
 import { Mdx } from "./render";
 
 const EMPTY_SLUG = "_empty";
-const eyebrows: Record<CollectionName, string> = { experiments: "Experiments", log: "Lab log", builds: "Builds" };
-const indexRoutes: Record<CollectionName, string> = { experiments: "/experiments", log: "/log", builds: "/builds" };
+const eyebrows: Record<CollectionName, string> = {
+  experiments: "Experiments",
+  log: "Lab log",
+  builds: "Builds",
+  research: "Research",
+};
+const indexRoutes: Record<CollectionName, string> = {
+  experiments: "/experiments",
+  log: "/log",
+  builds: "/builds",
+  research: "/research",
+};
 
 export function collectionIndex(collection: CollectionName, title: string, intro: string, empty: string) {
   return async function Index() {

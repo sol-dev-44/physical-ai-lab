@@ -44,9 +44,9 @@ export default async function Home() {
           <h1 className="text-display font-semibold">{site.tagline}</h1>
           <p className="mt-6 max-w-xl text-lg text-muted">{site.description}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href="/experiments">See the experiments</ButtonLink>
-            <ButtonLink href="/harness" variant="secondary">
-              How the harness works
+            <ButtonLink href="/research/safe-logged-robot-learning">Read the research write-up</ButtonLink>
+            <ButtonLink href="/experiments" variant="secondary">
+              See the experiments
             </ButtonLink>
           </div>
         </div>

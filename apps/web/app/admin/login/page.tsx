@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { PageHeader } from "@/components/page-header";
 import { sendMagicLink } from "./actions";
+import { control } from "@/lib/design/controls";
 
 export const metadata = { title: "Admin sign in", robots: { index: false } };
 
@@ -36,9 +37,9 @@ export default function LoginPage({ searchParams }: PageProps<"/admin/login">) {
           required
           autoComplete="email"
           placeholder="email"
-          className="flex-1 rounded border border-line bg-transparent px-3 py-2 text-sm"
+          className={`flex-1 ${control.input}`}
         />
-        <button type="submit" className="rounded border border-line px-3 py-2 text-sm">
+        <button type="submit" className={control.button}>
           Send link
         </button>
       </form>

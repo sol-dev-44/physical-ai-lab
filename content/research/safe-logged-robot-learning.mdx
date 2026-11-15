@@ -1,0 +1,116 @@
+---
+title: "Safe, logged, automatically evaluated robot learning at home"
+date: 2026-11-15
+summary: A small home lab can hold robot learning to production standards. One gated path to hardware, one event log, and a camera that scores outcomes turn a hobby bench into something that produces evidence. This draft lays out the harness, what three experiments showed so far, and the evaluation the arm work needs next.
+status: working-draft
+experiments: [exp000-ir-bridge, exp001-vision-observer, exp002-so-arm-bench]
+---
+
+## Abstract
+
+Low-cost arms and open policies like ACT put imitation learning on a kitchen table. What usually does
+not come with them is the discipline that makes results trustworthy: a single, audited path to the
+motors, a record of every command and refusal, and an evaluation that does not depend on someone
+remembering how a run went. This write-up describes a harness that provides those three things, the
+evidence from three experiments that it works on real hardware, and the protocol for the experiment
+that matters most: whether targeted demonstrations fix the placements a learned arm policy misses.
+
+The harness and the first two experiments are complete. The arm study is in progress, and its
+results section stays empty until the runs are logged.
+
+## 1. The problem
+
+Robot learning on a budget fails in quiet ways. A policy "works" because the operator remembers the
+good runs. A safety limit lives in one script and not in another. A result cannot be checked because
+the only record is a video and a feeling. None of this is about the model; it is about the system
+around it.
+
+Production software solved the same problems long ago with a few habits: one way in, an append-only
+log, tests for every rule, and numbers computed from data instead of typed into a report. The question
+here is whether those habits fit a one-person home lab without slowing the research down.
+
+## 2. The harness
+
+<Figure caption="Figure 1. Every request, from a person or a policy, goes through one registry and one gate. Every step, including refusals, is written to one append-only log, and results are computed from that log.">
+  <HarnessDiagram />
+</Figure>
+
+- **One event contract.** Every run is an append-only JSONL log in one format. It is defined in
+  TypeScript and mirrored in Python and Rust; shared fixtures run in all three test suites, and CI checks
+  that Python and Rust compute identical summaries from the same runs.
+- **One path to hardware.** Every command goes through a typed tool registry and a safety gate: a STOP
+  file, an allowlist, argument checks, duration caps, confirmation for risky tools, rate limits, and
+  world-state interlocks. Each decision is logged with the rule that made it.
+- **Sensors report, the gate decides.** The camera never blocks a move itself. It reports where the robot
+  is; interlocks in the gate decide whether a move is allowed, and they are tested like every other rule.
+- **The website never touches hardware.** The admin page can only queue a request. The lab machine polls
+  for it, and its gate decides. Database policies, pinned by SQL tests, record who asked.
+- **Privacy by construction.** Camera frames are tracked and dropped; only numbers are kept. No child ever
+  appears in published data (ADR 0007), and published arm clips are hand-reviewed (ADR 0011).
+
+## 3. Evidence so far
+
+**Experiment 0: the harness on real hardware.** A $30 IR blaster drove a toy robot from the command line
+and from the website, with every request, decision, send and outcome in the log. The first moves came out
+as jerky surges caused by Wi-Fi latency between per-frame sends. Moving timed holds onto the device (one
+frame, a repeat count) made motion smooth and closed a gap where a recorded code could outlast the gate's
+3 second cap (ADR 0008).
+
+**Experiment 1: a camera as the judge.** An overhead webcam tracked the robot, kept it inside a taped
+arena through gate interlocks, and judged every move. In the final run it judged 29 of 29 tracked moves
+correctly, tracked a still robot to about 1 mm, and never needed to refuse a move. The lesson that made it
+work was to stop reading stickers for heading and infer heading from motion instead.
+
+**Experiment 2: a learned arm policy.** On a Seeed SO-ARM101 Pro pair, an ACT policy trained on 39
+teleoperated demonstrations picks a red Lego into a bowl on some placements. The dataset has since grown
+to 65 recorded episodes (57,252 frames). Nine
+exploratory rollouts of the first policy showed the shape of the problem: grasps on flat and stacked
+blocks, misses on every vertical and rotated block. Those placements were rare in the data.
+
+## 4. The arm study
+
+**Question.** When a policy misses a class of placements, do demonstrations that target that class fix it,
+without losing what already works?
+
+**Data.** The first policy trained on 39 demonstrations. A second batch of 25 added the under-covered
+placements: 6 flat, 6 vertical, 6 rotated (3, 6, 9 and 12 o'clock), 4 stacked and 3 near the bowl or the
+mat's edge, with the other two blocks always present as distractors.
+
+**Protocol.**
+
+1. A fixed list of placements, reused for every policy compared.
+2. About 10 trials per policy, the same placements in the same order.
+3. One outcome per trial: grasped first try, grasped after retries, missed, or dropped, plus the number
+   of attempts.
+4. Select checkpoints on grasps, never on training loss.
+
+**What the harness adds.** Today these rollouts run in LeRobot outside the gate, with a per-step speed cap
+as the only limit, and outcomes are recorded by hand. The next harness step routes rollouts through the
+gate and the event log, so that the results below are computed from runs, and the camera judge from
+Experiment 1 can score grasps.
+
+## 5. Results
+
+<Callout>
+  Pending. The second policy is training. Results appear here as logged runs once the fixed-placement
+  comparison has been run.
+</Callout>
+
+## 6. Limitations
+
+- **Small numbers.** About 10 trials per condition can show a large effect, not a small one.
+- **One operator, one bench.** Every demonstration comes from one person on one table. The results say
+  nothing about other scenes yet.
+- **The arm is not gated yet.** Until rollouts go through the harness, the arm's safety rests on the speed
+  cap and the operator.
+- **No baseline beyond the first policy.** The comparison is within one method (ACT), on purpose.
+
+## 7. What comes next
+
+1. Run the fixed-placement comparison and publish it here.
+2. Put arm rollouts on the harness: gated, logged, and summarized like Experiments 0 and 1.
+3. Extend the camera judge from "where is the robot" to "is the block in the bowl".
+4. Grow the dataset toward 100 demonstrations and repeat the comparison.
+
+The code, the decision records and every bench note are
+[on GitHub](https://github.com/sol-dev-44/physical-ai-lab).

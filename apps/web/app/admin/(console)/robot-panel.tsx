@@ -3,6 +3,8 @@
 import { useActionState, useState } from "react";
 import type { ToolRow } from "@/lib/data/commands";
 import { requestCommand } from "./actions";
+// Relative: this file is imported by a vitest test, where the @/ alias does not resolve.
+import { control } from "../../../lib/design/controls";
 
 const MOVES = [
   { tool: "robot.forward", label: "Forward" },
@@ -23,7 +25,7 @@ export function RobotPanel({ tools }: { tools: ToolRow[] }) {
   if (available.length === 0) return null;
 
   return (
-    <section aria-labelledby="robot-heading" className="rounded border border-line p-4">
+    <section aria-labelledby="robot-heading" className={control.panel}>
       <h2 id="robot-heading" className="mb-3 text-lg font-semibold">
         Wall-e Robot
       </h2>
@@ -51,7 +53,7 @@ export function RobotPanel({ tools }: { tools: ToolRow[] }) {
               name="tool"
               value={m.tool}
               disabled={pending}
-              className="rounded border border-line px-3 py-4 text-base font-medium disabled:opacity-50"
+              className="inline-flex min-h-14 items-center justify-center rounded-control border border-line-strong bg-surface px-4 text-base font-medium transition-colors duration-fast hover:border-fg disabled:opacity-50"
             >
               {m.label}
               {"hint" in m ? <span className="block text-xs font-normal text-muted">{m.hint}</span> : null}

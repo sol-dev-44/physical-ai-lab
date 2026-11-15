@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { control } from "@/lib/design/controls";
 
 /**
  * Shown when an admin read or action fails (Supabase down, a refused query, a run that
@@ -20,7 +21,7 @@ export default function AdminError({ error, retry }: { error: unknown; retry: ()
       <p className="text-muted">A Supabase read or update failed. Reload the console before trying the action again.</p>
       {message ? <p className="font-mono text-danger">{message}</p> : null}
       {digest ? <p className="font-mono text-muted">Error id: {digest}</p> : null}
-      <button type="button" onClick={() => retry()} className="rounded border border-line px-3 py-2">
+      <button type="button" onClick={() => retry()} className={control.button}>
         Try again
       </button>
     </div>

@@ -91,10 +91,10 @@ export function ReplayViewer({ sample }: { sample: string }) {
             e.target.value = "";
           }}
         />
-        <button type="button" className="rounded border border-line px-3 py-1 hover:border-fg" onClick={() => fileRef.current?.click()} disabled={busy}>
+        <button type="button" className="inline-flex min-h-11 items-center rounded-control border border-line-strong bg-surface px-4 text-sm font-medium transition-colors duration-fast hover:border-fg disabled:opacity-50" onClick={() => fileRef.current?.click()} disabled={busy}>
           Open a .jsonl log
         </button>
-        <button type="button" className="rounded border border-line px-3 py-1 hover:border-fg" onClick={() => load("sample (contract fixture)", sample)} disabled={busy}>
+        <button type="button" className="inline-flex min-h-11 items-center rounded-control border border-line-strong bg-surface px-4 text-sm font-medium transition-colors duration-fast hover:border-fg disabled:opacity-50" onClick={() => load("sample (contract fixture)", sample)} disabled={busy}>
           Try the sample
         </button>
         <fieldset className="ml-auto flex items-center gap-3" disabled={busy}>
@@ -115,7 +115,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           <p className="text-sm text-muted">
             <span className="font-mono">{loaded.name}</span>: {run.length} events, {run.valid ? "valid" : `${run.issues.length} issue(s)`}. Parsed in {ms(loaded.ms)} ms
             ({loaded.engine === "ts" ? "TypeScript" : "Rust/WASM"}).{" "}
-            <button type="button" className="underline" onClick={compare} disabled={busy}>
+            <button type="button" className="font-medium text-accent underline underline-offset-2 disabled:opacity-50" onClick={compare} disabled={busy}>
               Time both engines
             </button>
             {timing ? (
@@ -127,7 +127,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           </p>
 
           {run.issues.length ? (
-            <ul className="rounded border border-line p-3 font-mono text-xs">
+            <ul className="rounded-card border border-warn bg-warn-soft p-4 font-mono text-xs text-fg">
               {run.issues.slice(0, 20).map((i, k) => (
                 <li key={k}>
                   {i.line ? `line ${i.line}: ` : ""}
@@ -139,7 +139,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           ) : null}
 
           <div className="flex items-center gap-3">
-            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
+            <button type="button" className="min-h-11 min-w-11 rounded-control border border-line-strong bg-surface text-lg transition-colors duration-fast hover:border-fg" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
               ‹
             </button>
             <input
@@ -148,10 +148,10 @@ export function ReplayViewer({ sample }: { sample: string }) {
               max={run.length}
               value={pos}
               onChange={(e) => setPos(Number(e.target.value))}
-              className="flex-1"
+              className="flex-1 accent-accent-solid"
               aria-label="Position in run"
             />
-            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
+            <button type="button" className="min-h-11 min-w-11 rounded-control border border-line-strong bg-surface text-lg transition-colors duration-fast hover:border-fg" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
               ›
             </button>
             <span className="w-24 text-right font-mono text-sm">
@@ -160,7 +160,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <section className="rounded border border-line p-4">
+            <section className="rounded-card border border-line bg-surface p-5 shadow-card">
               <h3 className="mb-2 text-sm font-semibold">Event {pos > 0 ? pos - 1 : "-"}</h3>
               {event ? (
                 <>
@@ -198,7 +198,7 @@ function SummaryTable({ s }: { s: RunSummary }) {
     ["Success rate", pct(s.success_rate)],
   ];
   return (
-    <section className="rounded border border-line p-4">
+    <section className="rounded-card border border-line bg-surface p-5 shadow-card">
       <h3 className="mb-2 text-sm font-semibold">Summary so far</h3>
       <table className="w-full text-sm">
         <tbody>

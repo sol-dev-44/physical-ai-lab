@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
+import { Figure } from "./figure";
+import { HarnessDiagram } from "./harness-diagram";
 import { RunBoundary } from "./run-boundary";
 import { RunResults } from "./run-results";
 
@@ -20,4 +22,4 @@ function Run({ id }: { id: string }) {
   );
 }
 
-export const mdxComponents = { Callout, Run };
+export const mdxComponents = { Callout, Run, Figure, HarnessDiagram };

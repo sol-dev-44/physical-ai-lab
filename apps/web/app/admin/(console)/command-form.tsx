@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import type { ToolRow } from "@/lib/data/commands";
 import { requestCommand } from "./actions";
+import { control } from "@/lib/design/controls";
 
 export function CommandForm({ tools }: { tools: ToolRow[] }) {
   const [state, action, pending] = useActionState(requestCommand, null);
@@ -12,7 +13,7 @@ export function CommandForm({ tools }: { tools: ToolRow[] }) {
   return (
     <form action={action} className="space-y-3 text-sm">
       <div className="flex flex-wrap gap-2">
-        <select name="tool" aria-label="Tool" className="rounded border border-line bg-transparent px-2 py-2">
+        <select name="tool" aria-label="Tool" className={control.input}>
           {tools.map((t) => (
             <option key={t.name} value={t.name}>
               {t.name}
@@ -23,14 +24,14 @@ export function CommandForm({ tools }: { tools: ToolRow[] }) {
         <input
           name="args"
           defaultValue="{}"
-          className="flex-1 rounded border border-line bg-transparent px-3 py-2 font-mono"
+          className={`flex-1 font-mono ${control.input}`}
           aria-label="args as JSON"
         />
       </div>
       <label className="flex items-center gap-2">
         <input type="checkbox" name="confirmed" /> I confirm (required for tools marked confirm)
       </label>
-      <button type="submit" disabled={pending} className="rounded border border-line px-3 py-2">
+      <button type="submit" disabled={pending} className={control.button}>
         {pending ? "Queuing…" : "Queue command"}
       </button>
       {state ? <p className={state.ok ? "" : "text-danger"}>{state.message}</p> : null}
