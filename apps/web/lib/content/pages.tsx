@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/format";
 import type { CollectionName } from "./collections";
 import { type Entry, getCollection, getEntry } from "./loader";
+import { extractHeadings } from "./headings";
 import { Mdx } from "./render";
 
 const EMPTY_SLUG = "_empty";
@@ -43,6 +44,7 @@ export function collectionIndex(collection: CollectionName, title: string, intro
 export function collectionDetail<C extends CollectionName>(
   collection: C,
   aside?: (entry: Entry<C>) => ReactNode,
+  footer?: (entry: Entry<C>) => ReactNode,
 ) {
   async function generateStaticParams() {
     const entries = await getCollection(collection);
@@ -89,10 +91,32 @@ export function collectionDetail<C extends CollectionName>(
           <p className="mt-6 text-lg text-muted">{fm.summary}</p>
         </header>
         {aside?.(entry)}
+        <Contents body={entry.body} />
         <Mdx source={entry.body} />
+        {footer?.(entry)}
       </article>
     );
   }
 
   return { generateStaticParams, generateMetadata, Detail };
+}
+
+/** "Contents" list for long write-ups (four or more sections). */
+function Contents({ body }: { body: string }) {
+  const headings = extractHeadings(body);
+  if (headings.length < 4) return null;
+  return (
+    <nav aria-label="Contents" className="mb-12 rounded-card border border-line bg-surface p-5">
+      <p className="font-mono text-xs tracking-[0.14em] text-subtle uppercase">Contents</p>
+      <ol className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+        {headings.map((h) => (
+          <li key={h.id}>
+            <a href={`#${h.id}`} className="inline-flex min-h-9 items-center text-muted hover:text-accent">
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
 }

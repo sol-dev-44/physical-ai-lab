@@ -16,7 +16,7 @@
   /* Ink */
   --fg: #16161a;
   --muted: #55555e;
-  --subtle: #7c7c86;
+  --subtle: #66666f;
   /* Rules */
   --line: #e3e1da;
   --line-strong: #cbc8bd;
@@ -27,7 +27,7 @@
   --accent-contrast: #ffffff;
   --accent-soft: #fbe7dc;
   /* Status */
-  --ok: #157f3c;
+  --ok: #11703a;
   --ok-soft: #dcf2e3;
   --warn: #a15305;
   --warn-soft: #fbefd5;
@@ -47,7 +47,7 @@
     --surface-2: #1c1f23;
     --fg: #ecebe7;
     --muted: #a6a6ae;
-    --subtle: #7d7d86;
+    --subtle: #8a8a93;
     --line: #25282d;
     --line-strong: #363a41;
     --accent: #fb8a4a;
@@ -145,6 +145,11 @@
   ::selection {
     background: var(--accent-soft);
     color: var(--fg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
   :focus-visible {
     outline: 2px solid var(--accent);

@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { Children, type ReactNode, isValidElement } from "react";
 import { Suspense } from "react";
+import { slugify } from "../lib/content/headings";
 import { Figure } from "./figure";
 import { HarnessDiagram } from "./harness-diagram";
 import { RunBoundary } from "./run-boundary";
@@ -22,4 +23,24 @@ function Run({ id }: { id: string }) {
   );
 }
 
-export const mdxComponents = { Callout, Run, Figure, HarnessDiagram };
+/** Plain text of a heading's children, for its id. */
+function textOf(node: ReactNode): string {
+  return Children.toArray(node)
+    .map((c) => (typeof c === "string" || typeof c === "number" ? String(c) : isValidElement<{ children?: ReactNode }>(c) ? textOf(c.props.children) : ""))
+    .join("");
+}
+
+/** Section headings get an id and a hover anchor, so contents lists and shared links can point at them. */
+function H2({ children }: { children?: ReactNode }) {
+  const id = slugify(textOf(children));
+  return (
+    <h2 id={id} className="group scroll-mt-24">
+      {children}
+      <a href={`#${id}`} aria-label="Link to this section" className="ml-2 text-subtle no-underline opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100">
+        #
+      </a>
+    </h2>
+  );
+}
+
+export const mdxComponents = { Callout, Run, Figure, HarnessDiagram, h2: H2 };
