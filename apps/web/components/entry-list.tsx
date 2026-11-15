@@ -4,7 +4,12 @@ import type { Entry } from "@/lib/content/loader";
 import { formatDate } from "@/lib/format";
 import { Badge } from "./ui/badge";
 
-const routes: Record<CollectionName, string> = { experiments: "/experiments", log: "/log", builds: "/builds" };
+const routes: Record<CollectionName, string> = {
+  experiments: "/experiments",
+  log: "/log",
+  builds: "/builds",
+  research: "/research",
+};
 
 /** A dated list of write-ups: date in its own column from `sm` up. */
 export function EntryList<C extends CollectionName>({ entries, empty }: { entries: Entry<C>[]; empty: string }) {

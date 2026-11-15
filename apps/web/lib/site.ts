@@ -11,6 +11,7 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? (productionHost ? `https://${productionHost}` : "http://localhost:3000"),
   /** Sections with published content. Pages without content stay out of the menu until they have some. */
   nav: [
+    { href: "/research", label: "Research" },
     { href: "/experiments", label: "Experiments" },
     { href: "/log", label: "Log" },
     { href: "/harness", label: "Harness" },

@@ -39,6 +39,13 @@ export const collections = {
     ...base,
     experiment: ExperimentId.optional(),
   }),
+  research: z.strictObject({
+    ...base,
+    /** A working draft is updated as results land; final means frozen. */
+    status: z.enum(["working-draft", "final"]),
+    /** Experiments the write-up draws on, in reading order. */
+    experiments: z.array(ExperimentId).default([]),
+  }),
   builds: z.strictObject({
     ...base,
     status: z.enum(["planned", "building", "working", "retired"]),

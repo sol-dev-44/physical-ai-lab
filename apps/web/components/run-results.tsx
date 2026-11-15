@@ -1,4 +1,5 @@
 import { getPublishedRun } from "@/lib/data/runs";
+import { control } from "@/lib/design/controls";
 
 const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%`);
 
@@ -30,7 +31,7 @@ export async function RunResults({ runId }: { runId: string }) {
     ["Success rate", pct(s.success_rate)],
   ];
   return (
-    <section className="rounded border border-line p-4">
+    <section className={control.panel}>
       <h3 className="mb-2 font-mono text-sm">{runId}</h3>
       <table className="w-full text-sm">
         <tbody>

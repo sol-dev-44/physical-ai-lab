@@ -22,6 +22,7 @@ Read `docs/architecture.md` first. Rules that matter most:
 - Camera work (exp001): read its README's "Gotchas and hints" first. Camera commands run in macOS Terminal, never in this app.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
 - Never commit `events/`, media, `.env*` (except `.env.example`), or anything identifying a child (ADR 0007).
+  The one media exception is hand-reviewed arm clips in `apps/web/public/clips/` under ADR 0011.
 - Keep strict settings on: no `ignoreBuildErrors`, no skipping lint, no `any` without a comment saying why.
 - `apps/web` is Next.js 16 with Cache Components; read `apps/web/AGENTS.md` and the docs in `node_modules/next/dist/docs/` before changing data fetching.
 - Before finishing: `pnpm check`, `uv run pytest`, `cargo test` (and `supabase/tests/run.sh` when touching SQL or anything that writes to Supabase).

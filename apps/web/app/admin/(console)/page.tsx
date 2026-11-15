@@ -5,6 +5,7 @@ import { listRunsForAdmin } from "@/lib/data/runs";
 import { setRunPublished } from "./actions";
 import { CommandForm } from "./command-form";
 import { RobotPanel } from "./robot-panel";
+import { control } from "@/lib/design/controls";
 
 // Every admin page: a static shell, with the session read inside a Suspense boundary.
 export default function AdminHome() {
@@ -86,7 +87,7 @@ async function Console() {
                       <form action={setRunPublished}>
                         <input type="hidden" name="run_id" value={r.run_id} />
                         <input type="hidden" name="published" value={String(!r.published)} />
-                        <button type="submit" className="underline" aria-label={`${r.published ? "Unpublish" : "Publish"} ${r.run_id}`}>
+                        <button type="submit" className={control.textLink} aria-label={`${r.published ? "Unpublish" : "Publish"} ${r.run_id}`}>
                           {r.published ? "Unpublish" : "Publish"}
                         </button>
                       </form>
