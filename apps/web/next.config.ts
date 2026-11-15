@@ -10,7 +10,14 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@lab/schema", "@lab/events-wasm"],
   // Content lives at the repo root, outside this app.
   outputFileTracingRoot: repoRoot,
-  outputFileTracingIncludes: { "/**": ["../../content/**/*"] },
+  outputFileTracingIncludes: {
+    "/**": [
+      "../../content/**/*",
+      // Fonts for the share images (lib/og.tsx), in case an image re-renders at runtime.
+      "./node_modules/geist/dist/fonts/geist-sans/Geist-SemiBold.ttf",
+      "./node_modules/geist/dist/fonts/geist-mono/GeistMono-Regular.ttf",
+    ],
+  },
   turbopack: {
     root: repoRoot,
     rules: {

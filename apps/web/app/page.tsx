@@ -28,11 +28,13 @@ const principles = [
 const order = { running: 0, planned: 1, done: 2, abandoned: 3 } as const;
 
 export default async function Home() {
-  const [log, experiments, lines] = await Promise.all([
+  const [log, experiments, research, lines] = await Promise.all([
     getCollection("log"),
     getCollection("experiments"),
+    getCollection("research"),
     getSampleLines(),
   ]);
+  const paper = research[0];
   // Work in progress first, then newest. The first one is the lab's current focus.
   const ranked = [...experiments].sort((a, b) => order[a.frontmatter.status] - order[b.frontmatter.status]);
 
@@ -67,6 +69,29 @@ export default async function Home() {
           ))}
         </RevealList>
       </section>
+
+      {paper ? (
+        <Reveal>
+          <Link
+            href={`/research/${paper.slug}`}
+            className="group grid gap-8 rounded-card border border-line bg-surface p-8 shadow-card transition duration-base ease-out-quint hover:-translate-y-0.5 hover:shadow-lift sm:p-12 lg:grid-cols-[1fr_auto] lg:items-end"
+          >
+            <div className="max-w-3xl">
+              <Eyebrow className="mb-4">
+                Research{paper.frontmatter.status === "working-draft" ? " · working draft" : ""}
+              </Eyebrow>
+              <h2 className="text-title font-semibold">{paper.frontmatter.title}</h2>
+              <p className="mt-4 text-muted">{paper.frontmatter.summary}</p>
+            </div>
+            <span className="inline-flex items-center gap-1 text-sm font-medium whitespace-nowrap text-accent">
+              Read the write-up
+              <span aria-hidden className="transition-transform duration-base ease-out-quint group-hover:translate-x-0.5">
+                →
+              </span>
+            </span>
+          </Link>
+        </Reveal>
+      ) : null}
 
       <section>
         <SectionHeading
