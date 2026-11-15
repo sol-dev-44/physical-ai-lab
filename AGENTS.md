@@ -25,3 +25,15 @@ Read `docs/architecture.md` first. Rules that matter most:
 - Keep strict settings on: no `ignoreBuildErrors`, no skipping lint, no `any` without a comment saying why.
 - `apps/web` is Next.js 16 with Cache Components; read `apps/web/AGENTS.md` and the docs in `node_modules/next/dist/docs/` before changing data fetching.
 - Before finishing: `pnpm check`, `uv run pytest`, `cargo test` (and `supabase/tests/run.sh` when touching SQL or anything that writes to Supabase).
+
+## Shipping and environment
+
+- Vercel deploys every merge to `main` straight to production. Merging is deploying, so
+  get the owner's go before merging a PR. Each PR gets a preview deployment, but previews
+  sit behind Vercel sign-in (a plain `curl` gets a 302 to `vercel.com/sso-api`).
+- In a fresh git worktree, run `pnpm install` and `uv sync --all-packages --locked` first;
+  without the sync, pytest fails at collection. Never run either in someone else's checkout.
+- If `cargo` is not on PATH in an agent shell, prepend `$(ls -d ~/.rustup/toolchains/stable-*)/bin`.
+- `supabase/tests/run.sh` needs a local Postgres (`psql`). Without one, rely on CI's
+  `database` job and say so.
+- Web app specifics: `apps/web/AGENTS.md`, below the generated Next.js block.
