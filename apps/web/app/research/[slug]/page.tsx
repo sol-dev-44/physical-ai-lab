@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PrintButton } from "@/components/print-button";
 import { Badge } from "@/components/ui/badge";
 import { collectionDetail } from "@/lib/content/pages";
 
@@ -21,6 +22,9 @@ const { generateStaticParams, generateMetadata, Detail } = collectionDetail("res
           ))}
         </>
       ) : null}
+      <span className="ml-auto">
+        <PrintButton />
+      </span>
     </div>
   );
 });

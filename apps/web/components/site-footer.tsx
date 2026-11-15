@@ -5,11 +5,12 @@ const more = [
   { href: `${site.repo}/blob/main/docs/architecture.md`, label: "Architecture" },
   { href: `${site.repo}/blob/main/docs/adr/README.md`, label: "Decision records" },
   { href: site.repo, label: "Code on GitHub" },
+  { href: "/feed.xml", label: "RSS feed" },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-line">
+    <footer data-site-chrome className="mt-24 border-t border-line">
       <div className="mx-auto grid w-full max-w-page gap-10 px-5 py-12 sm:grid-cols-[1.5fr_1fr_1fr] sm:px-8">
         <div className="max-w-sm">
           <p className="font-semibold tracking-tight">{site.name}</p>
