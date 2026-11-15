@@ -1,0 +1,51 @@
+---
+title: "Fifty thousand steps: the first grasp"
+date: 2026-11-14
+summary: 40 demonstrations and an overnight training run produced a policy that picks up the Lego and drops it in the bowl, sometimes. It grasps flat placements and misses rotated and vertical ones. Changing how it runs didn't fix that.
+tags: [arm, lerobot, act, imitation-learning, eval]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+## The run
+
+The bowl dataset grew to 40 episodes, about 35,000 frames. Episode 0 was a failed
+demonstration and is left out. ACT then trained for 50,000 steps on episodes 1 to 39, on
+the Mac's GPU at about 1.7 steps a second: 7 hours 44 minutes, a checkpoint every 5,000
+steps.
+
+## On the arm
+
+The first 30-second run reached the Lego, bumped it on the way down, backed off,
+regrasped, dropped it in the bowl and went back to rest. Shaky, but it did the whole task.
+
+Then the placements varied:
+
+| Lego placement | What happened |
+|---|---|
+| Flat, horizontal | Once grabbed right away, twice missed or overshot |
+| Flat, stacked on two other blocks | Grabbed on the first try |
+| Vertical | Missed three times |
+| Rotated to 12 o'clock | Gripper didn't rotate to match; missed three times beside it |
+
+The pattern is the training data. The demonstrations were mostly flat placements, and
+those are what the policy can grasp. Rotated and vertical ones are barely in the data.
+
+## Changing how it runs
+
+ACT predicts a chunk of 100 future actions at a time. Two settings change how those are
+used, without retraining:
+
+- **10 actions per chunk:** the arm barely moved and shook periodically. Worse.
+- **Temporal ensembling** (a new chunk every step, overlapping predictions averaged): the
+  control loop held 30 Hz instead of dipping to about 16, and the motion was smoother. It
+  still missed twice to the left, under-rolled the wrist, and hovered.
+
+Neither changes what the policy knows. Smoother isn't better at grasping.
+
+<Callout>These nine runs were exploratory, one setting at a time, with no fixed placement list. They aren't a success rate. Each is recorded as a row in `experiments/exp002-so-arm-bench/trials.md`.</Callout>
+
+## Next
+
+More data where it fails: a batch of demonstrations with the Lego vertical, rotated and
+stacked, then a retrain, then a fixed test with the same placements for every checkpoint.
