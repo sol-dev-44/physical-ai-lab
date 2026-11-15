@@ -10,23 +10,36 @@ export const runTag = (runId: string) => `run:${runId}`;
 
 export type PublishedRun = { runId: string; events: Event[]; summary: RunSummary };
 
+/** `null`: not published yet (or no Supabase). `"unavailable"`: the read failed. */
+export type PublishedRunResult = PublishedRun | null | "unavailable";
+
 /**
  * Events for a published run, validated against the contract and folded into
  * a summary. Cached until the sync calls /api/revalidate for this run.
  */
-export async function getPublishedRun(runId: string): Promise<PublishedRun | null> {
+export async function getPublishedRun(runId: string): Promise<PublishedRunResult> {
   "use cache";
   cacheTag(runTag(runId));
-  cacheLife("max");
 
   const db = publicClient();
-  if (!db) return null;
+  if (!db) {
+    cacheLife("max");
+    return null;
+  }
   const { data, error } = await db
     .from("events")
     .select("raw")
     .eq("run_id", runId)
     .order("seq", { ascending: true });
-  if (error || !data?.length) return null;
+  if (error) {
+    // Cache the failure briefly, not for the "max" lifetime: otherwise a short Supabase
+    // outage (at build or at runtime) shows "not published yet" until the next sync.
+    cacheLife("minutes");
+    console.error(`Could not load run ${runId}: ${error.message}`);
+    return "unavailable";
+  }
+  cacheLife("max");
+  if (!data?.length) return null;
 
   const events = data.map((row) => Event.parse(row.raw));
   return { runId, events, summary: summarizeRun(events) };
