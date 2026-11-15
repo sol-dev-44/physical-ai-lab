@@ -26,3 +26,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tailwind v4 `focus:not-sr-only` resets padding; add `focus:px-* focus:py-*` after it.
 - The admin console needs a real Supabase sign-in, so local checks cannot reach it.
   Test its data layer with mocks (`test/admin-data.test.ts`).
+
+## Design system
+
+- Colors are semantic tokens only (`bg-surface`, `text-muted`, `border-line`, `text-accent`,
+  `bg-ok-soft`...), defined in `app/globals.css` with light and dark values. The default Tailwind
+  palette is switched off (`--color-*: initial`), so `text-red-600` does nothing: use `text-danger`.
+- Type, widths, radii and easing are tokens too: `text-display`, `text-title`, `max-w-page`,
+  `max-w-prose`, `rounded-card`, `rounded-control`, `ease-out-quint`, `duration-base`.
+- Reuse `components/ui/*` (Container, Badge, StatusBadge, Eyebrow, SectionHeading, ButtonLink, Stat)
+  before writing new markup. Join classes with `cn` from `lib/design/cn.ts`.
+- Animation uses `motion` (the framer-motion successor) through `LazyMotion`: import `m` from
+  `motion/react`, never `motion.div`, or the full bundle ships. Timings come from `lib/design/motion.ts`.
+  CSS transitions for hover and focus; `motion` for enter, reveal and layout animation.
+- `Reveal`/`RevealList` only below the fold. The hero and a page's main text render without it so
+  they paint immediately. `MotionConfig reducedMotion="user"` already honors reduced motion.
+- Tap targets are at least 44px (`min-h-11`). Check new pages at 375px wide and in dark mode.
+- Long-form MDX uses `prose prose-lab` (tokens mapped onto the typography plugin).

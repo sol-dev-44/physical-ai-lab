@@ -1,36 +1,174 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Design tokens. Deliberately plain for now; the look gets designed later. */
+/*
+ * Design tokens. Components use these semantic names only (bg-surface, text-muted,
+ * border-line, text-accent...). The default Tailwind palette is switched off below,
+ * so a raw `text-red-600` fails to style instead of drifting from the system.
+ * Light and dark values live in :root; Tailwind reads them through @theme inline.
+ */
 :root {
-  --bg: #ffffff;
-  --fg: #111111;
-  --muted: #6b6b6b;
-  --line: #e5e5e5;
-  --accent: #0b6bcb;
+  color-scheme: light;
+  /* Surfaces: warm lab-notebook paper */
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface-2: #efede7;
+  /* Ink */
+  --fg: #16161a;
+  --muted: #55555e;
+  --subtle: #7c7c86;
+  /* Rules */
+  --line: #e3e1da;
+  --line-strong: #cbc8bd;
+  /* Accent: safety orange. `accent` is for text and icons (AA on bg and surface);
+     `accent-solid` is a fill with `accent-contrast` text on top. */
+  --accent: #b93d0b;
+  --accent-solid: #c2410c;
+  --accent-contrast: #ffffff;
+  --accent-soft: #fbe7dc;
+  /* Status */
+  --ok: #157f3c;
+  --ok-soft: #dcf2e3;
+  --warn: #a15305;
+  --warn-soft: #fbefd5;
+  --danger: #b42318;
+  --danger-soft: #fbe2df;
+  --info: #1f4fbf;
+  --info-soft: #e1e9fb;
+  /* Depth */
+  --shadow-color: 30 20 10;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0d0d0d;
-    --fg: #ededed;
-    --muted: #9a9a9a;
-    --line: #262626;
-    --accent: #5aa7f0;
+    color-scheme: dark;
+    --bg: #0e0f11;
+    --surface: #15171a;
+    --surface-2: #1c1f23;
+    --fg: #ecebe7;
+    --muted: #a6a6ae;
+    --subtle: #7d7d86;
+    --line: #25282d;
+    --line-strong: #363a41;
+    --accent: #fb8a4a;
+    --accent-solid: #f97316;
+    --accent-contrast: #0e0f11;
+    --accent-soft: #2c1a10;
+    --ok: #4ade80;
+    --ok-soft: #10261a;
+    --warn: #fbbf24;
+    --warn-soft: #2a2110;
+    --danger: #f87171;
+    --danger-soft: #2c1414;
+    --info: #7aa7ff;
+    --info-soft: #121c33;
+    --shadow-color: 0 0 0;
   }
+}
+
+@theme {
+  /* Only semantic colors exist; see the note at the top. */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Type: Tailwind's text-xs..text-6xl scale stays; these add fluid display sizes. */
+  --text-display: clamp(2.25rem, 1.6rem + 3.2vw, 4rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.02em;
+
+  /* Layout widths */
+  --container-page: 72rem;
+  --container-prose: 44rem;
+
+  /* Radii */
+  --radius-card: 0.875rem;
+  --radius-control: 0.5rem;
+
+  /* Motion. Mirrored in lib/design/motion.ts for JS animations. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+
+  /* Hero log lines: CSS so they paint before hydration. Stagger comes from --i on each line. */
+  --animate-log-line: log-line 400ms var(--ease-out-quint) both;
+  @keyframes log-line {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+  }
+}
+
+.animate-log-line {
+  animation-delay: calc(250ms + var(--i, 0) * 90ms);
 }
 
 @theme inline {
   --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --shadow-card: 0 1px 2px rgb(var(--shadow-color) / 0.06), 0 8px 24px -12px rgb(var(--shadow-color) / 0.18);
+  --shadow-lift: 0 2px 4px rgb(var(--shadow-color) / 0.08), 0 18px 40px -16px rgb(var(--shadow-color) / 0.28);
 }
 
-body {
-  background: var(--bg);
-  color: var(--fg);
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--fg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Long-form text in the lab's tokens. Used by MDX write-ups. */
+@utility prose-lab {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-lead: var(--muted);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-counters: var(--subtle);
+  --tw-prose-bullets: var(--line-strong);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-kbd: var(--fg);
+  --tw-prose-code: var(--fg);
+  --tw-prose-pre-code: var(--fg);
+  --tw-prose-pre-bg: var(--surface-2);
+  --tw-prose-th-borders: var(--line-strong);
+  --tw-prose-td-borders: var(--line);
 }

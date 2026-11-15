@@ -40,7 +40,10 @@ jobs:
           fetch-depth: 1
 
       - name: Claude review
+        id: review
         if: env.HAS_KEY == 'true'
+        # Advisory only: an API problem (bad key, no credit, outage) warns instead of turning the PR red.
+        continue-on-error: true
         # v1.0.276, pinned by commit so a moved tag cannot change what runs here.
         uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc
         with:
@@ -72,3 +75,7 @@ jobs:
             Skip style nits that the linters already cover, and do not praise.
           claude_args: |
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+
+      - name: Warn when the review could not run
+        if: steps.review.outcome == 'failure'
+        run: echo "::warning::The Claude review could not run. Check that the ANTHROPIC_API_KEY secret is valid and the Anthropic account has credit."

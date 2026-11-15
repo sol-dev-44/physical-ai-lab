@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
-import { NavLink } from "./nav-link";
+import { SiteNav } from "./site-nav";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-line">
-      <nav aria-label="Main" className="mx-auto flex max-w-4xl flex-wrap items-baseline gap-x-5 gap-y-2 px-4 py-4">
-        <Link href="/" className="mr-auto font-semibold">
+    <header className="sticky top-0 z-20 border-b border-line bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70">
+      <nav aria-label="Main" className="relative mx-auto flex h-16 w-full max-w-page items-center justify-between px-5 sm:px-8">
+        <Link href="/" className="group flex min-h-11 items-center gap-2.5 font-semibold tracking-tight">
+          <span aria-hidden className="grid size-6 place-items-center rounded-md bg-accent-solid text-accent-contrast">
+            <span className="size-2 rounded-full bg-current transition-transform duration-base ease-out-quint group-hover:scale-125" />
+          </span>
           {site.name}
         </Link>
-        {site.nav.map((item) => (
-          <NavLink key={item.href} href={item.href} label={item.label} />
-        ))}
+        <SiteNav items={site.nav} />
       </nav>
     </header>
   );
