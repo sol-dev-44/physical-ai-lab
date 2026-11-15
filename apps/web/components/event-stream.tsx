@@ -1,9 +1,6 @@
-"use client";
-
-import { m } from "motion/react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/design/cn";
-import { easeOutQuint } from "@/lib/design/motion";
 import type { LogLine } from "@/lib/sample-run";
 
 const toneClass: Record<LogLine["tone"], string> = {
@@ -13,7 +10,10 @@ const toneClass: Record<LogLine["tone"], string> = {
   accent: "text-accent",
 };
 
-/** The sample run, printed line by line like the harness writes it. Decorative; the data is real fixture data. */
+/**
+ * The sample run, printed line by line like the harness writes it. The data is real fixture data.
+ * A CSS animation, not motion: it is above the fold, so it paints without waiting for JavaScript.
+ */
 export function EventStream({ lines }: { lines: LogLine[] }) {
   return (
     <figure className="overflow-hidden rounded-card border border-line bg-surface shadow-lift">
@@ -27,19 +27,17 @@ export function EventStream({ lines }: { lines: LogLine[] }) {
       </div>
       <ol className="space-y-1 p-4 font-mono text-[0.75rem] leading-relaxed sm:p-5" aria-label="Sample run log">
         {lines.map((l, i) => (
-          <m.li
+          <li
             key={l.seq}
-            className="grid grid-cols-[4.25rem_1fr] gap-x-3 sm:grid-cols-[4.5rem_9.5rem_1fr]"
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.25 + i * 0.09, duration: 0.4, ease: easeOutQuint }}
+            className="grid animate-log-line grid-cols-[4.25rem_1fr] gap-x-3 motion-reduce:animate-none sm:grid-cols-[4.5rem_9.5rem_1fr]"
+            style={{ "--i": i } as CSSProperties}
           >
             <span className="text-subtle tabular-nums">{l.time}</span>
             <span className="truncate text-fg">{l.type}</span>
             <span className={cn("col-start-2 truncate sm:col-start-auto", toneClass[l.tone])}>
               {[l.tool, l.detail].filter(Boolean).join(" · ")}
             </span>
-          </m.li>
+          </li>
         ))}
       </ol>
       <figcaption className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-3 text-xs text-muted sm:px-5">

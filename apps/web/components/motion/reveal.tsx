@@ -13,6 +13,7 @@ const viewport = { once: true, margin: "0px 0px -10% 0px" } as const;
 export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <m.div
+      data-reveal
       className={className}
       variants={rise}
       initial="hidden"
@@ -27,7 +28,7 @@ export function Reveal({ children, className }: { children: ReactNode; className
 /** A list whose items (RevealItem) appear one after another. */
 export function RevealList({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <m.ul className={className} variants={stagger()} initial="hidden" whileInView="show" viewport={viewport}>
+    <m.ul data-reveal className={className} variants={stagger()} initial="hidden" whileInView="show" viewport={viewport}>
       {children}
     </m.ul>
   );
@@ -35,7 +36,7 @@ export function RevealList({ children, className }: { children: ReactNode; class
 
 export function RevealItem({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <m.li className={className} variants={rise}>
+    <m.li data-reveal className={className} variants={rise}>
       {children}
     </m.li>
   );

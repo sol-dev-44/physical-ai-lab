@@ -26,6 +26,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
       <body className="flex min-h-screen flex-col font-sans">
+        {/* Without JavaScript, scroll reveals never run: show their content as is. */}
+        <noscript>
+          <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
         <a
           href="#content"
           className="sr-only rounded-control border border-line bg-surface text-sm focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-30 focus:px-3 focus:py-2"

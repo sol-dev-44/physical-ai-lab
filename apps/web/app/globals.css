@@ -92,6 +92,19 @@
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 150ms;
   --duration-base: 250ms;
+
+  /* Hero log lines: CSS so they paint before hydration. Stagger comes from --i on each line. */
+  --animate-log-line: log-line 400ms var(--ease-out-quint) both;
+  @keyframes log-line {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+  }
+}
+
+.animate-log-line {
+  animation-delay: calc(250ms + var(--i, 0) * 90ms);
 }
 
 @theme inline {
