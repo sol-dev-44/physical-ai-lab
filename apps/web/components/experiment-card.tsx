@@ -4,8 +4,18 @@ import { cn } from "@/lib/design/cn";
 import { StatusBadge } from "./ui/status-badge";
 
 /** One experiment as a linked card: id, status, title, summary, hardware. */
-export function ExperimentCard({ entry, featured = false }: { entry: Entry<"experiments">; featured?: boolean }) {
+export function ExperimentCard({
+  entry,
+  featured = false,
+  headingLevel = 3,
+}: {
+  entry: Entry<"experiments">;
+  featured?: boolean;
+  /** Pick the level that fits the page's outline: 2 under the page title, 3 under a section heading. */
+  headingLevel?: 2 | 3;
+}) {
   const fm = entry.frontmatter;
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <Link
       href={`/experiments/${entry.slug}`}
@@ -19,7 +29,7 @@ export function ExperimentCard({ entry, featured = false }: { entry: Entry<"expe
         <span className="font-mono text-xs text-subtle">{fm.id}</span>
         <StatusBadge status={fm.status} />
       </div>
-      <h3 className={cn("mt-4 font-semibold tracking-tight", featured ? "text-2xl" : "text-lg")}>{fm.title}</h3>
+      <Heading className={cn("mt-4 font-semibold tracking-tight", featured ? "text-2xl" : "text-lg")}>{fm.title}</Heading>
       <p className="mt-2 flex-1 text-sm text-muted">{fm.summary}</p>
       {fm.hardware.length ? (
         <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Hardware">
