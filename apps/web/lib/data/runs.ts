@@ -4,6 +4,7 @@ import { Event, type RunSummary, summarizeRun } from "@lab/schema";
 import { cacheLife, cacheTag } from "next/cache";
 import { publicClient } from "@/lib/supabase/public";
 import { sessionClient } from "@/lib/supabase/server";
+import { rowsOrThrow } from "./rows";
 
 export const runTag = (runId: string) => `run:${runId}`;
 
@@ -43,10 +44,10 @@ export type RunRow = {
 export async function listRunsForAdmin(limit = 50): Promise<RunRow[]> {
   const db = await sessionClient();
   if (!db) return [];
-  const { data } = await db
+  const res = await db
     .from("runs")
     .select("run_id, experiment_id, status, started_at, published")
     .order("started_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as RunRow[];
+  return rowsOrThrow<RunRow>("runs", res);
 }

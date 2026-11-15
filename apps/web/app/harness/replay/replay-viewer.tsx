@@ -51,16 +51,26 @@ export function ReplayViewer({ sample }: { sample: string }) {
   async function compare() {
     if (!loaded) return;
     setBusy(true);
+    setError(null);
     const t: Partial<Timing> = {};
-    for (const name of ["ts", "wasm"] as const) {
-      const { run, ms } = await open(name, loaded.text);
-      const s = performance.now();
-      run.summaryAt(run.length);
-      t[name] = ms + (performance.now() - s);
-      run.free();
+    try {
+      for (const name of ["ts", "wasm"] as const) {
+        const { run, ms } = await open(name, loaded.text);
+        try {
+          const s = performance.now();
+          run.summaryAt(run.length);
+          t[name] = ms + (performance.now() - s);
+        } finally {
+          run.free();
+        }
+      }
+      setTiming(t as Timing);
+    } catch (e) {
+      // e.g. the WASM engine failed to download. Without this the viewer stayed disabled.
+      setError(`Timing failed: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setBusy(false);
     }
-    setTiming(t as Timing);
-    setBusy(false);
   }
 
   const run = loaded?.run;
@@ -129,7 +139,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
           ) : null}
 
           <div className="flex items-center gap-3">
-            <button type="button" className="rounded border border-line px-2" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
+            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.max(0, p - 1))} aria-label="Previous event">
               ‹
             </button>
             <input
@@ -141,7 +151,7 @@ export function ReplayViewer({ sample }: { sample: string }) {
               className="flex-1"
               aria-label="Position in run"
             />
-            <button type="button" className="rounded border border-line px-2" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
+            <button type="button" className="min-h-11 min-w-11 rounded border border-line" onClick={() => setPos((p) => Math.min(run.length, p + 1))} aria-label="Next event">
               ›
             </button>
             <span className="w-24 text-right font-mono text-sm">

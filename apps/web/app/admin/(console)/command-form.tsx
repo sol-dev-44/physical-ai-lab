@@ -12,7 +12,7 @@ export function CommandForm({ tools }: { tools: ToolRow[] }) {
   return (
     <form action={action} className="space-y-3 text-sm">
       <div className="flex flex-wrap gap-2">
-        <select name="tool" className="rounded border border-line bg-transparent px-2 py-2">
+        <select name="tool" aria-label="Tool" className="rounded border border-line bg-transparent px-2 py-2">
           {tools.map((t) => (
             <option key={t.name} value={t.name}>
               {t.name}
