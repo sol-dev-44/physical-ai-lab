@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { RunBoundary } from "@/components/run-boundary";
 import { RunResults } from "@/components/run-results";
+import { ExperimentGlyph } from "@/components/experiment-glyph";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EntryList } from "@/components/entry-list";
 import { getCollection } from "@/lib/content/loader";
@@ -10,6 +11,12 @@ const { generateStaticParams, generateMetadata, Detail } = collectionDetail("exp
   const fm = entry.frontmatter;
   return (
     <section className="mb-12 space-y-6">
+      <div aria-hidden className="flex items-end justify-between border-b border-line pb-4">
+        <ExperimentGlyph id={fm.id} className="size-16 text-accent" />
+        <span className="font-mono text-6xl font-semibold tracking-tighter text-line-strong tabular-nums">
+          {fm.id.slice(3, 6)}
+        </span>
+      </div>
       <dl className="grid gap-x-6 gap-y-4 rounded-card border border-line bg-surface p-6 text-sm shadow-card sm:grid-cols-[7rem_1fr]">
         <dt className="font-mono text-xs tracking-wider text-subtle uppercase sm:pt-0.5">Status</dt>
         <dd>

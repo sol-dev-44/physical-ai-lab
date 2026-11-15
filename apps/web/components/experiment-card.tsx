@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Entry } from "@/lib/content/loader";
 import { cn } from "@/lib/design/cn";
+import { ExperimentGlyph } from "./experiment-glyph";
 import { StatusBadge } from "./ui/status-badge";
 
 /** One experiment as a linked card: id, status, title, summary, hardware. */
@@ -25,11 +26,15 @@ export function ExperimentCard({
         featured && "sm:p-8",
       )}
     >
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-xs text-subtle">{fm.id}</span>
+      <div className="flex items-start justify-between gap-3">
+        <ExperimentGlyph
+          id={fm.id}
+          className="text-accent transition-transform duration-base ease-out-quint group-hover:-translate-y-0.5"
+        />
         <StatusBadge status={fm.status} />
       </div>
-      <Heading className={cn("mt-4 font-semibold tracking-tight", featured ? "text-2xl" : "text-lg")}>{fm.title}</Heading>
+      <p className="mt-4 font-mono text-xs text-subtle">{fm.id}</p>
+      <Heading className={cn("mt-1.5 font-semibold tracking-tight", featured ? "text-2xl" : "text-lg")}>{fm.title}</Heading>
       <p className="mt-2 flex-1 text-sm text-muted">{fm.summary}</p>
       {fm.hardware.length ? (
         <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Hardware">
