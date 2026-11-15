@@ -1,7 +1,8 @@
 # exp002: SO-ARM101 Pro bench notes
 
-Status: both arms calibrated and teleop working (2026-11-12). Fine-tuning of the gripper is open.
-Not an experiment run yet. No camera, no trials, no sync. Nothing here is published.
+Status (2026-11-15): both arms calibrated, teleop working, two cameras recording. A 50k-step ACT policy runs on the arm and grasps the Lego on flat placements, but misses rotated and vertical ones and moves jerkily. A 25-episode orientation batch is recorded (65 episodes total) and a second 50k retrain on episodes 1 to 64 is running. See the progress log below. Nothing here is published.
+
+Run scripts for recording, training and rollout are in `scripts/`. They hold this Mac's ports, camera indexes and paths, so check those before running one.
 
 ## Kit
 
@@ -100,7 +101,71 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
    stops short. Test: hold the leader fully closed for 10 seconds, stop, then read the follower.
 3. **Shoulder pan right stop.** The right end of the pan is likely a physical limit. Confirm before relying on it.
 
+## Progress log (2026-11-13 to 2026-11-15)
+
+### Setup
+- Box camera: Logitech, OpenCV index 0, 1920x1080, mounted about 50 to 70 cm overhead. Zoom and focus set in Logi Tune (not controllable from OpenCV on this Mac).
+- Wrist camera: index 1, recorded at 640x480, mounted in the gripper slot.
+- Camera indexes can change after a replug. Check with `probe_cams.py` before recording.
+- Both cameras record together. Logi Tune is installed in /Applications.
+- Mac hostname changed during the session (Mac-146 to Mac-153). Serial port names did not change.
+
+### Calibration and tuning
+- Leader and follower recalibrated on 2026-11-13. The follower's gripper still stops about 10 counts above its calibrated closed end. Cause not confirmed; accepted for now.
+- Shoulder lift lag on the follower at the default gain (16): up to 100 to 155 degrees behind the leader on some runs.
+- Gain 32 (`--robot.position_p_coefficient=32`): mean bowl-episode lag about 3 degrees, worst about 48. Gain 48 did not help the quick swing. Gain 32 is the recording setting.
+- Speed cap `--robot.max_relative_target=5` stays on. The policy regularly asks for bigger steps, so the logs show many "clamped" warnings.
+
+### Dataset `exp002-bowl-p32` (gain 32, bowl fixed, Lego moved each episode)
+- 40 episodes (0 to 39), 35,037 frames. Reset 15 s, episode 30 s.
+- Episode 0 is a failure and is excluded from training.
+- Episodes 10 to 39 were recorded with the rest-to-rest pattern (see below).
+- Episode 37 had a brief fumble and recovery, and is kept.
+- Older `exp002-bowl-v1` (13 episodes) is not used for training.
+
+### Training
+- `exp002-bowl-act-5k`: 5,000 steps on episodes 1 to 9, batch size 8, MPS. About 1.7 steps per second. First rollout was jerky and never reached the Lego.
+- `exp002-bowl-act-50k`: 50,000 steps on episodes 1 to 39, batch size 8, MPS. Finished 2026-11-14 at 11:03 after 7 h 44 min. Checkpoints every 5,000 steps.
+
+### Rollouts (30 s, both cameras, gain 32, cap 5)
+- 5k checkpoint: moved, shaky, never got close to the Lego.
+- 50k, first run: reached the Lego, bumped it going down, backed off, regrasped, dropped it in the bowl, returned to rest. Shaky, but much better.
+- 50k, Lego flat and horizontal: run 1 missed on a couple of attempts. Run 2 grabbed right away. Run 3 (Lego vertical) missed on three attempts.
+- 50k, second batch: run 1 with the Lego flat, stacked on the other two blocks, succeeded on the first try. Run 2 with the Lego flat and rotated to 12 o'clock: the gripper did not rotate to grab, and it missed three times next to the block. Run 3 with the Lego flat and horizontal: bumped it on the first grab, missed, then overshot to the left twice.
+- Loop rate dips to about 16 Hz during runs. Inference averages about 50 to 60 ms with occasional spikes to about 200 ms.
+- 50k, `n_action_steps=10`: barely moved and shook periodically. Worse than the default.
+- 50k, temporal ensembling (`n_action_steps=1`, `temporal_ensemble_coeff=0.01`): the loop held 30 Hz and motion was smoother, but it missed left twice, the wrist did not roll enough, and it hovered and shook on the third try. Not a grasp improvement, so not the default.
+- Rollout settings change only how the policy runs, not its weights. Better grasping needs more data and a retrain.
+
+### Orientation batch (2026-11-15)
+- Backup first: `exp002-bowl-p32-backup-2026-11-14` (40 episodes), kept.
+- Recorded 25 episodes (40 to 64) appended to `exp002-bowl-p32` with `--resume=true`, same settings as the bowl batch (gain 32, cap 5, both cameras at 640x480 and 30 fps, 30 s episodes, 15 s resets, rest to rest). Script: `scripts/record_orient_25.sh`.
+- Red Lego placements: 6 flat and horizontal across the mat, 6 vertical, 6 rotated (about 3, 6, 9 and 12 o'clock), 4 stacked on the other two blocks, 3 near the bowl or the mat edges.
+- The other two blocks stay in the scene as distractors, flat, moved to a new spot each episode. ACT does not read the task text, so the distractors are what teach it to pick by color.
+- All 25 episodes were successful demos. None are excluded.
+- Dataset is now 65 episodes (0 to 64), 57,252 frames. Episode 0 is still excluded from training.
+
+### Retrain `exp002-bowl-act-50k-v2` (started 2026-11-15 05:58)
+- From scratch, 50,000 steps on episodes 1 to 64 (56,352 frames), batch size 8, MPS, checkpoints every 5,000 steps. Script: `scripts/train_act_50k_v2.sh`.
+- About 1.6 steps per second, so expect it to finish around 14:30.
+- Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v2_2026-11-15.log`. Recording log: `/Users/alancampbell/lerobot_data/record_orient_25_2026-11-15.log`.
+- Next: test the 30k and 50k checkpoints on the same fixed placements, about 10 trials each, and keep the one with more successful grasps. Do not pick by training loss.
+
+### Read of the results (not verified)
+- The policy works on some placements, but it misses rotated and vertical Lego positions. Those are under-covered in the training data.
+- Jerkiness is still there. The speed-cap clamp is the likely cause, but a cap of 10 has not been tested yet.
+
+### Next
+1. Done: temporal ensembling tested (see rollouts above).
+2. Done: orientation batch recorded (25 episodes, see above).
+3. Running: retrain on episodes 1 to 64. Then compare the 30k and 50k checkpoints, about 10 trials each.
+4. Keep adding batches until the dataset is near 100 episodes, then retrain and compare again.
+5. Not started: test the speed cap at 10 on a rollout.
+6. Not started: decide the training location. No upload has happened. Check the conditions in ADR 0010 first.
+
 ## Plan and next steps (2026-11-13)
+
+(Partly superseded by the progress log above. Items 1 and 2 are done.)
 
 Status: teleop works, a 5-episode test dataset is recorded, and a 5,000-step ACT checkpoint ran on the
 arm for 30 seconds. It moved but never reached down to the Lego, so the next work is about data and reach,
@@ -145,9 +210,11 @@ not new hardware.
 
 ### Data and file locations (outside the repo, never committed)
 
-- Dataset: `/Users/alancampbell/lerobot_data/exp002-red-lego-test` (5 episodes, 4,500 frames at the moment).
-- Mac training outputs: `/Users/alancampbell/lerobot_outputs/` (timing run at 100 steps, run at 5,000 steps).
-- Checkpoint for the arm trial: `/Users/alancampbell/lerobot_outputs/exp002-act-5k/checkpoints/005000/pretrained_model`.
+- Current dataset: `/Users/alancampbell/lerobot_data/exp002-bowl-p32` (65 episodes, gain 32).
+- Backup before the orientation batch: `/Users/alancampbell/lerobot_data/exp002-bowl-p32-backup-2026-11-14` (40 episodes).
+- Earlier test dataset: `/Users/alancampbell/lerobot_data/exp002-red-lego-test` (5 episodes).
+- Mac training outputs: `/Users/alancampbell/lerobot_outputs/` (`exp002-bowl-act-5k`, `exp002-bowl-act-50k`, `exp002-bowl-act-50k-v2` (running), and the older 100-step smoke run).
+- Current checkpoint: `/Users/alancampbell/lerobot_outputs/exp002-bowl-act-50k/checkpoints/050000/pretrained_model`.
 
 ## Harness work (later, not started)
 
@@ -167,3 +234,9 @@ not new hardware.
   the new goal the long way round, which looks like a reversal.
 - Workaround for now: keep the leader's wrist roll within about 150 degrees either side of the middle.
 - Fix (for the harness, not the bench): see the harness work list above.
+
+## Demonstration pattern: rest to rest
+
+- Each episode in the bowl batch (gain 32, bowl fixed) starts and ends with the arm retracted to its rest pose.
+  The operator returns the arm to rest after dropping the Lego in the bowl, so every episode begins and ends at the same pose.
+- Episodes 10 to 39 were recorded this way. Episode 37 had a brief fumble and recovery, and is kept.
