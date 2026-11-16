@@ -1,6 +1,6 @@
 # exp002: SO-ARM101 Pro bench notes
 
-Status (2026-11-15): both arms calibrated, teleop working, two cameras recording. A 50k-step ACT policy runs on the arm and grasps the Lego on flat placements, but misses rotated and vertical ones and moves jerkily. A 25-episode orientation batch is recorded (65 episodes total) and a second 50k retrain on episodes 1 to 64 is running. See the progress log below. Nothing here is published.
+Status (2026-11-16): both arms calibrated, teleop working, two cameras recording. The bench moved to a new environment, and the v2 checkpoints (trained only on the original setup) failed all 4 runs there. A new overhead camera (Logitech C920) is in, 30 new-environment episodes are recorded (95 episodes total), and a v3 retrain on episodes 1 to 94 is running. See the progress log below. Nothing here is published.
 
 Run scripts for recording, training and rollout are in `scripts/`. Every rollout goes in `trials.md`, one row per trial. They hold this Mac's ports, camera indexes and paths, so check those before running one.
 
@@ -101,7 +101,7 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
    stops short. Test: hold the leader fully closed for 10 seconds, stop, then read the follower.
 3. **Shoulder pan right stop.** The right end of the pan is likely a physical limit. Confirm before relying on it.
 
-## Progress log (2026-11-13 to 2026-11-15)
+## Progress log (2026-11-13 to 2026-11-16)
 
 ### Setup
 - Box camera: Logitech, OpenCV index 0, 1920x1080, mounted about 50 to 70 cm overhead. Zoom and focus set in Logi Tune (not controllable from OpenCV on this Mac).
@@ -151,6 +151,28 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
 - Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v2_2026-11-15.log`. Recording log: `/Users/alancampbell/lerobot_data/record_orient_25_2026-11-15.log`.
 - Next: test the 30k and 50k checkpoints on the same fixed placements, about 10 trials each, and keep the one with more successful grasps. Do not pick by training loss.
 
+### New environment (2026-11-15 evening)
+- Moved the bench: new location, new lighting, cameras moved, arms and bowl moved. Not tightly controlled on purpose; the policy has to cope with different setups.
+- After the replug, camera indexes swapped: overhead (box) is index 1, wrist is index 0. The v2 rollout scripts use that order.
+- The sky cam timed out at connect twice; `warmup_s: 3` on the box camera fixed it.
+- v2 30k once and v2 50k three times: all 4 failed (trials 10 to 13 in `trials.md`, placements not recorded). Expected, since every demo so far came from the original setup.
+
+### Overhead camera and new-environment batch (2026-11-16)
+- New overhead camera: Logitech HD Pro Webcam C920 at index 1 (the wrist cam is the "USB HD Camera" at index 0). Aimed at the follower with `scripts/camera_view.py 1`.
+- Numbers-only check with `scripts/cam_stats.py 1` at 640x480: brightness 125, drift 0.0, blown out 0.79%, crushed 0.00%, sharpness 639 (drift 2), color balanced, 30 fps. Writes no frames.
+- Backup first: `exp002-bowl-p32-backup-2026-11-16` (65 episodes), kept.
+- Recorded 30 episodes (65 to 94) into `exp002-bowl-p32` in three blocks of 10 with `scripts/record_env2_10.sh`, same settings as before. The bowl moved and the lighting changed between blocks. Each block: 3 flat, 2 vertical, 3 rotated, 1 stacked, 1 near the edge or bowl, with the two distractor blocks moved each episode.
+  - Block A (65 to 74): bowl and light as set up. All clean.
+  - Block B (75 to 84): second bowl spot, changed light. Episode 76 placed the Lego at the buzzer but did not return to rest; kept.
+  - Block C (85 to 94): third bowl spot, third lighting. All clean.
+- Dataset is now 95 episodes (0 to 94), 83,243 frames. Logs: `/Users/alancampbell/lerobot_data/record_env2_block{A,B,C}_2026-11-16.log`.
+
+### Retrain `exp002-bowl-act-50k-v3` (started 2026-11-16 14:22)
+- From scratch, 50,000 steps on episodes 1 to 94 (82,343 frames), same settings as v2. Script: `scripts/train_act_50k_v3.sh`.
+- About 1.7 steps per second, so expect it to finish around 22:30.
+- Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v3_2026-11-16.log`.
+- Next: test v3 in this environment, then in a changed one, logging every trial in `trials.md`.
+
 ### Read of the results (not verified)
 - The policy works on some placements, but it misses rotated and vertical Lego positions. Those are under-covered in the training data.
 - Jerkiness is still there. The speed-cap clamp is the likely cause, but a cap of 10 has not been tested yet.
@@ -158,7 +180,8 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
 ### Next
 1. Done: temporal ensembling tested (see rollouts above).
 2. Done: orientation batch recorded (25 episodes, see above).
-3. Running: retrain on episodes 1 to 64. Then compare the 30k and 50k checkpoints, about 10 trials each.
+3. Done: v2 retrain on episodes 1 to 64. The 30k vs 50k comparison was not run; the bench moved first.
+3a. Running: v3 retrain on episodes 1 to 94 (original setup plus 30 new-environment episodes). Then test it here and in a changed setup.
 4. Keep adding batches until the dataset is near 100 episodes, then retrain and compare again.
 5. Not started: test the speed cap at 10 on a rollout.
 6. Not started: decide the training location. No upload has happened. Check the conditions in ADR 0010 first.

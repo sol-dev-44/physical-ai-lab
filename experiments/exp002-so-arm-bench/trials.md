@@ -9,6 +9,7 @@ One row per 30-second rollout. Alan watches every run and reports the outcome; t
 | v1 50k | `exp002-bowl-act-50k/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 39 | 50,000 |
 | v2 30k | `exp002-bowl-act-50k-v2/checkpoints/030000` | `exp002-bowl-p32` episodes 1 to 64 | 30,000 |
 | v2 50k | `exp002-bowl-act-50k-v2/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 64 | 50,000 |
+| v3 50k (training) | `exp002-bowl-act-50k-v3/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 94 (65 to 94 in the new environment, C920 overhead cam) | 50,000 |
 
 ## Fixed lists
 
@@ -32,6 +33,12 @@ Rows marked `not recorded` were backfilled from the progress log and lack that d
 | 7 | 2026-11-14 | v1 50k | chunk | flat-horizontal | missed | about 4 | no | Bumped on the first grab, missed, overshot left twice. |
 | 8 | 2026-11-14 | v1 50k | nas10 | not recorded | missed | 0 | no | Barely moved, shook periodically. |
 | 9 | 2026-11-14 | v1 50k | te | not recorded | missed | 3 | no | Loop held 30 Hz. Missed left twice, wrist did not roll enough, hovered and shook. |
+| 10 | 2026-11-15 | v2 30k | chunk | not recorded | not recorded | not recorded | no | New environment, see below. Failed. |
+| 11 | 2026-11-15 | v2 50k | chunk | not recorded | not recorded | not recorded | no | New environment. Failed. |
+| 12 | 2026-11-15 | v2 50k | chunk | not recorded | not recorded | not recorded | no | New environment. Failed. Sky cam warm-up raised to 3 s after a connect timeout. |
+| 13 | 2026-11-15 | v2 50k | chunk | not recorded | not recorded | not recorded | no | New environment. Failed. |
+
+Rows 10 to 13 ran in a new environment: a different location, different lighting, cameras moved, and the arms and bowl moved. Every demonstration was recorded in the original setup, so these runs test generalization. They are not part of the v2 comparison.
 
 ## v2 comparison (planned, not run)
 
