@@ -7,11 +7,11 @@ which git ignores: rebuild instead of committing meshes.
 CadQuery is large, so it stays out of the lab's uv workspace and runs on demand:
 
 ```bash
-uv run --no-project --python 3.12 --with cadquery python experiments/exp003-home-robot/cad/build.py
+uv run --no-project --python 3.12 --with cadquery python experiments/exp003-household-robot/cad/build.py
 ```
 
 ```bash
-uv run --no-project --python 3.12 --with cadquery --with pytest pytest -q experiments/exp003-home-robot
+uv run --no-project --python 3.12 --with cadquery --with pytest pytest -q experiments/exp003-household-robot
 ```
 
 The plain `uv run pytest` runs the measurement checks and skips the geometry tests.

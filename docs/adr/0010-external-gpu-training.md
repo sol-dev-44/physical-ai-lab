@@ -1,6 +1,7 @@
 # 0010: Arm policies may train on external GPUs
 
 Status: Accepted (approved by owner, 2026-11-13). Supersedes [0009](0009-arm-bench-camera.md).
+Its privacy conditions are replaced by [0013](0013-owner-governs-personal-data.md).
 
 **Context.** exp002 records camera frames and joint data for imitation learning. Training on the lab
 Mac is slow, and a consistent training schedule needs a GPU. ADR 0009 said frames never leave the lab's

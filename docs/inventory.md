@@ -4,7 +4,7 @@ What the lab owns, where each thing is, and what is coming. Check here before or
 
 **Keep it current.** Update this file in the same change whenever a part arrives, gets assigned to
 an experiment, breaks, or is used up, and add a line to the change log at the bottom.
-Order numbers, addresses and anything identifying a child stay out (ADR 0007); the repo is public.
+The repo is public: personal details go in only when the owner says so (ADR 0013).
 
 ## Status key
 
@@ -23,7 +23,7 @@ Order numbers, addresses and anything identifying a child stay out (ADR 0007); t
 |---|---|---|---|
 | SO-ARM101 Pro kit, leader arm (black, 7.4V motors) | 1 | Active | exp002 bench, read-only teleop arm |
 | SO-ARM101 Pro kit, follower arm (white, 12V STS3215) | 1 | Active | exp002 bench |
-| SO-ARM101 Pro kit, second leader + follower | 1 pair | Unknown | Second kit from the 2026-11-07 order |
+| SO-ARM101 Pro kit, second leader + follower | 1 pair | Unknown | Second kit from the 2026-11-07 order. Candidate for the exp003 v2 arm (follower on the robot, leader for teleop demos) |
 | Bus servo driver boards (from the arm kits) | 4 | 2 Active, 2 Unknown | One per arm |
 | Wrist cameras ("USB HD Camera", from the kits) | 2 | 1 Active, 1 Unknown | exp002 follower gripper |
 | 5V 4A adapter (leader power) | 1+ | Active | exp002 |
@@ -46,7 +46,7 @@ Order numbers, addresses and anything identifying a child stay out (ADR 0007); t
 |---|---|---|---|
 | Logitech C920x webcam | 2 | 1 Active, 1 Reserved | Active: overhead camera (exp001 arena, then exp002 bench). Reserved: exp003 front camera |
 | Seeed reSpeaker XVF3800 USB mic array | 1 | Reserved | exp003 head |
-| DJI Mic Mini | 1 | Spare | Build-log narration. Not for recording a child (ADR 0007) |
+| DJI Mic Mini | 1 | Spare | Build-log narration |
 | Xbox controller | 1 | Reserved | exp003 teleop |
 | Neewer LED panels (2) + 22" overhead arm | 1 set | Unknown | Probably the bench lighting and camera mount |
 | Sabrent 10-port USB hub | 1 | Spare | Keep the arms off hubs (exp002) |
@@ -70,7 +70,7 @@ Order numbers, addresses and anything identifying a child stay out (ADR 0007); t
 | Felt desk mat | 1 | Active | Bench |
 | M2 to M5 screw assortment | 1 | Spare | |
 
-## exp003 home robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
+## exp003 household robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
 
 Status for all: **On order**, reserved for exp003. "Check on arrival" is what to verify before use.
 
@@ -150,3 +150,4 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 ## Change log
 
 - 2026-11-17: file created from the 2026-11-07 and 2026-11-17 orders and the experiment READMEs.
+- 2026-11-17: exp003 renamed household robot; privacy rules moved to owner judgement (ADR 0013); second SO-ARM101 pair noted as the v2 arm candidate.

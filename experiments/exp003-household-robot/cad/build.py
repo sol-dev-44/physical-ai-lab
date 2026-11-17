@@ -1,7 +1,7 @@
 """Build exp003's printable parts from servo.toml into cad/out/ (gitignored).
 
     uv run --no-project --python 3.12 --with cadquery \
-        python experiments/exp003-home-robot/cad/build.py
+        python experiments/exp003-household-robot/cad/build.py
 
 Writes STEP (open this in Bambu Studio: true curves) and STL for each part. While servo.toml
 still says measured = false, every file name ends in _UNMEASURED: do not print those.

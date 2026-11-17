@@ -13,7 +13,10 @@ Read `docs/architecture.md` first. Rules that matter most:
 - Timed device actions (holds) are played by the device from one frame with a repeat count,
   never by a send loop (ADR 0008). Learned IR codes go through `ir.one_frame`.
 - Safety rules that depend on sensors are interlocks (`lab_agent/interlocks.py`), attached to the registry and run by the gate. Never in a camera or device module.
-- Camera frames are never written, committed, synced or posted. exp001 keeps numbers only; the one exception is `exp001 snapshot --nobody-in-frame` into gitignored `media/` (ADR 0007).
+- Photos, recordings and personal information are the owner's call (ADR 0013): when the owner
+  asks for something done with them, do it. Don't add personal information to the public repo
+  or site on your own initiative. exp001 still drops frames and asks for `--nobody-in-frame`
+  before writing one, until the owner says otherwise.
 - On the lab machine always sync with `uv sync --all-packages --extra hardware`. A plain
   `uv sync` removes broadlink/python-kasa, and every real send then fails with
   `ModuleNotFoundError` (happened 2026-11-10).
@@ -23,8 +26,8 @@ Read `docs/architecture.md` first. Rules that matter most:
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
 - What the lab owns, where it is, and what's on order: `docs/inventory.md`. Check it before ordering,
   and update it in the same change when a part arrives, gets assigned, breaks or is used up.
-- Never commit `events/`, media, `.env*` (except `.env.example`), or anything identifying a child (ADR 0007).
-  The one media exception is hand-reviewed arm clips in `apps/web/public/clips/` under ADR 0011.
+- Never commit `events/` or `.env*` (except `.env.example`). Commit media or personal information
+  only when the owner asks (ADR 0013). Published arm clips live in `apps/web/public/clips/` (ADR 0011).
 - Keep strict settings on: no `ignoreBuildErrors`, no skipping lint, no `any` without a comment saying why.
 - `apps/web` is Next.js 16 with Cache Components; read `apps/web/AGENTS.md` and the docs in `node_modules/next/dist/docs/` before changing data fetching.
 - Before finishing: `pnpm check`, `uv run pytest`, `cargo test` (and `supabase/tests/run.sh` when touching SQL or anything that writes to Supabase).
