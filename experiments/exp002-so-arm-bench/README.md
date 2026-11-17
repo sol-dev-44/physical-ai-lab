@@ -1,6 +1,6 @@
 # exp002: SO-ARM101 Pro bench notes
 
-Status (2026-11-16): both arms calibrated, teleop working, two cameras recording. The bench moved to a new environment, and the v2 checkpoints (trained only on the original setup) failed all 4 runs there. A new overhead camera (Logitech C920) is in, 30 new-environment episodes are recorded (95 episodes total), and a v3 retrain on episodes 1 to 94 is running. See the progress log below. Nothing here is published.
+Status (2026-11-16, late): v3 (episodes 1 to 94) put 2 of 9 in the bowl on a fixed test in the new environment, and missed every rotated placement. A 30-episode rotation-weighted batch is recorded (125 episodes total) and a v4 retrain on episodes 1 to 124 is running overnight. See the progress log below and `trials.md`. Nothing here is published.
 
 Run scripts for recording, training and rollout are in `scripts/`. Every rollout goes in `trials.md`, one row per trial. They hold this Mac's ports, camera indexes and paths, so check those before running one.
 
@@ -172,6 +172,23 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
 - About 1.7 steps per second, so expect it to finish around 22:30.
 - Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v3_2026-11-16.log`.
 - Next: test v3 in this environment, then in a changed one, logging every trial in `trials.md`.
+
+### v3 on the arm (2026-11-16 evening)
+- `scripts/rollout_v3_50k_30s.sh` (default chunking) and `scripts/rollout_v3_50k_temporal_30s.sh` (temporal ensembling). Trials 14 to 25 in `trials.md`.
+- Fixed test, 9 runs with temporal ensembling at bowl spots A, B and C: 2 of 9 in the bowl, 3 of 9 grasped. Rotated-12 went 0 of 3. Most misses were 2 to 4 inches off on the mat with the height about right; two were too high. Full breakdown at the end of `trials.md`.
+
+### Rotation-weighted batch (2026-11-16 night)
+- Backup first: `exp002-bowl-p32-backup-2026-11-16b` (95 episodes), kept.
+- 30 episodes (95 to 124), three blocks of 10 with `scripts/record_env2_10.sh`, one block per bowl spot (A, B, C) with that block's light. All clean.
+- Each block: 3 angled right (two at 1 o'clock, one at 2), 3 angled left (two at 11, one at 10), 2 vertical, 2 flat-horizontal. Lego moved to a new spot on the mat each episode.
+- Demonstration style: turn the wrist to match before descending, slow final approach with a short pause, lower close to the bowl before releasing.
+- Dataset is now 125 episodes (0 to 124), 109,245 frames. Logs: `/Users/alancampbell/lerobot_data/record_rot_block{A,B,C}_2026-11-16.log`.
+
+### Retrain `exp002-bowl-act-50k-v4` (started 2026-11-16 23:18)
+- From scratch, 50,000 steps on episodes 1 to 124 (108,345 frames), same settings as v3. Script: `scripts/train_act_50k_v4.sh`.
+- About 1.7 steps per second, so expect it to finish around 07:30 on 2026-11-17.
+- Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v4_2026-11-16.log`.
+- Next: rerun the same 9-run fixed test with v4 and compare with v3's 2 of 9.
 
 ### Read of the results (not verified)
 - The policy works on some placements, but it misses rotated and vertical Lego positions. Those are under-covered in the training data.
