@@ -1,6 +1,6 @@
 # exp002: SO-ARM101 Pro bench notes
 
-Status (2026-11-16, late): v3 (episodes 1 to 94) put 2 of 9 in the bowl on a fixed test in the new environment, and missed every rotated placement. A 30-episode rotation-weighted batch is recorded (125 episodes total) and a v4 retrain on episodes 1 to 124 is running overnight. See the progress log below and `trials.md`. Nothing here is published.
+Status (2026-11-17): v4 (episodes 1 to 124) sat still at rest on every rollout. Cause found offline: the demos start with about 3 s of stillness, and the policy learned to wait. The lab now trims idle frames, audits data and checkpoints before training and robot time, and records with a motion gate. v5 (v4's data, trimmed) is ready to train. See the progress log, `trials.md` and `reports/ACT training best practices for SO101.md`. Nothing here is published.
 
 Run scripts for recording, training and rollout are in `scripts/`. Every rollout goes in `trials.md`, one row per trial. They hold this Mac's ports, camera indexes and paths, so check those before running one.
 
@@ -101,7 +101,7 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
    stops short. Test: hold the leader fully closed for 10 seconds, stop, then read the follower.
 3. **Shoulder pan right stop.** The right end of the pan is likely a physical limit. Confirm before relying on it.
 
-## Progress log (2026-11-13 to 2026-11-16)
+## Progress log (2026-11-13 to 2026-11-17)
 
 ### Setup
 - Box camera: Logitech, OpenCV index 0, 1920x1080, mounted about 50 to 70 cm overhead. Zoom and focus set in Logi Tune (not controllable from OpenCV on this Mac).
@@ -190,6 +190,22 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
 - Log: `/Users/alancampbell/lerobot_outputs/train_act_50k_v4_2026-11-16.log`.
 - Next: rerun the same 9-run fixed test with v4 and compare with v3's 2 of 9.
 
+### v4 on the arm: it never started (2026-11-17)
+- v4 finished at 06:58 (7 h 40 min, 1.8 steps per second, final loss 0.107 against v3's 0.098).
+- `scripts/rollout_v4_50k_temporal_30s.sh` twice and `scripts/rollout_v4_50k_30s.sh` (default chunking) once at the T1 setup: the arm stayed at rest every time. The software side was clean each run (30 Hz, every action sent, no errors). v3 as a control on the same setup moved normally. Trials 26 to 29 in `trials.md`.
+- Ruled out offline (no motion): normalization stats and config match v3; on recorded mid-episode frames v4 predicts normal motion; brightness made no difference; both camera views looked the same as when recording.
+- Found with `scripts/live_policy_probe.py` (one live frame from each camera, no arm, nothing written) and then on recorded data: from the rest pose, v4's 100-step plan moved 2 to 3 degrees on the live frames and 55 degrees on a recorded one. Across all 125 recorded episode starts, v4 planned to stay put on 63 (50%); on the 30 rotation-batch starts, 13 for v4 against 0 for v3.
+- Cause: the demos sit still at the rest pose for a median 3.2 s before the first move, and for a median 7 s at rest after the return, waiting for the 30 s timer. About 37% of all frames were idle. ACT has no memory, so a scene that often meant "wait" makes it wait, and the next frame looks the same, so it waits for the whole run. A small nudge to the start pose did not break it. This is reported upstream too (LeRobot issue 3429).
+
+### Data pipeline added (2026-11-17)
+- `scripts/trim_idle.py`: copies a dataset with each episode's idle start (keeps 3 frames before the first move) and idle end (keeps 1 s) cut. Videos stay byte-identical; only parquet rows and episode metadata change, and numeric stats are recomputed. `--verify` checks random frames against the source (numbers equal, pixel difference 0). Built `exp002-bowl-p32-trimmed`: 68,254 of 109,245 frames, verified. The source is untouched.
+- `scripts/audit.py`: run before training and before robot time. Data checks (idle start and end, mid-episode pauses, length outliers, stats count) and, with `--checkpoint`, the policy's planned motion from every recorded episode start. It fails if the median idle start is over 0.5 s, the median idle end over 2 s, or a checkpoint plans to wait on more than 5% of starts. It would have caught v4 before the robot: data FAIL on both idle checks, checkpoint FAIL at 50%.
+- `scripts/record_gated.py` and `scripts/record_env2_10_gated.sh`: `lerobot-record` with a motion gate. Frames before the first move are not saved, and the episode ends itself once the arm is folded back to rest (shoulder lift and elbow within 5 degrees of the start) and every joint has stayed within 2 degrees for 1 s. Replayed on all 125 recorded episodes: the start cut matches `trim_idle.py` on all 125, 112 end on their own, and every early end drops only time with the arm already folded at rest. Not yet used on the arm.
+- `scripts/train_act_50k_v5.sh`: v4's episodes 1 to 124 from the trimmed copy, same settings as v4, and it stops if the audit fails. A 20-step smoke test on the trimmed data ran. Trimming also changes the epoch count: 50k steps at batch 8 is about 5.9 epochs of the trimmed data against v4's 3.7, so the 30k checkpoint (about 3.5 epochs) is the epoch-matched comparison with v4.
+- Research behind these: `reports/ACT training best practices for SO101.md` (notes in `research_notes/`).
+- v5 started 2026-11-17 11:07: audit PASS, 124 episodes, 67,627 frames, about 1.8 steps per second, so expect it to finish around 19:00. Output `/Users/alancampbell/lerobot_outputs/exp002-bowl-act-50k-v5`, log `/Users/alancampbell/lerobot_outputs/train_act_50k_v5_2026-11-17.log`.
+- Failed partial copies of the trimmed dataset are kept as `exp002-bowl-p32-trimmed-FAILED-partial` and `-partial2` (a column-shape bug, fixed). Nothing else uses them; they can be removed.
+
 ### Read of the results (not verified)
 - The policy works on some placements, but it misses rotated and vertical Lego positions. Those are under-covered in the training data.
 - Jerkiness is still there. The speed-cap clamp is the likely cause, but a cap of 10 has not been tested yet.
@@ -202,6 +218,9 @@ moves the raw readings, so any stored goal in raw units must be re-measured afte
 4. Keep adding batches until the dataset is near 100 episodes, then retrain and compare again.
 5. Not started: test the speed cap at 10 on a rollout.
 6. Not started: decide the training location. No upload has happened. Check the conditions in ADR 0010 first.
+7. Running: v5 (`scripts/train_act_50k_v5.sh`, started 11:07, done about 19:00). Then `audit.py --checkpoint` on v5 and `live_policy_probe.py` before any rollout, then the 9-run fixed test against v3's 2 of 9.
+8. From now on: record new demos with `scripts/record_env2_10_gated.sh`, run `audit.py` after every batch, and start moving as soon as an episode begins.
+9. Later: image augmentation (v6 candidate, one change at a time), longer training (100k steps), SmolVLA fine-tuning on a cloud GPU, and LeRobot's correction mode (`lerobot-rollout --strategy.type=dagger`). See the research report.
 
 ## Plan and next steps (2026-11-13)
 
@@ -280,3 +299,4 @@ not new hardware.
 - Each episode in the bowl batch (gain 32, bowl fixed) starts and ends with the arm retracted to its rest pose.
   The operator returns the arm to rest after dropping the Lego in the bowl, so every episode begins and ends at the same pose.
 - Episodes 10 to 64 were recorded this way. Episode 37 had a brief fumble and recovery, and is kept.
+- Lesson (2026-11-17): rest to rest is right, but the arm must not wait at rest. Every episode began with about 3 s of stillness and ended with about 7 s at rest, and v4 learned to wait. Start moving as soon as recording begins, and let the motion gate (`scripts/record_gated.py`) end the episode once the arm is back at rest.

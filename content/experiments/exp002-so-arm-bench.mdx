@@ -3,11 +3,11 @@ id: exp002-so-arm-bench
 title: "Experiment 2: teaching an arm to pick up a Lego"
 date: 2026-11-11
 status: running
-summary: A low-cost leader and follower arm pair, 65 recorded episodes and an ACT policy that now picks a red Lego into a bowl on some placements. Next, a fixed-placement comparison of whether covering more orientations in the data helps.
+summary: A low-cost leader and follower arm pair, 125 recorded episodes and ACT policies that pick a red Lego into a bowl on some placements. After a move to a new room the best policy scored 2 of 9 on a fixed test. The next one froze at rest, which led to trimming idle frames and auditing data before every run.
 hypothesis: Adding demonstrations that cover the placements a policy misses (vertical and rotated blocks) raises its grasp success on those placements, without losing the ones it already gets.
 hardware:
   - Seeed SO-ARM101 Pro (leader and follower)
-  - Overhead Logitech webcam
+  - Overhead Logitech C920 webcam
   - Wrist camera
 tags: [arm, imitation-learning, act, lerobot, eval]
 runs: []
@@ -44,19 +44,21 @@ distractors, and the arm has to put the red one in a bowl and return to rest.
 ## Data
 
 <Stats>
-  <Stat value="65" label="recorded episodes" note="64 used for training" />
-  <Stat value="57,252" label="frames at 30 fps" />
+  <Stat value="125" label="recorded episodes" note="124 used for training" />
+  <Stat value="109,245" label="frames at 30 fps" note="68,254 after trimming idle frames" />
   <Stat value="~52M" label="policy parameters (ACT)" />
   <Stat value="50 to 60 ms" label="inference per step" note="spikes near 200 ms" />
 </Stats>
 
-Every episode is 30 seconds with a 15 second reset, and starts and ends with the arm at rest.
+Every episode so far is 30 seconds with a 15 second reset, and starts and ends with the arm at rest. That last part turned out to matter (see "The policy that waited" below).
 
 | | |
 | --- | --- |
-| Dataset | `exp002-bowl-p32`, 65 episodes, 57,252 frames at 30 fps |
+| Dataset | `exp002-bowl-p32`, 125 episodes, 109,245 frames at 30 fps |
 | Bowl batch | 40 episodes, the Lego moved each time (episode 0 excluded as a failure) |
 | Orientation batch | 25 episodes on 15 November: 6 flat, 6 vertical, 6 rotated, 4 stacked, 3 near the bowl or an edge |
+| New-room batch | 30 episodes on 16 November after the bench moved, three blocks with the bowl and lighting changed per block |
+| Rotation batch | 30 episodes on 16 November: per block 6 angled, 2 vertical, 2 flat, with a slow final approach |
 | Follower gain | 32. At the default 16 the shoulder lagged the leader by up to 100 to 155 degrees; at 32 the mean lag was about 3 |
 
 The orientation batch exists because of what the first policy got wrong.
@@ -92,12 +94,49 @@ rotated block was missed, and those placements were rare in the training data.
 - **Inference is fast enough.** About 50 to 60 ms per step on the Mac, with spikes near 200 ms.
 - **The jerkiness has a likely cause.** The speed cap clamps many steps. A higher cap has not been tested.
 
+## A new room
+
+On 15 November the bench moved: new room, new lighting, and the cameras, arms and bowl all in
+new places. The second policy, trained only on the old setup, failed all 4 tries there. 30
+demonstrations in the new room and a better overhead camera went into a third policy (v3).
+
+On a fixed test of 9 runs (three bowl spots, each with the Lego flat-horizontal, vertical and
+rotated to about 1 o'clock) v3 placed 2 of 9 in the bowl and grasped 3. Rotated blocks went
+0 of 3: the wrist didn't turn far enough. Most other misses had the height right and landed
+2 to 4 inches off. Nine trials only show direction: the 95% interval on 2 of 9 is roughly 3%
+to 60%.
+
+## The policy that waited
+
+A fourth policy (v4) added 30 demonstrations weighted toward rotated blocks. It trained
+cleanly and then never left the rest pose on the arm, while v3 moved on the same setup.
+
+Offline, from the first frame of every recorded demo, v4 planned to stay put on 63 of 125. The
+demos explained it: a median 3.2 seconds of stillness before the first move and 7 seconds at
+rest after the return, about 37% of all frames. ACT sees only the current frame, so a scene
+that often meant "wait" makes it wait, and the next frame looks the same.
+
+## What the freeze taught
+
+- **Audit the data before training.** A check that measures idle time, and a checkpoint check
+  that measures planned motion from every recorded start, would have caught v4 before an
+  8-hour run. Both now run before every training run and every robot session.
+- **Trim, don't re-record.** Idle starts and ends are cut from a copy of the dataset, with the
+  videos left byte-identical. The recorder now cuts them as it goes, and ends each episode
+  once the arm is back at rest.
+- **Coverage beats count.** 125 demos is well past the usual 50 for one task. What fails
+  (rotated blocks) needs coverage of those angles, not more of the same.
+- **Loss doesn't pick checkpoints.** v3 ended at a higher training loss than v2 and did better.
+  Behavioural checks and fixed trials decide.
+
 ## Next
 
-1. A second policy, trained from scratch on episodes 1 to 64 (with the orientation batch), is training now.
-2. Compare its checkpoints on the same fixed placements, about 10 trials each, and keep the one with more
-   successful grasps, not the one with the lowest training loss.
-3. Keep adding batches toward 100 episodes, then retrain and compare again.
+1. Train v5: v4's demos with idle frames trimmed, nothing else changed, so any difference has
+   one cause.
+2. Before it touches the arm: the checkpoint audit and a live-frame probe. Then the same 9-run
+   test against v3's 2 of 9, with v3 re-run as a control.
+3. One change per run after that: image augmentation, longer training, correction demos taken
+   over mid-run with the leader arm, and fine-tuning a pretrained model (SmolVLA) on a rented GPU.
 4. Log rollouts through the harness, so results on this page are computed from runs instead of typed in.
 
 Bench notes, every calibration gotcha and the scripts are in the

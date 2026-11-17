@@ -1,0 +1,66 @@
+---
+title: "A new room, and 2 of 9"
+date: 2026-11-16
+summary: "The bench moved and the policy failed all four tries. 30 demonstrations in the new room, a better overhead camera and a retrain got it to 2 of 9 on a fixed test. Rotated blocks went 0 of 3, so the next batch targets them."
+tags: [arm, lerobot, act, imitation-learning, data, eval]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+Last night the bench moved: a new room, new lighting, the cameras, arms and bowl all in new
+places. Nothing was tightly controlled, on purpose. A policy that only works on one table
+isn't much use.
+
+## It failed in the new room
+
+The second policy, trained on the 64 episodes recorded in the old setup, went 0 for 4 in the
+new one. That's the expected result. Every demonstration it had seen came from a scene that
+no longer exists.
+
+## A better camera, checked by numbers
+
+A Logitech C920 replaced the old overhead webcam. It was aimed with a live view that writes
+nothing, then checked with a script that prints only numbers from 5 seconds of frames:
+brightness 125, no drift, under 1% blown out, nothing crushed to black, and sharpness 639 with
+almost no change between frames (so autofocus wasn't hunting). No frames were saved.
+
+## 30 demonstrations in the new room
+
+Three blocks of 10, with the bowl in a different spot and the lighting changed for each
+block. Each block mixed placements: 3 flat, 2 vertical, 3 rotated, 1 stacked, 1 near an edge
+or the bowl. Then a third policy (v3) trained from scratch on all 94 good episodes, about
+8 hours on the Mac.
+
+## The fixed test
+
+Nine runs, the same nine every time: three bowl spots, each with the Lego flat-horizontal,
+vertical (long side pointing away from the arm) and rotated to about 1 o'clock. The Lego
+always lies flat. It was reset by hand between runs.
+
+<Stats>
+  <Stat value="2 of 9" label="placed in the bowl" />
+  <Stat value="3 of 9" label="grasped" />
+  <Stat value="0 of 3" label="rotated placements" />
+</Stats>
+
+| Placement | Grasped | In the bowl |
+|---|---|---|
+| Flat-horizontal | 2 of 3 | 1 of 3 (one released too high and bounced off) |
+| Vertical | 1 of 3 | 1 of 3 |
+| Rotated | 0 of 3 | 0 of 3 |
+
+Two runs were perfect from start to finish. Most misses had the height right but landed 2 to
+4 inches off on the mat. On every rotated block the wrist didn't turn far enough, the same
+weakness the first policy had.
+
+<Callout>
+  Nine trials can't separate 2 of 9 from 4 of 9. The 95% interval on 2 of 9 runs from about
+  3% to 60%. The test is for direction, and for seeing how runs fail.
+</Callout>
+
+## The next batch
+
+30 more demonstrations weighted toward what failed: per block, 6 angled (three each way), 2
+vertical and 2 flat. In these demos the wrist turns to match before the arm goes down, the
+final approach is slow, and the Lego is released low over the bowl. A fourth policy (v4) on
+all 124 good episodes trained overnight.

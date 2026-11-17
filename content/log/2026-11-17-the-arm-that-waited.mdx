@@ -1,0 +1,83 @@
+---
+title: "The arm that waited"
+date: 2026-11-17
+summary: "The fourth policy trained cleanly and then never moved. The cause was in the data: every demonstration began with 3 seconds of stillness, and the policy learned to wait. Now idle frames are trimmed, data and checkpoints are audited before robot time, and the recorder cuts dead time as it goes."
+tags: [arm, lerobot, act, imitation-learning, data, eval]
+experiment: exp002-so-arm-bench
+draft: false
+---
+
+v4 finished training at 7 this morning, in 7 hours 40 minutes. On the arm it did nothing.
+Three runs, two rollout settings, and it never left the rest pose. Every run looked clean
+in the logs: 30 Hz, every action sent, no errors.
+
+## Ruling things out
+
+The previous policy (v3) moved normally on the same setup, so the arm, the cameras and the
+software were fine. That left v4 itself. Without moving the arm:
+
+- Its normalization stats and config matched v3's.
+- Fed recorded frames from the middle of a demo, it predicted normal motion.
+- Both camera views looked the same as when the demos were recorded, and brightening the live
+  frames changed nothing.
+
+## The finding
+
+ACT plans 100 steps (about 3.3 seconds) at a time. Shown the rest pose with one live frame from
+each camera, v4's whole plan moved 2 to 3 degrees. Shown the same pose with a recorded frame,
+it moved 55. Run over the first frame of every recorded demo, it planned to stay put on 63 of
+125.
+
+The demos explained it. The arm sat still at rest for a median 3.2 seconds before the
+operator's first move, and for a median 7 seconds at rest after returning, waiting for the
+30 second timer. About 37% of all frames were the arm doing nothing.
+
+<Callout>
+  ACT has no memory. It sees the current frame and nothing else. If the starting scene often
+  meant "wait" in the demos, it waits. The next frame looks the same, so it waits again, for
+  the whole run. v3 waits on some recorded starts too, but from today's scene it planned to
+  move, if weakly.
+</Callout>
+
+This failure has been reported on LeRobot's issue tracker. It isn't in the docs, and LeRobot's
+dataset editor still can't cut frames out of an episode.
+
+## What changed
+
+Four tools, all checked against the 125 recorded demos before going near the arm:
+
+- **A trimmer.** It copies the dataset with each demo's idle start and end cut: 0.1 seconds
+  kept before the first move and 1 second at rest after the last. Video files stay
+  byte-identical; only the frame tables and timing metadata change. A check against the source
+  found identical numbers and identical pixels. 68,254 of 109,245 frames are left.
+- **An audit before training.** It flags idle starts and ends, long pauses and odd-length
+  demos. Given a checkpoint, it also measures the planned motion from every recorded start and
+  fails if the policy would wait on more than 5% of them. Run on v4, it fails on all three
+  counts. It would have caught this before the 8-hour run, not after.
+- **A recorder that cuts as it goes.** It wraps LeRobot's recorder with a motion gate. Frames
+  before the first move are never saved, and the episode ends itself once the arm is back at
+  rest and still for a second. Replayed over the old demos, it cuts the start exactly where the
+  trimmer does, and it only drops time when the arm is already folded at rest.
+- **A training script that checks first.** v5 is v4's demos, trimmed, with nothing else
+  changed, so any difference has one cause. The script won't start if the audit fails.
+
+## Reading up
+
+A research pass covered how people curate, record, train and evaluate ACT on small SO-100 and
+SO-101 datasets. The points that change this bench:
+
+- **Coverage matters more than count.** 125 demos is already well past the usual 50 for one
+  task. More of the same stops helping; covering more Lego angles does not.
+- **Loss doesn't pick checkpoints.** Neither training nor validation loss reliably predicts
+  real success. Behavioural checks like the start-frame audit, then fixed trials, do.
+- **Small tests need big gaps.** At 9 trials, only very large differences are real. Re-run the
+  current best checkpoint alongside a new one as a control, and record each step (reach,
+  grasp, lift, place, release).
+- **Next options, one change per run.** Image augmentation for lighting, longer training,
+  LeRobot's new correction mode (take over with the leader arm mid-run and record the fix),
+  and fine-tuning a pretrained model like SmolVLA on a rented GPU.
+
+## Next
+
+Train v5 overnight. Before it touches the arm, it has to pass the checkpoint audit and the
+live-frame probe. Then the same nine-run test against v3's 2 of 9.
