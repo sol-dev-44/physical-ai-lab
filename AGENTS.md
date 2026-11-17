@@ -21,6 +21,8 @@ Read `docs/architecture.md` first. Rules that matter most:
   each has its own gate and rate limits.
 - Camera work (exp001): read its README's "Gotchas and hints" first. Camera commands run in macOS Terminal, never in this app.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
+- What the lab owns, where it is, and what's on order: `docs/inventory.md`. Check it before ordering,
+  and update it in the same change when a part arrives, gets assigned, breaks or is used up.
 - Never commit `events/`, media, `.env*` (except `.env.example`), or anything identifying a child (ADR 0007).
   The one media exception is hand-reviewed arm clips in `apps/web/public/clips/` under ADR 0011.
 - Keep strict settings on: no `ignoreBuildErrors`, no skipping lint, no `any` without a comment saying why.
