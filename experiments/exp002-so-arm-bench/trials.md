@@ -10,7 +10,7 @@ One row per 30-second rollout. Alan watches every run and reports the outcome; t
 | v2 30k | `exp002-bowl-act-50k-v2/checkpoints/030000` | `exp002-bowl-p32` episodes 1 to 64 | 30,000 |
 | v2 50k | `exp002-bowl-act-50k-v2/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 64 | 50,000 |
 | v3 50k | `exp002-bowl-act-50k-v3/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 94 (65 to 94 in the new environment, C920 overhead cam) | 50,000 |
-| v4 50k (training) | `exp002-bowl-act-50k-v4/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 124 (95 to 124 rotation-weighted) | 50,000 |
+| v4 50k | `exp002-bowl-act-50k-v4/checkpoints/050000` | `exp002-bowl-p32` episodes 1 to 124 (95 to 124 rotation-weighted) | 50,000 |
 
 ## Fixed lists
 
@@ -51,6 +51,10 @@ Rows marked `not recorded` were backfilled from the progress log and lack that d
 | 23 | 2026-11-16 | v3 50k | te | flat-horizontal | grasp-first | 1 | no | Fixed test T7, bowl spot C. Grasped with an unneeded wrist rotation to the right, hesitated finding the bowl, released well above it; the Lego bounced off the bowl. |
 | 24 | 2026-11-16 | v3 50k | te | vertical | missed | 3 | no | Fixed test T8, bowl spot C. Good wrist orientation and height; about 2 inches too far up the mat (north) on all 3 attempts. |
 | 25 | 2026-11-16 | v3 50k | te | rotated-12 | missed | 3 | no | Fixed test T9, bowl spot C. Wrist did not turn enough. Height good. First 2 attempts 3 to 4 inches up and to the right; the last bumped the Lego. |
+| 26 | 2026-11-17 | v4 50k | te | flat-horizontal | missed | 0 | no | Fixed-test T1 setup, bowl spot A. Never left rest. Loop clean at 30 Hz, no errors. Not counted as T1. |
+| 27 | 2026-11-17 | v3 50k | te | flat-horizontal | not recorded | not recorded | not recorded | Control for row 26 on the same setup: moved normally. Outcome not recorded. |
+| 28 | 2026-11-17 | v4 50k | te | flat-horizontal | missed | 0 | no | Rerun of row 26. Never left rest. |
+| 29 | 2026-11-17 | v4 50k | chunk | flat-horizontal | missed | 0 | no | Default chunking. Stayed retracted, barely moved. |
 
 Rows 10 to 13 ran in a new environment: a different location, different lighting, cameras moved, and the arms and bowl moved. Every demonstration was recorded in the original setup, so these runs test generalization. They are not part of the v2 comparison.
 
@@ -99,3 +103,10 @@ How the misses failed (some had more than one):
 - After a bump, later attempts drifted farther off (T3).
 
 Read (not verified): v3 does the whole task in this environment sometimes, at every bowl spot but C. Its weakest point is rotated placements, then a position error of a couple of inches. More demonstrations should target rotated placements, with a slow, clear final approach and release. Every fixed-test run used temporal ensembling; default chunking was not compared.
+
+## v4 fixed test (2026-11-17, stopped)
+
+Stopped before T1 counted: v4 never left the rest pose (rows 26, 28 and 29), while v3 moved on the same setup (row 27).
+Offline, v4 planned to stay put on 63 of the 125 recorded episode starts. The demos begin with about 3 s of stillness
+at rest, and the memoryless policy learned to wait. Details in the README progress log. v5 retrains on the same
+episodes with the idle frames trimmed; the fixed test resumes with v5 after `scripts/audit.py --checkpoint` passes.
