@@ -68,7 +68,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | STREBITO screwdriver set | 1 | Active | |
 | 6" C-clamps | 4 | Active | Bench |
 | Felt desk mat | 1 | Active | Bench |
-| M2 to M5 screw assortment | 1 | Spare | |
+| Mywish 1290-piece M2 to M5 button-head hex socket screw kit (B0CQWYFTXC) | 1 | Spare | Each size in 8, 12, 16 and 20 mm, with nuts, flat washers and hex keys. No M3 shorter than 8 mm |
 
 ## exp003 household robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
 
@@ -151,3 +151,4 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 
 - 2026-11-17: file created from the 2026-11-07 and 2026-11-17 orders and the experiment READMEs.
 - 2026-11-17: exp003 renamed household robot; privacy rules moved to owner judgement (ADR 0013); second SO-ARM101 pair noted as the v2 arm candidate.
+- 2026-11-18: screw kit identified from the order (button heads, 8 to 20 mm); exp003 hub sized for M3 x 8.

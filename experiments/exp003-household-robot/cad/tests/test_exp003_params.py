@@ -4,7 +4,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
-from exp003_cad.params import Horn, HubParams, derive, load
+from exp003_cad.params import Horn, HubParams, Screws, derive, load
 
 # Plausible STS3215 values, used only to test the arithmetic.
 HORN = Horn(
@@ -77,12 +77,37 @@ def test_counterbores_stay_above_a_deep_centre_pocket():
     assert counterbore_floor - d.center_pocket_depth_mm == pytest.approx(0.8)
 
 
-def test_checked_in_servo_file_is_the_measured_horn():
+MEASURED_HORN = Horn(19.9, 2.08, 4, 13.6, "M3", 5.0, 2.0, 4.0)
+KIT = Screws(head="button", lengths_mm=(8, 12, 16, 20))  # the lab's Mywish M2-M5 kit
+
+
+def test_web_thickens_so_the_shortest_kit_screw_stops_short_of_the_case():
+    d = derive(HubParams(horn=MEASURED_HORN, measured=True, screws=KIT))
+    assert d.screw == "M3 x 8"
+    assert d.counterbore_depth_mm == pytest.approx(1.95)  # 1.65 mm button head + 0.3
+    assert d.counterbore_diameter_mm == pytest.approx(6.3)  # 5.7 mm head + 0.6
+    clamp = d.web_mm - d.counterbore_depth_mm - d.recess_depth_mm
+    tip_below_horn_top = 8 - clamp
+    assert tip_below_horn_top == pytest.approx(4.0 - 0.5)  # stops 0.5 mm above the case
+    assert d.web_mm == pytest.approx(7.95)
+
+
+def test_no_screw_on_hand_fits():
+    with pytest.raises(ValueError, match="on hand"):
+        derive(HubParams(horn=MEASURED_HORN, measured=True, screws=Screws(lengths_mm=(3,))))
+
+
+def test_unknown_head_style_is_rejected():
+    with pytest.raises(ValueError, match="head"):
+        derive(HubParams(horn=MEASURED_HORN, measured=True, screws=Screws(head="pan")))
+
+
+def test_checked_in_servo_file_is_the_measured_horn_and_kit():
     p = load(Path(__file__).resolve().parents[1] / "servo.toml")
     assert p.measured is True
-    d = derive(p)
-    assert d.web_mm == pytest.approx(8.1)
-    assert d.screw == "M3 x 6"
+    assert p.horn == MEASURED_HORN
+    assert p.screws == KIT
+    assert derive(p).screw == "M3 x 8"
 
 
 def test_load_reads_every_field(tmp_path):
@@ -93,7 +118,20 @@ def test_load_reads_every_field(tmp_path):
         "od_mm = 21.0\nthickness_mm = 2.0\nbolt_count = 4\nbolt_circle_mm = 14.5\n"
         'bolt_size = "M2.5"\ncenter_head_mm = 5.5\ncenter_head_height_mm = 0.4\n'
         "shaft_height_mm = 4.5\n"
+        "[screws]\n"
+        'head = "button"\nlengths_mm = [6, 10]\n'
     )
     p = load(f)
     assert p.measured is True
     assert p.horn == Horn(21.0, 2.0, 4, 14.5, "M2.5", 5.5, 0.4, 4.5)
+    assert p.screws == Screws("button", (6, 10))
+
+
+def test_load_defaults_to_standard_socket_screws_without_a_screws_table(tmp_path):
+    f = tmp_path / "servo.toml"
+    f.write_text(
+        "measured = false\n[horn]\nod_mm = 20.0\nthickness_mm = 2.5\nbolt_count = 4\n"
+        'bolt_circle_mm = 14.0\nbolt_size = "M2"\ncenter_head_mm = 5.0\n'
+        "center_head_height_mm = 0.0\nshaft_height_mm = 4.0\n"
+    )
+    assert load(f).screws == Screws()

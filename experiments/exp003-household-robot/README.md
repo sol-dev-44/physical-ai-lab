@@ -125,5 +125,8 @@ See [cad/README.md](cad/README.md). First print: the hub coupon, once
   household rules) with a v2 arm for tidying toys. Privacy rules handed to the owner (ADR 0013,
   superseding 0007 and 0012); folder renamed from `exp003-home-robot`.
 - 2026-11-17: horn measured on a spare STS3215 (19.9 mm aluminium horn, 4 M3 holes on 13.6 mm,
-  centre screw 2 mm proud). Hub web thickened to 8.1 mm so the centre pocket stays below the screw
-  counterbores; fixed with 4 x M3 x 6. Coupon ready to print.
+  centre screw 2 mm proud). Hub web thickened so the centre pocket stays below the screw
+  counterbores. Coupon ready to print.
+- 2026-11-18: the lab's screw kit is button head with M3 only from 8 mm, so the model now takes the
+  screws on hand (`[screws]` in `servo.toml`) and thickens the web (7.95 mm) until an M3 x 8 stops
+  0.5 mm short of the servo case. Fixed with 4 x M3 x 8 button head.

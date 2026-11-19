@@ -42,7 +42,7 @@ def main() -> None:
 
     recess = f"{d.recess_diameter_mm:.2f} x {d.recess_depth_mm} mm"
     print(f"\nweb {d.web_mm:.1f} mm, horn recess {recess}")
-    print(f"screws: {p.horn.bolt_count} x {d.screw} socket head cap screws")
+    print(f"screws: {p.horn.bolt_count} x {d.screw} {p.screws.head}-head")
     if not p.measured:
         print("\nservo.toml is still placeholders (measured = false). Do not print these files.")
 
