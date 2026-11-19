@@ -200,6 +200,73 @@ def derive(p: HubParams) -> Derived:
     )
 
 
+MAX_TIRE_STRETCH = 0.05  # most a TPU 95A tire should stretch to roll over a flange by hand
+MIN_TIRE_OVER_FLANGE_MM = 3.0  # tread left above a flange, so the flange never touches the floor
+
+
+@dataclass(frozen=True)
+class Tire:
+    """The TPU tire, printed flat. Design choices; refine after the first one is fitted."""
+
+    od_mm: float = 120.0
+    # How much smaller the bore is than the rim seat, on diameter: the stretch that grips the rim.
+    # Printed bores come out a little small too, so start low.
+    interference_mm: float = 1.0
+    clearance_mm: float = 0.2  # per side, round the flanges, so the tire seats on the rim
+    edge_chamfer_mm: float = 1.5  # 45-degree chamfer on both outer edges; prints without support
+    # The printed rim's seat diameter, if measured with a caliper; the design value otherwise.
+    rim_measured_od_mm: float | None = None
+
+
+@dataclass(frozen=True)
+class TireDerived:
+    rim_seat_od_mm: float  # what the bore is sized against
+    bore_mm: float  # inside diameter on the rim seat
+    lip_bore_mm: float  # inside diameter of the lips that wrap over the flanges
+    tread_mm: float  # rubber over the rim seat
+    over_flange_mm: float  # rubber over the flanges
+    grip_stretch: float  # how far the bore stretches on the seat, as a fraction
+    mount_stretch: float  # how far the bore stretches to roll over a flange, as a fraction
+
+
+def derive_tire(p: HubParams, t: Tire) -> TireDerived:
+    """Size the tire against the rim, or raise ValueError naming what does not work."""
+    w = p.wheel
+    seat = t.rim_measured_od_mm if t.rim_measured_od_mm is not None else w.rim_od_mm
+    if abs(seat - w.rim_od_mm) > 1.0:
+        raise ValueError(
+            f"measured rim {seat} mm is over 1 mm from the design {w.rim_od_mm} mm; re-measure "
+            "across the bare seat between the flanges"
+        )
+    if t.interference_mm < 0:
+        raise ValueError("interference must be zero or more, or the tire spins on the rim")
+    bore = seat - t.interference_mm
+    flange_od = seat + 2 * w.flange_mm
+    over_flange = (t.od_mm - flange_od) / 2 - t.clearance_mm
+    if over_flange < MIN_TIRE_OVER_FLANGE_MM:
+        raise ValueError(
+            f"only {over_flange:.1f} mm of tire over the flanges; need "
+            f"{MIN_TIRE_OVER_FLANGE_MM} mm, so raise the tire od or lower the flanges"
+        )
+    if t.edge_chamfer_mm >= over_flange:
+        raise ValueError("the edge chamfer would cut through the lip over the flange")
+    mount = flange_od / bore - 1
+    if mount > MAX_TIRE_STRETCH:
+        raise ValueError(
+            f"the tire must stretch {mount:.1%} to pass a flange; TPU 95A manages about "
+            f"{MAX_TIRE_STRETCH:.0%} by hand, so lower the flanges or the interference"
+        )
+    return TireDerived(
+        rim_seat_od_mm=seat,
+        bore_mm=bore,
+        lip_bore_mm=flange_od + 2 * t.clearance_mm,
+        tread_mm=(t.od_mm - bore) / 2,
+        over_flange_mm=over_flange,
+        grip_stretch=seat / bore - 1,
+        mount_stretch=mount,
+    )
+
+
 @dataclass(frozen=True)
 class Case:
     """The STS3215 body, for brackets and the base plate. Origin: the shaft axis.

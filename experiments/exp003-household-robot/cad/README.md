@@ -22,6 +22,7 @@ The plain `uv run pytest` runs the measurement checks and skips the geometry tes
 |---|---|---|
 | Hub coupon | `out/hub_coupon.step` | The horn interface only. About 20 minutes. Print this first. |
 | Wheel hub | `out/wheel_hub.step` | 108 mm rim, 32 mm wide, flanges for a 6 mm TPU tire (120 mm wheel). |
+| Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`
 and the vendored STS3215 model in [vendor/](vendor/README.md).
@@ -42,6 +43,27 @@ While `servo.toml` says `measured = false`, files end in `_UNMEASURED`. Do not p
   brim. The full hub can only print this way (its rim is a cup opening upward), so print the
   coupon the same way for an honest test.
 - 0.4 mm nozzle, 0.2 mm layers, 4 walls, 30% infill (the profile's grid pattern is fine).
+
+## Tire (H2D, TPU 95A)
+
+Design numbers are `Tire` in `exp003_cad/params.py`; the build prints the bore and stretch.
+
+- **Before printing, measure the printed rim:** caliper across the bare seat between the flanges,
+  at three places round the wheel. Put the middle reading in `Tire.rim_measured_od_mm` and
+  rebuild, so the bore is sized to the real rim (the build refuses a reading over 1 mm off design).
+- Left nozzle, filament from the external spool holder, never through the AMS. Studio preset:
+  Generic TPU. A sealed spool is dry enough; if it strings or pops, dry it.
+- Flat, either face down, no supports, no brim. 3 walls, 25% gyroid infill (some give, still
+  holds its shape), 4 top and bottom layers. Use the preset's slow speeds.
+- Fitting: hub off the servo, servo-side face down. Push the tire over the top (outboard)
+  flange at one point, then work round, rolling the lip over. It stretches about 3.7% to pass the
+  flange. If it fights, a few minutes in hot tap water softens it.
+
+| Result | Change |
+|---|---|
+| Tire turns on the rim under load | Raise `Tire.interference_mm` by 0.5 and reprint |
+| Cannot get it over the flange | Lower `Tire.interference_mm` by 0.5 |
+| Lip does not sit down over a flange | Raise `Tire.clearance_mm` by 0.1 |
 
 ## Coupon check
 

@@ -11,8 +11,8 @@ household's rules about where it may go and when, and can be driven by remote.
 
 **Status (2026-11-19):** design settled, parts on order (due 2026-11-21 to 23; see
 [docs/inventory.md](../../docs/inventory.md)). Both PETG wheel hubs are printed and fit the horns.
-The servo body is measured and its CAD model is vendored, ready for the bracket. Next: the TPU
-tires, once the TPU arrives, and the servo bracket. Nothing here runs against hardware yet. Photos and personal data are the
+The servo body is measured and its CAD model is vendored, ready for the bracket. The TPU tire is
+modelled. Next: print the tires when the TPU arrives, and the servo bracket. Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
 ## Design: the body
@@ -123,7 +123,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v1 (recess round the horn) | PETG | Printed 2026-11-18; too close to the case, retired |
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
-| Tire x 2 | TPU 95A | To model; print when the TPU arrives |
+| Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
 | Servo bracket, base plate | PETG | To design; base plate waits for the caster, battery and Pi |
 
 ## Progress log
@@ -161,3 +161,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   keeps its measured numbers. The idler disc on the bottom stands about 4.1 mm proud of the case
   bottom round the shaft, so anything under the servo needs a pocket. Case numbers in
   `servo.toml` `[case]`, checked by the tests.
+- 2026-11-19: TPU tire modelled (`cad/exp003_cad/tire.py`): a 120 mm ring with a 107 mm bore that
+  grips the 108 mm rim seat (0.9% stretch) and a lip over each flange, 0.2 mm clear, so it cannot
+  walk off sideways. Fitting it means stretching 3.7% over one flange. Tests check the only
+  contact with the hub is the grip band on the seat. Prints flat in TPU 95A, no supports.
