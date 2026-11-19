@@ -124,3 +124,6 @@ See [cad/README.md](cad/README.md). First print: the hub coupon, once
 - 2026-11-17: scope widened to a household robot (recognition, per-person behaviour, memory,
   household rules) with a v2 arm for tidying toys. Privacy rules handed to the owner (ADR 0013,
   superseding 0007 and 0012); folder renamed from `exp003-home-robot`.
+- 2026-11-17: horn measured on a spare STS3215 (19.9 mm aluminium horn, 4 M3 holes on 13.6 mm,
+  centre screw 2 mm proud). Hub web thickened to 8.1 mm so the centre pocket stays below the screw
+  counterbores; fixed with 4 x M3 x 6. Coupon ready to print.

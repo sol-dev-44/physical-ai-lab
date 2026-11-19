@@ -1,15 +1,13 @@
 # STS3215 wheel-servo measurements for the wheel hub. How to take each one: MEASURING.md.
-# The values below are placeholders, not measurements. Replace every one from your caliper,
-# then set measured = true. Until then, build.py names its files *_UNMEASURED so nothing
-# gets printed by mistake.
-measured = false
+# Measured 2026-11-17 on a spare STS3215-12V with its 4-hole aluminium horn fitted.
+measured = true
 
 [horn]
-od_mm = 20.0                # A: outside diameter of the round horn
-thickness_mm = 2.5          # B: thickness of the horn disc
+od_mm = 19.9                # A: outside diameter of the round horn
+thickness_mm = 2.08         # B: thickness of the horn disc
 bolt_count = 4              # C: screw holes around the horn (not counting the centre screw)
-bolt_circle_mm = 14.0       # D: centre-to-centre distance across the holes
-bolt_size = "M2"            # E: screw that threads into the holes: "M2", "M2.5" or "M3"
+bolt_circle_mm = 13.6       # D: centre-to-centre across the holes (16.6 outside edges - 3.0 hole)
+bolt_size = "M3"            # E: screw that threads into the holes
 center_head_mm = 5.0        # F: centre screw head diameter
-center_head_height_mm = 0.0 # G: how far the centre screw head stands above the horn face; 0 if flush
+center_head_height_mm = 2.0 # G: how far the centre screw head stands above the horn face
 shaft_height_mm = 4.0       # H: horn top face down to the top of the servo case

@@ -69,10 +69,20 @@ def test_impossible_measurements_are_rejected(change, message):
         derive(params(**change))
 
 
-def test_checked_in_servo_file_loads_and_is_marked_unmeasured_until_filled_in():
+def test_counterbores_stay_above_a_deep_centre_pocket():
+    # The measured horn (2026-11-17): M3 holes and a centre screw standing 2 mm proud. The pocket
+    # (1.5 + 2.0 + 0.5 = 4.0 mm deep) must stop below the counterbore floors, with material between.
+    d = derive(params(bolt_size="M3", bolt_circle_mm=13.6, center_head_height_mm=2.0))
+    counterbore_floor = d.web_mm - d.counterbore_depth_mm
+    assert counterbore_floor - d.center_pocket_depth_mm == pytest.approx(0.8)
+
+
+def test_checked_in_servo_file_is_the_measured_horn():
     p = load(Path(__file__).resolve().parents[1] / "servo.toml")
-    derive(p)
-    assert p.measured is False
+    assert p.measured is True
+    d = derive(p)
+    assert d.web_mm == pytest.approx(8.1)
+    assert d.screw == "M3 x 6"
 
 
 def test_load_reads_every_field(tmp_path):

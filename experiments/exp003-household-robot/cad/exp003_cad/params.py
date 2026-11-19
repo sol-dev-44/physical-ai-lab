@@ -24,6 +24,7 @@ SCREW_LENGTHS_MM = (3, 4, 5, 6, 8, 10, 12, 16)
 
 MIN_UNDER_HEAD_MM = 2.0  # hub material left between a screw head and the horn
 MIN_CASE_GAP_MM = 1.0  # air between the hub and the servo case
+MIN_POCKET_ROOF_MM = 0.8  # material between the centre pocket and the counterbore floors
 SCREW_TIP_MARGIN_MM = 0.5  # a screw tip stops this far short of the servo case
 
 
@@ -117,7 +118,10 @@ def derive(p: HubParams) -> Derived:
 
     cb_d = head_d + f.counterbore_extra_mm
     cb_depth = head_h + 0.3
-    web = max(w.min_web_mm, recess_depth + cb_depth + MIN_UNDER_HEAD_MM, pocket_depth + 1.5)
+    # A deep centre pocket must stop below the counterbore floors, or only a thin ring of
+    # plastic separates them.
+    above_pocket = pocket_depth + cb_depth + MIN_POCKET_ROOF_MM if pocket_depth else 0.0
+    web = max(w.min_web_mm, recess_depth + cb_depth + MIN_UNDER_HEAD_MM, above_pocket)
 
     clamp = web - cb_depth - recess_depth  # hub material the screw passes before the horn
     shortest = clamp + min(h.thickness_mm, 2.0)
