@@ -33,3 +33,8 @@ height_shaft_end_mm = 28.8   # (model) case top round the shaft to case bottom r
 height_far_end_mm = 32.9     # (model) the far end has 1.5 mm strips on top and a 1.5 mm step below
 bottom_disc_od_mm = 20.0     # (model) idler disc on the bottom, on the shaft axis
 bottom_disc_proud_mm = 4.1   # (lab) below the case bottom round the shaft; about 0.1 more than H
+
+# The printed PETG rim, for sizing the tire's bore. The caliper's jaws cannot reach the seat, so
+# measure across the top flange's flat land and subtract 3.0 (two 1.5 mm flanges).
+[tire]
+rim_measured_od_mm = 107.6  # 2026-11-19: flange read 110.6 on a printed hub

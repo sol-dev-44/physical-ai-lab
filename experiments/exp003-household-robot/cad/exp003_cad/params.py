@@ -229,6 +229,12 @@ class TireDerived:
     mount_stretch: float  # how far the bore stretches to roll over a flange, as a fraction
 
 
+def load_tire(path: Path) -> Tire:
+    """The tire's design values, plus the printed rim's seat from `[tire]` in servo.toml if set."""
+    raw = tomllib.loads(path.read_text()).get("tire", {})
+    return Tire(rim_measured_od_mm=raw.get("rim_measured_od_mm"))
+
+
 def derive_tire(p: HubParams, t: Tire) -> TireDerived:
     """Size the tire against the rim, or raise ValueError naming what does not work."""
     w = p.wheel

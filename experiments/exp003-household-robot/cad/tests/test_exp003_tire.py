@@ -1,7 +1,9 @@
 """Checks on the tire's sizing against the rim. No CadQuery needed."""
 
+from pathlib import Path
+
 import pytest
-from exp003_cad.params import Horn, HubParams, Tire, derive_tire
+from exp003_cad.params import Horn, HubParams, Tire, derive_tire, load_tire
 
 P = HubParams(horn=Horn(19.9, 2.08, 4, 13.6, "M3", 5.0, 2.0, 4.0, 2.0), measured=True)
 
@@ -38,3 +40,19 @@ def test_bore_follows_a_measured_rim():
 def test_unworkable_tires_are_rejected(tire, message):
     with pytest.raises(ValueError, match=message):
         derive_tire(P, tire)
+
+
+def test_checked_in_rim_reading_sizes_the_bore():
+    # 2026-11-19: the printed hub's top flange read 110.6 mm, so the seat is 107.6.
+    t = load_tire(Path(__file__).resolve().parents[1] / "servo.toml")
+    assert t.rim_measured_od_mm == pytest.approx(107.6)
+    d = derive_tire(P, t)
+    assert d.bore_mm == pytest.approx(106.6)
+    assert d.lip_bore_mm == pytest.approx(110.6 + 0.4)
+    assert d.tread_mm == pytest.approx(6.7)
+
+
+def test_load_tire_without_a_tire_table_uses_the_design_rim(tmp_path):
+    f = tmp_path / "servo.toml"
+    f.write_text("measured = true\n")
+    assert load_tire(f) == Tire()

@@ -165,3 +165,5 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   grips the 108 mm rim seat (0.9% stretch) and a lip over each flange, 0.2 mm clear, so it cannot
   walk off sideways. Fitting it means stretching 3.7% over one flange. Tests check the only
   contact with the hub is the grip band on the seat. Prints flat in TPU 95A, no supports.
+- 2026-11-19: printed rim measured across the top flange (110.6 mm, design 111.0), so the seat is
+  about 107.6 mm. The tire's bore is now sized to it (106.6 mm, `[tire]` in `servo.toml`).

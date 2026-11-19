@@ -48,9 +48,12 @@ While `servo.toml` says `measured = false`, files end in `_UNMEASURED`. Do not p
 
 Design numbers are `Tire` in `exp003_cad/params.py`; the build prints the bore and stretch.
 
-- **Before printing, measure the printed rim:** caliper across the bare seat between the flanges,
-  at three places round the wheel. Put the middle reading in `Tire.rim_measured_od_mm` and
-  rebuild, so the bore is sized to the real rim (the build refuses a reading over 1 mm off design).
+- **Before printing, measure the printed rim.** Caliper jaws cannot reach across a 108 mm seat,
+  and the flanges stand in the way from above. So lay the hub flat, open side up, rest the beam
+  across the top with the jaws hanging down, and close them gently on the top flange's narrow flat
+  land. Take three readings 60 degrees apart; the seat is the middle one minus 3.0. Put it in
+  `[tire]` in `servo.toml` (2026-11-19: flange 110.6, seat 107.6) and rebuild. The build refuses
+  a seat over 1 mm off the design.
 - Left nozzle, filament from the external spool holder, never through the AMS. Studio preset:
   Generic TPU. A sealed spool is dry enough; if it strings or pops, dry it.
 - Flat, either face down, no supports, no brim. 3 walls, 25% gyroid infill (some give, still
