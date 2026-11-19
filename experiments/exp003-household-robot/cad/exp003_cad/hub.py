@@ -1,7 +1,9 @@
 """Wheel hub geometry. Dimensions come from params.derive; see params.py for the axis convention.
 
-Both parts print servo side down on the bed with no supports: the horn recess and centre pocket
-open onto the bed, the screw counterbores open upward, and the only overhangs are 45 degrees.
+Both parts print servo side down on the bed with no supports. That face is flat and sits on the
+horn's top face; the centre pocket opens onto the bed and the screw counterbores open upward. The
+only bridges are the small pocket roof and the counterbore floors (plus the relief step, when the
+case needs one), and the tire flanges overhang at 45 degrees.
 """
 
 from __future__ import annotations
@@ -20,10 +22,12 @@ def _ring(radius: float, count: int) -> list[tuple[float, float]]:
 
 
 def _horn_web(p: HubParams, od_mm: float) -> cq.Workplane:
-    """A disc that bolts to the horn: recess, centre pocket, screw holes, counterbores."""
+    """A disc that bolts flat to the horn: centre pocket, screw holes, counterbores, case relief."""
     d = derive(p)
     web = cq.Workplane("XY").circle(od_mm / 2).extrude(d.web_mm)
-    web = web.cut(cq.Workplane("XY").circle(d.recess_diameter_mm / 2).extrude(d.recess_depth_mm))
+    if d.relief_mm:
+        relief = cq.Workplane("XY").circle(od_mm / 2).circle(d.pad_diameter_mm / 2)
+        web = web.cut(relief.extrude(d.relief_mm))
     if d.center_pocket_depth_mm:
         pocket = cq.Workplane("XY").circle(d.center_pocket_diameter_mm / 2)
         web = web.cut(pocket.extrude(d.center_pocket_depth_mm))

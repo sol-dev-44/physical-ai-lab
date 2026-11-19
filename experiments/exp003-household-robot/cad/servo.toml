@@ -1,5 +1,6 @@
 # STS3215 wheel-servo measurements for the wheel hub. How to take each one: MEASURING.md.
-# Measured 2026-11-17 on a spare STS3215-12V with its 4-hole aluminium horn fitted.
+# Measured 2026-11-17 on a spare STS3215-12V with its 4-hole aluminium horn fitted; I added
+# 2026-11-18 after the first coupon nearly touched the raised block beside the horn.
 measured = true
 
 [horn]
@@ -10,10 +11,25 @@ bolt_circle_mm = 13.6       # D: centre-to-centre across the holes (16.6 outside
 bolt_size = "M3"            # E: screw that threads into the holes
 center_head_mm = 5.0        # F: centre screw head diameter
 center_head_height_mm = 2.0 # G: how far the centre screw head stands above the horn face
-shaft_height_mm = 4.0       # H: horn top face down to the top of the servo case
+shaft_height_mm = 4.0       # H: horn top face down to the case right round the shaft
+raised_case_mm = 2.0        # I: horn top face down to the raised block beside the horn
 
 # The screws on hand: the lab's Mywish 1290-piece M2-M5 kit (button-head hex socket, ISO 7380).
 # Its M3 lengths are 8, 12, 16 and 20 mm; the model thickens the hub to suit the shortest.
 [screws]
 head = "button"
 lengths_mm = [8, 12, 16, 20]
+
+# The servo body, for the brackets and base plate. Origin: the shaft axis. Marked (lab) where a
+# caliper confirmed it on 2026-11-19, (model) where read from vendor/STS3215_03a.step only.
+[case]
+length_mm = 45.4             # 1 (lab): shaft end to far end
+width_mm = 24.8              # 2 (lab)
+shaft_to_near_end_mm = 10.2  # (model) shaft centre to the near end
+holes_along_mm = 20.7        # 3 (lab): top-face mounting holes, centre to centre along the case
+holes_across_mm = 20.4       # 3 (lab): and across it
+holes_near_offset_mm = 8.3   # (model) shaft centre to the nearer pair; the far pair is at 29.0
+height_shaft_end_mm = 28.8   # (model) case top round the shaft to case bottom round the shaft
+height_far_end_mm = 32.9     # (model) the far end has 1.5 mm strips on top and a 1.5 mm step below
+bottom_disc_od_mm = 20.0     # (model) idler disc on the bottom, on the shaft axis
+bottom_disc_proud_mm = 4.1   # (lab) below the case bottom round the shaft; about 0.1 more than H

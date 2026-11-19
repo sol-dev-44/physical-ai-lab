@@ -1,6 +1,7 @@
 """Geometry checks on the built hub. Skipped unless CadQuery is installed (see cad/README.md)."""
 
 import math
+from dataclasses import replace
 
 import pytest
 
@@ -19,10 +20,12 @@ P = HubParams(
         center_head_mm=5.0,
         center_head_height_mm=1.0,
         shaft_height_mm=4.0,
+        raised_case_mm=4.0,
     ),
     measured=True,
 )
 D = derive(P)
+P_STEP = HubParams(horn=replace(P.horn, raised_case_mm=1.0), measured=True)
 
 
 def solid_at(part, x, y, z) -> bool:
@@ -63,19 +66,31 @@ def test_bolt_holes_go_through_and_material_sits_between_them(make):
         assert solid_at(part, r * math.cos(between), r * math.sin(between), D.web_mm / 2)
 
 
-def test_horn_recess_and_centre_pocket_are_open_on_the_servo_side(coupon):
-    z = D.recess_depth_mm / 2
-    assert not solid_at(coupon, P.horn.od_mm / 2 - 0.3, 0, z)
-    assert solid_at(coupon, D.recess_diameter_mm / 2 + 1.0, 0, z)
-    # The centre screw head pocket goes deeper than the recess.
+def test_servo_side_is_flat_with_an_open_centre_pocket(coupon):
+    # Solid right down to the bed, inside and outside the horn's footprint (between two holes).
+    a = math.pi / P.horn.bolt_count
+    for r in (P.horn.od_mm / 2 - 1.0, P.horn.od_mm / 2 + 3.0):
+        assert solid_at(coupon, r * math.cos(a), r * math.sin(a), 0.2)
     assert not solid_at(coupon, 0, 0, D.center_pocket_depth_mm - 0.2)
     assert solid_at(coupon, 0, 0, D.center_pocket_depth_mm + 0.3)
+
+
+@pytest.mark.parametrize("make", [hub_coupon, full_hub])
+def test_underside_steps_up_beyond_the_horn_over_a_raised_case(make):
+    d = derive(P_STEP)
+    assert d.relief_mm == pytest.approx(1.0)
+    part = make(P_STEP)
+    a = math.pi / P.horn.bolt_count
+    inside, outside = P.horn.od_mm / 2 - 1.0, P.horn.od_mm / 2 + 3.0
+    assert solid_at(part, inside * math.cos(a), inside * math.sin(a), 0.5)
+    assert not solid_at(part, outside * math.cos(a), outside * math.sin(a), 0.5)
+    assert solid_at(part, outside * math.cos(a), outside * math.sin(a), d.relief_mm + 0.5)
 
 
 def test_counterbores_are_on_the_outboard_face(coupon):
     r = P.horn.bolt_circle_mm / 2 + D.counterbore_diameter_mm / 2 - 0.3
     assert not solid_at(coupon, r, 0, D.web_mm - 0.2)
-    assert solid_at(coupon, r, 0, D.recess_depth_mm + 0.5)
+    assert solid_at(coupon, r, 0, 0.5)
 
 
 def test_full_hub_is_an_open_cup_with_flanges(hub):

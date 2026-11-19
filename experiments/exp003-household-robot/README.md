@@ -9,9 +9,10 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-17):** design settled, parts on order (due 2026-11-21 to 23; see
-[docs/inventory.md](../../docs/inventory.md)), wheel hub modelled. Waiting on servo measurements
-for the first test print. Nothing here runs against hardware yet. Photos and personal data are the
+**Status (2026-11-19):** design settled, parts on order (due 2026-11-21 to 23; see
+[docs/inventory.md](../../docs/inventory.md)). Both PETG wheel hubs are printed and fit the horns.
+The servo body is measured and its CAD model is vendored, ready for the bracket. Next: the TPU
+tires, once the TPU arrives, and the servo bracket. Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
 ## Design: the body
@@ -114,8 +115,16 @@ its leader records teleop demos). v1 leaves room for it:
 
 ## Printed parts
 
-See [cad/README.md](cad/README.md). First print: the hub coupon, once
-[cad/MEASURING.md](cad/MEASURING.md) is done.
+See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURING.md) and
+`cad/servo.toml`; the STS3215 model is in [cad/vendor/](cad/vendor/README.md).
+
+| Part | Material | Status |
+|---|---|---|
+| Hub coupon v1 (recess round the horn) | PETG | Printed 2026-11-18; too close to the case, retired |
+| Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
+| Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
+| Tire x 2 | TPU 95A | To model; print when the TPU arrives |
+| Servo bracket, base plate | PETG | To design; base plate waits for the caster, battery and Pi |
 
 ## Progress log
 
@@ -130,3 +139,25 @@ See [cad/README.md](cad/README.md). First print: the hub coupon, once
 - 2026-11-18: the lab's screw kit is button head with M3 only from 8 mm, so the model now takes the
   screws on hand (`[screws]` in `servo.toml`) and thickens the web (7.95 mm) until an M3 x 8 stops
   0.5 mm short of the servo case. Fixed with 4 x M3 x 8 button head.
+- 2026-11-18: H2D set up (firmware 01.04.20.00, AMS 2 Pro on the right nozzle). First print: the
+  hub coupon in PETG Basic, servo side down, 0.2 mm layers, 4 walls, 30% infill, no supports,
+  textured PEI plate (22 min, 8.3 g). Snug fit on the horn with 4 x M3 x 8 button head and the
+  default 0.2 mm clearance; screws pull it flat and it spins free. But it cleared the servo by
+  only about two sheets of paper (design: 2.5 mm): the case is low round the shaft, and a raised
+  block under the label starts right at the horn's edge, 2.0 mm below the horn top (new
+  measurement I, `raised_case_mm`). A 1.5 mm recess wrapping round the horn left 0.5 mm over it.
+- 2026-11-18: hub redesigned to sit flat on the horn's top face, centred by the centre pocket
+  (5.4 mm over the 5.0 mm screw head) and the screws. It now clears the case by 2.0 mm, the new
+  minimum (it was 1.0); the model steps the underside up beyond the horn if a case needs more.
+  Web 6.45 mm, still 4 x M3 x 8. Reprint the coupon to confirm before the full hub.
+- 2026-11-19: coupon v2 (flat seat) printed in PETG (20 min, 7.2 g) and fits well on the horn.
+  Kept as the fit gauge and phase 0 spin indicator. Next: two full wheel hubs.
+- 2026-11-19: both full wheel hubs printed together in PETG, servo side down, no supports
+  (2 h 44 min, 118.5 g). Clean prints; each seats on the horn like the coupon and spins true
+  without touching the case. Next: the TPU tire, once the TPU arrives.
+- 2026-11-19: STS3215 CAD model vendored from The Robot Studio's SO-ARM100 repo (Apache-2.0) in
+  `cad/vendor/`. A caliper on a spare confirmed the case (45.4 x 24.8 mm) and the top mounting
+  holes (20.7 x 20.4 mm centre to centre) exactly; the horn differs by 0.3 to 0.5 mm, so the hub
+  keeps its measured numbers. The idler disc on the bottom stands about 4.1 mm proud of the case
+  bottom round the shaft, so anything under the servo needs a pocket. Case numbers in
+  `servo.toml` `[case]`, checked by the tests.

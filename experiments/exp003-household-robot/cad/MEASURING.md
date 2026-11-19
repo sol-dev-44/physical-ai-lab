@@ -1,6 +1,6 @@
 # Measuring the wheel servo for the hub
 
-The hub bolts to the round horn on an STS3215's output shaft. Eight numbers (A to H) go into
+The hub bolts flat onto the round horn on an STS3215's output shaft. Nine numbers (A to I) go into
 `servo.toml`. Use one of the two **spare** STS3215s, never a motor from an arm.
 
 ## Before you start
@@ -22,7 +22,8 @@ The hub bolts to the round horn on an STS3215's output shaft. Eight numbers (A t
 | E | `bolt_size` | Screw that fits the holes | See "Hole size" below. `"M2"`, `"M2.5"` or `"M3"`. |
 | F | `center_head_mm` | Centre screw head diameter | Outside jaws across the head. |
 | G | `center_head_height_mm` | How far that head stands above the horn face | Depth rod (see below). `0` if flush or sunk. |
-| H | `shaft_height_mm` | Horn top face down to the servo case | Depth rod (see below). |
+| H | `shaft_height_mm` | Horn top face down to the case right round the shaft | Depth rod (see below). |
+| I | `raised_case_mm` | Horn top face down to the highest part of the case beside the horn | Depth rod (see below). |
 
 ### Bolt circle (D)
 
@@ -47,8 +48,12 @@ diameter instead and tell Claude; the hub then needs a different screw plan.
 The thin rod that slides out of the end of the caliper measures depth.
 
 - **H, shaft height.** Stand the servo on the bench, horn up. Rest the end of the caliper beam
-  flat on the horn's top face, near its edge, and slide the rod down until it touches the servo
-  case beside the horn. Read it.
+  flat on the horn's top face, near its edge, and slide the rod down until it touches the low
+  part of the case right beside the shaft. Read it.
+- **I, raised case.** The STS3215's case top is not flat: it is low round the shaft, and a raised
+  block (under the label) starts at the horn's edge. Rest the beam end on the horn's top face at
+  the edge nearest the label and slide the rod down onto that block. The hub sweeps over the whole
+  case top, so this is the number that sets its clearance. On a flat-topped case, I = H.
 - **G, centre screw head.** Rest the beam end flat on the centre screw head and slide the rod down
   to the horn face beside it. If the head is level with the face or below it, G = 0.
 
@@ -56,6 +61,21 @@ The thin rod that slides out of the end of the caliper measures depth.
 
 A photo of the horn, straight down, with the caliper's jaws open across it helps catch mistakes.
 Drop it into the chat with your numbers.
+
+## The servo body (for brackets)
+
+The case numbers live in the `[case]` table of `servo.toml`. Most come from the STS3215 model in
+`vendor/` (see its README); a caliper confirmed the ones that set a bracket's fit, on 2026-11-19:
+
+1. **Case length**, shaft end to far end: 45.4 mm.
+2. **Case width**: 24.8 mm.
+3. **Mounting-hole spacing** on the horn side (the four small holes in the case top, not the
+   corner case screws), centre to centre: 20.7 mm along, 20.4 mm across. The holes are small, so
+   measure inside edge to inside edge and add one hole diameter.
+4. **Bottom disc**: how far it stands proud of the lowest part of the bottom face, the area round
+   the shaft axis: about 4.1 mm.
+
+If a different servo goes in, check those four again before printing a bracket for it.
 
 ## After measuring
 

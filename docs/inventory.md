@@ -17,6 +17,14 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | **Wishlist** | Saved, not bought. |
 | **Unknown** | Owned, but where it is or whether it's in use needs checking (see "To confirm"). |
 
+## Printed parts
+
+| Item | Qty | Status | Where / notes |
+|---|---|---|---|
+| exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels; tires to follow in TPU |
+| exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
+| exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
+
 ## Robot arms (exp002)
 
 | Item | Qty | Status | Where / notes |
@@ -28,17 +36,24 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | Wrist cameras ("USB HD Camera", from the kits) | 2 | 1 Active, 1 Unknown | exp002 follower gripper |
 | 5V 4A adapter (leader power) | 1+ | Active | exp002 |
 | 12V 2A adapter (follower power, labelled theqingliupower) | 1+ | Active | exp002; also bench power for spare servos when the arms are off |
-| Feetech STS3215 12V servos (loose spares) | 2 | Reserved | exp003 wheel motors |
+| Feetech STS3215 12V servos (loose spares) | 2 | Reserved | exp003 wheel motors, each with a PETG wheel hub fitted to its horn. Dimensions: `experiments/exp003-household-robot/cad/servo.toml` and the vendored model in `cad/vendor/` |
 
 ## Printing
 
 | Item | Qty | Status | Where / notes |
 |---|---|---|---|
-| Bambu Lab H2D AMS Combo | 1 | Active | All printed parts |
-| PLA Basic: Jade White, Blue, Sunflower Yellow, Pumpkin Orange | 1 spool each | Spare | Amounts left not tracked |
-| PLA Pure, Baby Blue | 1 | Spare | |
-| PETG Basic, Orange | 2 | Reserved | exp003 wheel hubs, brackets |
-| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | On order | exp003 tires and bumper. Feed from the external spool holder, not the AMS |
+| Bambu Lab H2D AMS Combo, Standard (not Pro) | 1 | Active | All printed parts. Delivered 2026-11-12; firmware 01.04.20.00 |
+| Bambu AMS 2 Pro (in the combo) | 1 | Active | On the right nozzle; firmware 02.04.19.87; has a drying mode (use it for PETG). Slots on 2026-11-19: A1 PETG Orange, A2 PLA Jade White, A3 PLA Blue, A4 PLA Sunflower Yellow. The left nozzle feeds from the external spool holder (TPU) |
+| Bambu PLA Basic, Jade White (10100), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
+| Bambu PLA Basic, Blue (10601), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
+| Bambu PLA Basic, Sunflower Yellow (10402), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
+| Bambu PLA Basic, Pumpkin Orange (10301), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
+| Bambu PLA Pure, Baby Blue (17600), 1 kg | 1 | Spare | Studio preset: Bambu PLA Pure |
+| Bambu PETG Basic, Orange (30301), 1 kg | 2 | Reserved | exp003 wheel hubs, brackets. Studio preset: Bambu PETG Basic. About 134 g used from the first spool by 2026-11-19 (two coupons, two hubs) |
+| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | On order | exp003 tires and bumper. Studio preset: Generic TPU. Feed from the external spool holder, not the AMS |
+
+All Bambu spools are 1 kg with RFID tags, so the AMS reads type and colour itself. Amounts left are
+not tracked yet; the AMS shows an estimate per spool.
 
 ## Cameras, audio, control
 
@@ -152,3 +167,5 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-17: file created from the 2026-11-07 and 2026-11-17 orders and the experiment READMEs.
 - 2026-11-17: exp003 renamed household robot; privacy rules moved to owner judgement (ADR 0013); second SO-ARM101 pair noted as the v2 arm candidate.
 - 2026-11-18: screw kit identified from the order (button heads, 8 to 20 mm); exp003 hub sized for M3 x 8.
+- 2026-11-18: filament audited against the Bambu order email (all 7 spools match); colour codes, spool weights and Studio presets added; H2D confirmed Standard.
+- 2026-11-19: AMS 2 Pro and its slots, printer firmware, PETG used, and the printed exp003 parts added; STS3215 spares point to their dimensions.

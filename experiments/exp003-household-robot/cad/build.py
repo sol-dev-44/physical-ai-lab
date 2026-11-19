@@ -40,8 +40,9 @@ def main() -> None:
                 cq.exporters.export(part, str(path))
         print(f"{name}: {path.with_suffix('.step').name} and .stl, {part.val().Volume():.0f} mm3")
 
-    recess = f"{d.recess_diameter_mm:.2f} x {d.recess_depth_mm} mm"
-    print(f"\nweb {d.web_mm:.1f} mm, horn recess {recess}")
+    step = f", underside stepped up {d.relief_mm:.1f} mm beyond the horn" if d.relief_mm else ""
+    print(f"\nweb {d.web_mm:.2f} mm, sits flat on the horn{step}")
+    print(f"clears the servo case by {d.case_gap_mm:.1f} mm")
     print(f"screws: {p.horn.bolt_count} x {d.screw} {p.screws.head}-head")
     if not p.measured:
         print("\nservo.toml is still placeholders (measured = false). Do not print these files.")
