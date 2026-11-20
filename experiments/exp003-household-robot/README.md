@@ -124,7 +124,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
-| Servo cradle x 2 | PETG | Modelled 2026-11-19; ready to print and fit |
+| Servo cradle x 2 | PETG | First one printed 2026-11-19 (34 min, 10.0 g) and fitted: solid. Second printing 2026-11-19 |
 | Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
@@ -185,3 +185,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   measured on arrival. Owner chose the widest stance: battery across between the servos, 330 mm
   over the tires, a 300 x 262 mm one-piece plate. Balance check: centre of mass 46 mm behind the
   axle, 18 mm with a 1 kg v2 arm at full forward reach.
+- 2026-11-19: the first servo cradle is printed and fitted. The servo slides in well, sits flat
+  on the pads and holds solid with the supplied M2 x 6 screws. The loose metal idler disc on the
+  servo's bottom comes off first (only a two-sided bracket holds it) and goes with the spares.
+  Second cradle sent to print.

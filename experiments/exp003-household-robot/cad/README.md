@@ -124,8 +124,9 @@ model.
 - Fitting: slide the servo between the cheeks, bottom first, so it sits on the four pads. Drive
   the four supplied M2 x 6 self-tapping screws from the back; they go 3.5 mm into the case (the
   SO-101 puts them in up to 4.1). Snug, not tight: they cut their own thread in plastic.
-- Plug the bus cables in through the window in the back wall. The idler disc sits in the round
-  opening and must turn freely.
+- Take the loose metal idler disc off the servo's bottom first (the one with a hole in the middle;
+  the top horn has a screw there) and keep it with the spares. Nothing here bolts to it, and it
+  would rattle or drop out through the round opening. Plug the bus cables in through the window.
 - For the chassis: the wheel axle is 15.6 mm above the foot face, and the screw heads and the
   idler disc stand slightly proud of the back wall, so keep 2 mm clear behind it.
 

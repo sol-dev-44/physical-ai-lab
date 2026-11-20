@@ -50,7 +50,7 @@ Positions from the shaft axis; "along" is towards the far end.
 | Top | Raised block | From 8.9 mm along, 2.6 mm above the case round the shaft | Anything sweeping over the case must clear it (the hub does, by 2.0 mm) |
 | Top | 4 mounting holes, 1.5 mm | 8.3 and 29.0 mm along, 10.25 mm each side | Bracket from above |
 | Top | 2 case-screw heads, 3.5 mm | Far corners, 33.2 mm along, 10.4 mm each side | Long screws through the whole case; leave them alone, don't clamp over the heads |
-| Bottom | Idler disc, 20 mm, and a 6 mm nub | On the shaft, 3.3 / 3.9 mm proud (lab: 4.1) | Pocket needed under the servo |
+| Bottom | Idler disc, 20 mm, metal on the lab's servos, with 4 holes (2.5 mm on 13.9 mm in the model) and a hole in the middle (the top horn has a screw there instead) | On the shaft, 3.3 / 3.9 mm proud (lab: 4.1) | Opening needed under the servo. It looks like the top horn: tell them apart by the centre (hole here, screw on top) and by the cable sockets, which are on this side. It is loose: only a two-sided bracket screwed to its four holes holds it on (as on the SO-101). exp003 leaves it off |
 | Bottom | 4 mounting holes, 1.5 mm | 8.3 and 32.8 mm along, 10.25 mm each side | Mount from below |
 | Bottom | Two 3-pin bus connectors (six 2 mm pins in the model) | 14.1 mm along, across the middle | **The cables plug in on the bottom.** A plate under the servo needs an opening for the plugs and room for the cables to bend |
 | Bottom | Step, 1.5 mm lower | From about 5 mm along to the far end | The bottom is not flat |
