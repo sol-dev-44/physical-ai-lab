@@ -17,14 +17,16 @@ import cadquery as cq
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from exp003_cad.cradle import cradle  # noqa: E402
 from exp003_cad.hub import full_hub, hub_coupon  # noqa: E402
-from exp003_cad.params import derive, derive_tire, load, load_tire  # noqa: E402
+from exp003_cad.params import Cradle, derive, derive_cradle, derive_tire, load, load_case, load_tire  # noqa: E402
 from exp003_cad.tire import tire  # noqa: E402
 
 PARTS = {
     "hub_coupon": hub_coupon,
     "wheel_hub": full_hub,
     "tire": lambda p: tire(p, load_tire(HERE / "servo.toml")),
+    "servo_cradle": lambda p: cradle(load_case(HERE / "servo.toml"), p.horn),
 }
 
 
@@ -55,6 +57,11 @@ def main() -> None:
         f"tire: {tire_design.od_mm:.0f} mm wheel, bore {t.bore_mm:.1f} mm on the "
         f"{t.rim_seat_od_mm:.1f} mm seat ({t.grip_stretch:.1%} grip), "
         f"stretches {t.mount_stretch:.1%} to pass a flange"
+    )
+    cr = derive_cradle(load_case(HERE / "servo.toml"), p.horn, Cradle())
+    print(
+        f"servo cradle: supplied M2 x 6 screws go {cr.screw_depth_mm:.1f} mm into the case; "
+        f"wheel axle {cr.axle_above_foot_mm:.1f} mm above the foot"
     )
     if not p.measured:
         print("\nservo.toml is still placeholders (measured = false). Do not print these files.")

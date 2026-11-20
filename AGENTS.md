@@ -26,7 +26,8 @@ Read `docs/architecture.md` first. Rules that matter most:
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
 - Printed parts: before proposing, modelling or printing a part, work through "Before designing a part"
   in `experiments/exp003-household-robot/cad/README.md` (every face of every component, every mounting
-  option, every fastener, and whether each requested measurement can actually be taken).
+  option, every fastener). Never ask the owner to measure anything a doc, CAD model or quick search
+  already gives; ask only for what no source can show.
 - What the lab owns, where it is, and what's on order: `docs/inventory.md`. Check it before ordering,
   and update it in the same change when a part arrives, gets assigned, breaks or is used up.
 - Never commit `events/` or `.env*` (except `.env.example`). Commit media or personal information

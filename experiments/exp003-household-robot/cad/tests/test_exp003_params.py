@@ -167,6 +167,7 @@ def test_checked_in_case_has_the_caliper_confirmed_body():
     assert c.bottom_disc_proud_mm == pytest.approx(4.1)
     # The bottom has its own four holes, longer-spaced, sharing the near pair's position.
     assert (c.bottom_holes_along_mm, c.bottom_holes_across_mm) == (24.5, 20.5)
+    assert (c.mount_screw_length_mm, c.max_screw_depth_mm) == (6, 4.1)
 
 
 def test_hub_loader_ignores_the_case_table():
@@ -186,6 +187,14 @@ CASE_FIELDS = {
     "height_far_end_mm": 32.9,
     "bottom_disc_od_mm": 20.0,
     "bottom_disc_proud_mm": 4.1,
+    "bottom_step_mm": 1.5,
+    "bottom_step_from_mm": 5.3,
+    "bottom_keepout_from_mm": 11.55,
+    "bottom_keepout_to_mm": 29.9,
+    "bottom_keepout_half_width_mm": 10.1,
+    "bottom_keepout_proud_mm": 3.5,
+    "mount_screw_length_mm": 6,
+    "max_screw_depth_mm": 4.1,
 }
 
 
@@ -211,6 +220,9 @@ def test_load_case_reads_every_field(tmp_path):
         ({"bottom_holes_along_mm": 30.0}, "bottom mounting holes falls past"),
         ({"height_far_end_mm": 20.0}, "the larger"),
         ({"bottom_disc_od_mm": 30.0}, "wider than the case"),
+        ({"max_screw_depth_mm": 6.5}, "shorter than the mounting screw"),
+        ({"bottom_step_from_mm": 9.0}, "on the bottom step"),
+        ({"bottom_keepout_to_mm": 10.0}, "before bottom_keepout_to"),
     ],
 )
 def test_impossible_case_numbers_are_rejected(tmp_path, change, message):

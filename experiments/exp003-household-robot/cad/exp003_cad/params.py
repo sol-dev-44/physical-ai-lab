@@ -295,6 +295,14 @@ class Case:
     height_far_end_mm: float  # the far end is taller: raised strips on top, a step underneath
     bottom_disc_od_mm: float  # the idler disc on the bottom, on the shaft axis
     bottom_disc_proud_mm: float  # how far it stands below the case bottom round the shaft
+    bottom_step_mm: float  # the bottom steps down this much, from bottom_step_from_mm along
+    bottom_step_from_mm: float
+    bottom_keepout_from_mm: float  # connector recess and pad on the bottom: keep clear
+    bottom_keepout_to_mm: float
+    bottom_keepout_half_width_mm: float
+    bottom_keepout_proud_mm: float  # how far past the step face (the connector pins)
+    mount_screw_length_mm: int  # the M2 self-tapping screws supplied with the servo
+    max_screw_depth_mm: float  # deepest a mounting screw is known to go into the case
 
 
 def load_case(path: Path) -> Case:
@@ -315,9 +323,120 @@ def load_case(path: Path) -> Case:
         raise ValueError("the far pair of bottom mounting holes falls past the end of the case")
     if c.height_far_end_mm < c.height_shaft_end_mm:
         raise ValueError("height_far_end is measured over the raised strips, so it is the larger")
+    if not c.bottom_step_from_mm < c.holes_near_offset_mm:
+        raise ValueError("the bottom mounting holes must sit on the bottom step")
+    if not c.bottom_keepout_from_mm < c.bottom_keepout_to_mm:
+        raise ValueError("bottom_keepout_from must come before bottom_keepout_to")
+    if not 0 < c.max_screw_depth_mm < c.mount_screw_length_mm:
+        raise ValueError("max_screw_depth must be positive and shorter than the mounting screw")
     if c.bottom_disc_od_mm > c.width_mm:
         raise ValueError("the bottom disc cannot be wider than the case")
     return c
+
+
+MIN_SELF_TAP_MM = 3.0  # least thread an M2 self-tapping screw should cut into the case
+SCREW_HEAD_MM = 4.0  # the supplied M2 screws' head diameter, at most (typical pan head)
+MIN_HUB_GAP_MM = 2.0  # anything static stays this far below the hub's servo-side face
+
+
+@dataclass(frozen=True)
+class Cradle:
+    """The servo mount: a U that the servo's bottom bolts into. Design choices.
+
+    Frame: the shaft axis is the origin; a runs along the case towards the far end, b across it,
+    c along the shaft towards the horn, with c = 0 on the bottom step face the servo sits on.
+    """
+
+    wall_mm: float = 2.0  # back wall the screws pass through
+    pad_mm: float = 0.5  # pads at the four holes, so the servo sits on them and not on the wall
+    pad_diameter_mm: float = 4.3
+    cheek_mm: float = 3.0  # side walls that hug the case's long sides
+    cheek_height_mm: float = 20.0  # from the step face towards the horn
+    side_clearance_mm: float = 0.2  # per side, so the servo slides in
+    disc_clearance_mm: float = 1.0  # round the idler disc, radially
+    keepout_margin_mm: float = 0.4  # round the connector recess and pad
+    ear_length_mm: float = 10.0  # tabs on the foot cheek, one at each end
+    ear_mm: float = 4.0
+    ear_screw: str = "M3"
+
+
+@dataclass(frozen=True)
+class CradleDerived:
+    a_min_mm: float  # near end of the case
+    a_max_mm: float  # far end
+    b_inner_mm: float  # cheek inner faces at +-this
+    b_outer_mm: float  # cheek outer faces; the foot is the face at -this
+    holes: tuple[tuple[float, float], ...]  # (a, b) of the four mounting holes
+    hole_diameter_mm: float
+    screw_depth_mm: float  # how far the supplied screws go into the case
+    disc_opening_radius_mm: float
+    near_pad_gap_mm: float  # between the disc opening and the near pads
+    window: tuple[float, float, float]  # a from, a to, half width
+    throat_half_width_mm: float  # joins the disc opening to the window, clear of the near pads
+    hub_face_c_mm: float
+    axle_above_foot_mm: float  # the chassis needs this: foot face to wheel axis
+
+
+def derive_cradle(case: Case, horn: Horn, c: Cradle) -> CradleDerived:
+    """Size the cradle against the servo, or raise ValueError naming what does not fit."""
+    under_head = c.wall_mm + c.pad_mm
+    depth = case.mount_screw_length_mm - under_head
+    if depth > case.max_screw_depth_mm:
+        raise ValueError(
+            f"the M2 x {case.mount_screw_length_mm} screws would go {depth:.1f} mm into the case, "
+            f"past the {case.max_screw_depth_mm} mm known to be safe; thicken the wall"
+        )
+    if depth < MIN_SELF_TAP_MM:
+        raise ValueError(f"the screws would bite only {depth:.1f} mm into the case; thin the wall")
+
+    along = (case.holes_near_offset_mm, case.holes_near_offset_mm + case.bottom_holes_along_mm)
+    across = case.bottom_holes_across_mm / 2
+    holes = tuple((a, b) for a in along for b in (-across, across))
+
+    disc_r = case.bottom_disc_od_mm / 2 + c.disc_clearance_mm
+    near = math.hypot(along[0], across)
+    near_pad_gap = near - c.pad_diameter_mm / 2 - disc_r
+    if near_pad_gap < 0:
+        raise ValueError("the disc opening cuts into the near pads; slim the pads")
+    if near - SCREW_HEAD_MM / 2 < disc_r:
+        raise ValueError("the near screw heads would overhang the disc opening")
+
+    m = c.keepout_margin_mm
+    window = (case.bottom_keepout_from_mm - m, case.bottom_keepout_to_mm + m)
+    half = case.bottom_keepout_half_width_mm + m
+    pad_r = c.pad_diameter_mm / 2
+    if window[0] < along[0] + pad_r or window[1] > along[1] - pad_r:
+        raise ValueError("the connector window would cut into the mounting pads")
+
+    # The disc opening and the window nearly meet; a strip between them would be too thin to
+    # print, so a throat joins them, staying 1 mm clear of the near pads.
+    throat = across - pad_r - 1.0
+    if throat < 2.0:
+        raise ValueError("no room for a throat between the disc opening and the window")
+
+    b_inner = case.width_mm / 2 + c.side_clearance_mm
+    if half >= b_inner:
+        raise ValueError("the connector window is wider than the case")
+    hub_face = case.bottom_step_mm + case.height_shaft_end_mm + horn.shaft_height_mm
+    if c.cheek_height_mm > hub_face - MIN_HUB_GAP_MM:
+        raise ValueError(f"cheeks reach within {MIN_HUB_GAP_MM} mm of the spinning hub")
+
+    a_min = -case.shaft_to_near_end_mm
+    return CradleDerived(
+        a_min_mm=a_min,
+        a_max_mm=a_min + case.length_mm,
+        b_inner_mm=b_inner,
+        b_outer_mm=b_inner + c.cheek_mm,
+        holes=holes,
+        hole_diameter_mm=CLEARANCE_MM["M2"],
+        screw_depth_mm=depth,
+        disc_opening_radius_mm=disc_r,
+        near_pad_gap_mm=near_pad_gap,
+        window=(window[0], window[1], half),
+        throat_half_width_mm=throat,
+        hub_face_c_mm=hub_face,
+        axle_above_foot_mm=b_inner + c.cheek_mm,
+    )
 
 
 def load(path: Path) -> HubParams:

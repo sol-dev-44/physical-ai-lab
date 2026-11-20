@@ -24,7 +24,7 @@ and the case right round it differ by 0.3 to 0.5 mm, so the hub keeps its own me
 |---|---|---|---|
 | Case length x width | 45.4 x 24.8 mm | 45.4 x 24.8 mm | Datasheet: 45.2 x 24.7 |
 | Shaft centre to the near end of the case | 10.2 mm | not measured | |
-| Top-face mounting holes, centre to centre | 20.7 mm along, 20.5 mm across | 20.7, 20.4 mm | Nearer pair 8.3 mm from the shaft, other pair 29.0 mm (model). 1.5 mm pilot holes, so M2 self-tapping (the SO-101 guide fixes servos with M2 x 6); thread and depth not checked yet |
+| Top-face mounting holes, centre to centre | 20.7 mm along, 20.5 mm across | 20.7, 20.4 mm | Nearer pair 8.3 mm from the shaft, other pair 29.0 mm (model). 1.5 mm pilot holes for M2 self-tapping screws. Lab: the servos came with a bag of them and an M2 bites. The SO-101 holders put M2 x 6 through 1.9 to 2.7 mm of plastic, so the holes take at least 4.1 mm |
 | Bottom mounting holes, centre to centre | 24.5 mm along, 20.5 mm across | present, not measured | Nearer pair in line with the top pair (8.3 mm from the shaft), other pair 32.8 mm. Also 1.5 mm |
 | Horn diameter, thickness | 20.0, 2.5 mm | 19.9, 2.08 mm | |
 | Horn bolt circle | 13.9 mm (4 holes) | 13.6 mm | |
@@ -39,6 +39,9 @@ and the case right round it differ by 0.3 to 0.5 mm, so the hub keeps its own me
 ### Everything on the case (full survey of the model, 2026-11-19)
 
 Read from every cylinder and flat face in the model, so nothing is left for a design to trip on.
+The model has matched every caliper check so far (case, holes, disc, pad), so treat it as right
+for the case and check only what it cannot show: threads, hole depth, and the horn, which is a
+different part on the lab's servos.
 Positions from the shaft axis; "along" is towards the far end.
 
 | Face | Feature | Where | Why it matters |
@@ -51,7 +54,7 @@ Positions from the shaft axis; "along" is towards the far end.
 | Bottom | 4 mounting holes, 1.5 mm | 8.3 and 32.8 mm along, 10.25 mm each side | Mount from below |
 | Bottom | Two 3-pin bus connectors (six 2 mm pins in the model) | 14.1 mm along, across the middle | **The cables plug in on the bottom.** A plate under the servo needs an opening for the plugs and room for the cables to bend |
 | Bottom | Step, 1.5 mm lower | From about 5 mm along to the far end | The bottom is not flat |
-| Bottom | Raised pad, about 10 x 18 mm, 1.8 mm proud of the step | 20 to 30 mm along | Not yet seen on the lab's servo; check before relying on a flat bottom |
+| Bottom | Raised pad, about 10 x 18 mm, 1.8 mm proud of the step | 20 to 30 mm along | Confirmed on the lab's servo |
 | Ends, sides | No holes in the model | | Nothing to bolt to |
 
 How the bottom is built in the model, from the case bottom round the shaft (z = -14.4): a 6 mm boss

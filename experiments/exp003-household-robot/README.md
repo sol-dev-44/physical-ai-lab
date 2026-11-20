@@ -12,7 +12,7 @@ household's rules about where it may go and when, and can be driven by remote.
 **Status (2026-11-19):** design settled, parts on order (due 2026-11-21 to 23; see
 [docs/inventory.md](../../docs/inventory.md)). Both PETG wheel hubs are printed and fit the horns.
 The servo body is measured and its CAD model is vendored, ready for the bracket. The TPU tire is
-modelled. Next: print the tires when the TPU arrives, and the servo bracket. Nothing here runs against hardware yet. Photos and personal data are the
+modelled. The servo cradle is modelled. Next: print and fit a cradle, and print the tires when the TPU arrives. Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
 ## Design: the body
@@ -124,7 +124,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
-| Servo bracket, base plate | PETG | To design; base plate waits for the caster, battery and Pi |
+| Servo cradle x 2 | PETG | Modelled 2026-11-19; ready to print and fit |
+| Base plate | PETG | To design; waits for the caster, battery and Pi |
 
 ## Progress log
 
@@ -172,3 +173,10 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   confirmed present), the two bus connectors, a step and a raised pad. All recorded in
   `cad/vendor/README.md` and `servo.toml`; a "Before designing a part" checklist now gates every
   printed part (cad/README, pointed to from AGENTS.md).
+- 2026-11-19: servo cradle modelled (`cad/exp003_cad/cradle.py`), following the new checklist. It
+  holds the servo by its bottom holes because the top holes sit only about 2.5 mm under the
+  spinning hub. It is a U: the back wall has four 0.5 mm pads and one opening for the idler
+  disc, connectors and pad; cheeks hug the case 0.2 mm clear; the lower cheek is the foot, with
+  M3 ears. The supplied M2 x 6 screws go 3.5 mm into the case. Tests load the vendored servo
+  model into the cradle and find no clashes; the clash check fails as it should on a servo
+  lowered 0.6 mm. The wheel axle sits 15.6 mm above the foot, which the base plate will need.
