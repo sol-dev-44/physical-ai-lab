@@ -44,6 +44,31 @@ reach it.
 7. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
    `servo.toml` and the docs, so the next part starts from facts.
 
+## Gotchas and hints (for agents)
+
+- **CadQuery runs outside the workspace:** `uv run --no-project --python 3.12 --with cadquery
+  python -I <script>`. Put numbers and checks in `exp003_cad/params.py` (no CadQuery import), so
+  the lab's plain `uv run pytest` tests them; geometry modules import CadQuery and their tests skip
+  without it.
+- **Don't trust OpenCascade's boolean intersect on the vendored servo model.** It silently returns
+  nothing for overlaps deeper than about 0.3 mm. Check clashes by sampling `isInside` at points
+  (see `tests/test_exp003_cradle_geometry.py`). A clash test must also be shown to fail, on a
+  deliberately lowered servo.
+- **Sampling on a face that touches by design counts as a clash** (points on a boundary are
+  "inside"). Sample heights that avoid those faces.
+- **Look at a render before calling a part done.** The tests passed while a 0.15 mm sliver of wall
+  sat between two openings; the rear-view render showed it. Quick renders: tessellate and plot with
+  matplotlib (`uv run --no-project --with cadquery --with matplotlib`).
+- **Probe the vendored model first:** list every cylinder and planar face (axis, diameter, extent)
+  before designing against it. Its holes are drawn only 1.5 mm deep; real depths come from related
+  parts (the SO-101 holders' STEP files gave the screw depth).
+- **The website draws this build from `content/builds/household-robot.data.json`.** It is written
+  by `export_site.py` from `params.py`, `servo.toml`, the exp003 README (progress log and phases)
+  and `docs/inventory.md`. After changing any of those, run
+  `uv run python experiments/exp003-household-robot/cad/export_site.py` and commit the JSON;
+  `tests/test_exp003_site_data.py` fails until you do. Markdown tables there are parsed by header
+  name, so rename a column only together with the exporter.
+
 ## Parts
 
 | Part | File | What it is |

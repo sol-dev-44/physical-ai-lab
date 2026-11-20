@@ -8,7 +8,7 @@ import { RunBoundary } from "./run-boundary";
 import { RunResults } from "./run-results";
 
 /** Components available inside MDX write-ups. Keep this list small and stable. */
-function Callout({ children }: { children: ReactNode }) {
+export function Callout({ children }: { children: ReactNode }) {
   return <aside className="not-prose my-8 rounded-r-control border-l-2 border-accent bg-accent-soft/60 px-5 py-4 text-sm text-fg">{children}</aside>;
 }
 
@@ -32,10 +32,10 @@ function textOf(node: ReactNode): string {
 }
 
 /** Section headings get an id and a hover anchor, so contents lists and shared links can point at them. */
-function H2({ children }: { children?: ReactNode }) {
+export function H2({ children, className = "scroll-mt-24" }: { children?: ReactNode; className?: string }) {
   const id = slugify(textOf(children));
   return (
-    <h2 id={id} className="group scroll-mt-24">
+    <h2 id={id} className={`group ${className}`}>
       {children}
       <a href={`#${id}`} aria-label="Link to this section" className="ml-2 text-subtle no-underline opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100">
         #

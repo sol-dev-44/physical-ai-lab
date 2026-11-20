@@ -24,6 +24,14 @@ Read `docs/architecture.md` first. Rules that matter most:
   each has its own gate and rate limits.
 - Camera work (exp001): read its README's "Gotchas and hints" first. Camera commands run in macOS Terminal, never in this app.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
+- 3D printing (the H2D, what is loaded, driving Bambu Studio, which clicks only the owner can make):
+  `docs/printing.md`. Add to it whenever something new is learned.
+- The site's Builds page reads generated data (`content/builds/<slug>.data.json`). For exp003 it
+  comes from `experiments/exp003-household-robot/cad/export_site.py`: re-run it after changing the
+  CAD numbers, `servo.toml`, the exp003 README's progress log or phases, or `docs/inventory.md`.
+- Purchases: the owner checks out. Amazon blocks AI agents ("Access restricted"), so propose orders
+  with links; don't try another browser.
+- In zsh, quote `gh api` URLs that contain `?` (unquoted, zsh globs them: "no matches found").
 - Printed parts: before proposing, modelling or printing a part, work through "Before designing a part"
   in `experiments/exp003-household-robot/cad/README.md` (every face of every component, every mounting
   option, every fastener). Never ask the owner to measure anything a doc, CAD model or quick search

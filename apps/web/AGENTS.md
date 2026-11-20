@@ -32,6 +32,40 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   animation that starts at `opacity: 0` stays invisible until JavaScript runs.
 - The admin console needs a real Supabase sign-in, so local checks cannot reach it.
   Test its data layer with mocks (`test/admin-data.test.ts`).
+- next-mdx-remote 6 blocks JS expressions in MDX, so MDX component props are strings or bare flags
+  (`digits="0"`, `abs`, `current="0,1"`), never `{...}`.
+- Tailwind v4 does not scan `/content`, so classes written inside MDX do nothing. Style in components.
+- A sticky element only sticks within its parent: keep a sticky rail or chip bar a direct child of the
+  tall grid it should follow, not inside its own wrapper.
+- Scrollspy with IntersectionObserver misses fast jumps (a heading crosses the trigger line between
+  frames); also update on `scrollend`.
+- `AnimatePresence initial={false}` keeps a list visible in the server-rendered HTML.
+- In a `[slug]` route, call `getEntry` before reading a slug-named file, so an unknown slug 404s
+  before any file read.
+
+## Builds pages
+
+- A build's numbers come from `content/builds/<slug>.data.json`, validated by `lib/builds/data.ts`
+  (`getBuildData`). The file is generated next to the CAD (exp003: `cad/export_site.py`); never edit
+  it by hand. Pure display helpers live in `lib/builds/view.ts`.
+- The page passes build-specific MDX components (`components/builds/mdx-map.tsx`, closed over the
+  data) to `<Mdx components=...>`. `<Val k="tire.bore_mm" />` prints a number from the data in
+  prose, and a bad path fails the build. Write numbers that way, not by hand.
+- Drawings and panels are wrapped `data-wide`; prose stays at `max-w-prose`.
+- Images and video stay out of git (ADR 0006): drawings are SVG components drawn from the data.
+- Blueprint drawings (`components/builds/blueprints/`) are laid out for a 300 px width; text stays
+  11 px and strokes hairline at any size.
+- Chrome breaks `pathLength` draw-on for paths with `vector-effect: non-scaling-stroke` (the line
+  comes out dashed). Animated outlines scale their stroke with a CSS variable; only static lines
+  are non-scaling.
+- An SVG `<pattern>` (section hatch) takes its colour from where it is defined, not where it is
+  used: put the colour class on the `<pattern>`.
+- A server component cannot call a plain function exported from a `"use client"` file (it gets a
+  client reference). Keep shared helpers in a plain module (`blueprints/units.ts`).
+- When masking a shape, the mask's white part needs the stroke too, or the outline is clipped to
+  half its width.
+- A hidden Browser pane never runs ResizeObserver callbacks and throttles animation. Read the first
+  size straight from the element, and to check a drawing's final state, force it with a style.
 
 ## Design system
 
