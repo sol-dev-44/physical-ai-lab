@@ -125,7 +125,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
 | Servo cradle x 2 | PETG | Modelled 2026-11-19; ready to print and fit |
-| Base plate | PETG | To design; waits for the caster, battery and Pi |
+| Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
 
@@ -180,3 +180,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   M3 ears. The supplied M2 x 6 screws go 3.5 mm into the case. Tests load the vendored servo
   model into the cradle and find no clashes; the clash check fails as it should on a servo
   lowered 0.6 mm. The wheel axle sits 15.6 mm above the foot, which the base plate will need.
+- 2026-11-19: servo cradle sent to print in PETG (34 min, 10.0 g). Base plate inputs gathered with
+  sources in `cad/BASE_PLATE.md`; the caster's mounting height is not published anywhere and is
+  measured on arrival. Owner chose the widest stance: battery across between the servos, 330 mm
+  over the tires, a 300 x 262 mm one-piece plate. Balance check: centre of mass 46 mm behind the
+  axle, 18 mm with a 1 kg v2 arm at full forward reach.

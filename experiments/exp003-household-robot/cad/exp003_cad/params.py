@@ -439,6 +439,112 @@ def derive_cradle(case: Case, horn: Horn, c: Cradle) -> CradleDerived:
     )
 
 
+PRINT_BED_MM = (325.0, 320.0)  # H2D, one nozzle (Bambu tech specs)
+MIN_COM_BEHIND_AXLE_MM = 20.0  # with one caster at the back, the robot tips forward without this
+MIN_COM_BEHIND_WITH_ARM_MM = 10.0  # v2: the arm at full forward reach
+
+
+@dataclass(frozen=True)
+class Mass:
+    name: str
+    kg: float
+    x_mm: float  # fore-aft position of its centre of mass; + is forward of the axle
+    source: str
+
+
+@dataclass(frozen=True)
+class BaseLayout:
+    """Plan view of the base, decided 2026-11-19: the widest stance, battery across between the
+    servos. Axes: x fore-aft (+ forward) with the axle at x = 0, y across.
+
+    Masses are estimates for the balance check; the README's tip test is what decides v2.
+    """
+
+    battery_mm: tuple[float, float, float] = (152.0, 66.0, 94.0)  # across, fore-aft, height
+    battery_x_mm: float = -40.0  # behind the axle, so its weight keeps the nose up
+    cable_room_mm: float = 20.0  # battery end to cradle back: the servo plugs come out there
+    front_mm: float = 110.0  # plate edges, fore-aft
+    back_mm: float = -190.0
+    caster_x_mm: float = -165.0
+    electronics_x_mm: tuple[float, float] = (-80.0, -185.0)  # deck zone behind the battery
+    arm_base_x_mm: float = -110.0  # v2: SO-101 base on a top deck
+    arm_reach_com_mm: float = 150.0  # the arm's centre of mass ahead of its base at full reach
+    arm_kg: float = 1.0
+    other: tuple[Mass, ...] = (
+        Mass("plate", 0.25, -40.0, "estimate: about 300 x 260 x 4 mm PETG, part infill"),
+        Mass("electronics", 0.25, -130.0, "estimate: Pi 5, driver, converters, wiring"),
+        Mass("caster", 0.04, -165.0, "estimate"),
+    )
+    battery_kg: float = 1.07  # inventory figure; the EP1210 sheet says 1.22, so this is the low end
+    servo_kg: float = 0.07  # each, with its cradle (estimate)
+    wheel_kg: float = 0.146  # each: printed hub 59 g (118.5 g for two) + TPU tire about 87 g
+
+
+@dataclass(frozen=True)
+class BaseDerived:
+    cradle_back_y_mm: float
+    wheel_inner_y_mm: float
+    track_mm: float
+    width_over_tires_mm: float
+    plate_half_width_mm: float
+    plate_length_mm: float
+    masses: tuple[Mass, ...]
+    com_x_mm: float
+    com_x_with_arm_mm: float
+    caster_share: float  # of the weight, without the arm
+
+
+def _com(masses: tuple[Mass, ...]) -> float:
+    total = sum(m.kg for m in masses)
+    return sum(m.kg * m.x_mm for m in masses) / total
+
+
+def derive_base(case: Case, horn: Horn, cradle: Cradle, b: BaseLayout) -> BaseDerived:
+    """Lay out the base in plan, or raise ValueError naming what does not work."""
+    d = derive_cradle(case, horn, cradle)
+    back_wall = cradle.wall_mm + cradle.pad_mm  # cradle back face, behind the step face
+    cradle_back = b.battery_mm[0] / 2 + b.cable_room_mm
+    wheel_inner = cradle_back + back_wall + d.hub_face_c_mm
+    wheel_width = Wheel().width_mm
+    plate_half = wheel_inner - MIN_HUB_GAP_MM
+    length = b.front_mm - b.back_mm
+    if max(length, 2 * plate_half) > max(PRINT_BED_MM) or min(length, 2 * plate_half) > min(
+        PRINT_BED_MM
+    ):
+        raise ValueError(f"a {length:.0f} x {2 * plate_half:.0f} mm plate does not fit the H2D bed")
+    if not b.back_mm < b.caster_x_mm < b.battery_x_mm - b.battery_mm[1] / 2:
+        raise ValueError("the caster must sit behind the battery and on the plate")
+
+    masses = (
+        Mass("battery", b.battery_kg, b.battery_x_mm, "inventory; EP1210 sheet says 1.22"),
+        Mass("servos and cradles", 2 * b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "estimate"),
+        Mass("wheels", 2 * b.wheel_kg, 0.0, "printed hubs weighed by the slicer; tire estimate"),
+        *b.other,
+    )
+    com = _com(masses)
+    arm = Mass("v2 arm at full reach", b.arm_kg, b.arm_base_x_mm + b.arm_reach_com_mm, "README")
+    com_arm = _com((*masses, arm))
+    if -com < MIN_COM_BEHIND_AXLE_MM:
+        raise ValueError(f"centre of mass only {-com:.0f} mm behind the axle; move weight back")
+    if -com_arm < MIN_COM_BEHIND_WITH_ARM_MM:
+        raise ValueError(
+            f"with the v2 arm reaching forward the centre of mass is {-com_arm:.0f} mm behind "
+            "the axle; move the arm base back or the battery back"
+        )
+    return BaseDerived(
+        cradle_back_y_mm=cradle_back,
+        wheel_inner_y_mm=wheel_inner,
+        track_mm=2 * (wheel_inner + wheel_width / 2),
+        width_over_tires_mm=2 * (wheel_inner + wheel_width),
+        plate_half_width_mm=plate_half,
+        plate_length_mm=length,
+        masses=masses,
+        com_x_mm=com,
+        com_x_with_arm_mm=com_arm,
+        caster_share=-com / -b.caster_x_mm,
+    )
+
+
 def load(path: Path) -> HubParams:
     data = tomllib.loads(path.read_text())
     screws = Screws()
