@@ -1,0 +1,880 @@
+{
+ "slug": "household-robot",
+ "source": "experiments/exp003-household-robot/cad/export_site.py",
+ "wheel": {
+  "od_mm": 120.0,
+  "width_mm": 32.0,
+  "rim_od_mm": 108.0,
+  "rim_wall_mm": 3.0,
+  "flange_mm": 1.5,
+  "flange_land_mm": 1.2,
+  "web_mm": 6.45,
+  "screw": "4 x M3 x 8 button head",
+  "counterbore_diameter_mm": 6.3,
+  "counterbore_depth_mm": 1.95,
+  "hole_diameter_mm": 3.4,
+  "center_pocket_diameter_mm": 5.4,
+  "center_pocket_depth_mm": 2.5,
+  "case_gap_mm": 2.0,
+  "lightening_holes": 5,
+  "lightening_radius_mm": 31.98,
+  "lightening_diameter_mm": 29.59,
+  "hub_section": [
+   [
+    [
+     0.0,
+     2.5
+    ],
+    [
+     2.7,
+     2.5
+    ],
+    [
+     2.7,
+     6.45
+    ],
+    [
+     0.0,
+     6.45
+    ]
+   ],
+   [
+    [
+     2.7,
+     0.0
+    ],
+    [
+     3.65,
+     0.0
+    ],
+    [
+     3.65,
+     6.45
+    ],
+    [
+     2.7,
+     6.45
+    ]
+   ],
+   [
+    [
+     3.65,
+     0.0
+    ],
+    [
+     5.1,
+     0.0
+    ],
+    [
+     5.1,
+     4.5
+    ],
+    [
+     3.65,
+     4.5
+    ]
+   ],
+   [
+    [
+     8.5,
+     0.0
+    ],
+    [
+     9.95,
+     0.0
+    ],
+    [
+     9.95,
+     4.5
+    ],
+    [
+     8.5,
+     4.5
+    ]
+   ],
+   [
+    [
+     9.95,
+     0.0
+    ],
+    [
+     17.18,
+     0.0
+    ],
+    [
+     17.18,
+     6.45
+    ],
+    [
+     9.95,
+     6.45
+    ]
+   ],
+   [
+    [
+     46.77,
+     0.0
+    ],
+    [
+     51.0,
+     0.0
+    ],
+    [
+     51.0,
+     6.45
+    ],
+    [
+     46.77,
+     6.45
+    ]
+   ],
+   [
+    [
+     51.0,
+     0.0
+    ],
+    [
+     55.5,
+     0.0
+    ],
+    [
+     55.5,
+     1.2
+    ],
+    [
+     54.0,
+     2.7
+    ],
+    [
+     54.0,
+     29.3
+    ],
+    [
+     55.5,
+     30.8
+    ],
+    [
+     55.5,
+     32.0
+    ],
+    [
+     51.0,
+     32.0
+    ]
+   ]
+  ]
+ },
+ "tire": {
+  "od_mm": 120.0,
+  "rim_seat_od_mm": 107.6,
+  "rim_measured": true,
+  "bore_mm": 106.6,
+  "lip_bore_mm": 111.0,
+  "tread_mm": 6.7,
+  "over_flange_mm": 4.5,
+  "grip_stretch": 0.0094,
+  "mount_stretch": 0.0375,
+  "profile": [
+   [
+    55.5,
+    0.0
+   ],
+   [
+    58.5,
+    0.0
+   ],
+   [
+    60.0,
+    1.5
+   ],
+   [
+    60.0,
+    30.5
+   ],
+   [
+    58.5,
+    32.0
+   ],
+   [
+    55.5,
+    32.0
+   ],
+   [
+    55.5,
+    30.72
+   ],
+   [
+    53.3,
+    28.52
+   ],
+   [
+    53.3,
+    3.48
+   ],
+   [
+    55.5,
+    1.28
+   ]
+  ]
+ },
+ "cradle": {
+  "a_min_mm": -10.2,
+  "a_max_mm": 35.2,
+  "b_inner_mm": 12.6,
+  "b_outer_mm": 15.6,
+  "wall_mm": 2.0,
+  "pad_mm": 0.5,
+  "pad_diameter_mm": 4.3,
+  "cheek_mm": 3.0,
+  "cheek_height_mm": 20.0,
+  "ear_length_mm": 10.0,
+  "ear_mm": 4.0,
+  "holes": [
+   [
+    8.3,
+    -10.25
+   ],
+   [
+    8.3,
+    10.25
+   ],
+   [
+    32.8,
+    -10.25
+   ],
+   [
+    32.8,
+    10.25
+   ]
+  ],
+  "hole_diameter_mm": 2.4,
+  "disc_opening_radius_mm": 11.0,
+  "window": [
+   11.15,
+   30.3,
+   10.5
+  ],
+  "throat_half_width_mm": 7.1,
+  "screw_depth_mm": 3.5,
+  "axle_above_foot_mm": 15.6
+ },
+ "servo": {
+  "model": "Feetech STS3215 12V",
+  "horn": {
+   "od_mm": 19.9,
+   "thickness_mm": 2.08,
+   "bolt_count": 4,
+   "bolt_circle_mm": 13.6,
+   "bolt_size": "M3",
+   "center_head_mm": 5.0,
+   "center_head_height_mm": 2.0,
+   "shaft_height_mm": 4.0,
+   "raised_case_mm": 2.0
+  },
+  "case": {
+   "length_mm": 45.4,
+   "width_mm": 24.8,
+   "shaft_to_near_end_mm": 10.2,
+   "holes_along_mm": 20.7,
+   "holes_across_mm": 20.4,
+   "holes_near_offset_mm": 8.3,
+   "bottom_holes_along_mm": 24.5,
+   "bottom_holes_across_mm": 20.5,
+   "height_shaft_end_mm": 28.8,
+   "height_far_end_mm": 32.9,
+   "bottom_disc_od_mm": 20.0,
+   "bottom_disc_proud_mm": 4.1,
+   "bottom_step_mm": 1.5,
+   "bottom_step_from_mm": 5.3,
+   "bottom_keepout_from_mm": 11.55,
+   "bottom_keepout_to_mm": 29.9,
+   "bottom_keepout_half_width_mm": 10.1,
+   "bottom_keepout_proud_mm": 3.5,
+   "mount_screw_length_mm": 6,
+   "max_screw_depth_mm": 4.1
+  },
+  "measured_note": "Case length, width and mounting holes confirmed by caliper; the rest from the vendored CAD model."
+ },
+ "base": {
+  "cradle_back_y_mm": 96.0,
+  "wheel_inner_y_mm": 132.8,
+  "track_mm": 297.6,
+  "width_over_tires_mm": 329.6,
+  "plate_half_width_mm": 130.8,
+  "plate_length_mm": 300.0,
+  "com_x_mm": -45.86,
+  "com_x_with_arm_mm": -17.64,
+  "caster_share": 0.28,
+  "masses": [
+   {
+    "name": "battery",
+    "kg": 1.07,
+    "x_mm": -40.0,
+    "source": "inventory; EP1210 sheet says 1.22"
+   },
+   {
+    "name": "servos and cradles",
+    "kg": 0.14,
+    "x_mm": -12.5,
+    "source": "estimate"
+   },
+   {
+    "name": "wheels",
+    "kg": 0.292,
+    "x_mm": 0.0,
+    "source": "printed hubs weighed by the slicer; tire estimate"
+   },
+   {
+    "name": "plate",
+    "kg": 0.25,
+    "x_mm": -40.0,
+    "source": "estimate: about 300 x 260 x 4 mm PETG, part infill"
+   },
+   {
+    "name": "electronics",
+    "kg": 0.25,
+    "x_mm": -130.0,
+    "source": "estimate: Pi 5, driver, converters, wiring"
+   },
+   {
+    "name": "caster",
+    "kg": 0.04,
+    "x_mm": -165.0,
+    "source": "estimate"
+   }
+  ],
+  "battery_mm": [
+   152.0,
+   66.0,
+   94.0
+  ],
+  "battery_x_mm": -40.0,
+  "front_mm": 110.0,
+  "back_mm": -190.0,
+  "caster_x_mm": -165.0,
+  "electronics_x_mm": [
+   -80.0,
+   -185.0
+  ],
+  "arm_base_x_mm": -110.0,
+  "arm_kg": 1.0,
+  "arm_reach_com_mm": 150.0
+ },
+ "printed": [
+  {
+   "item": "exp003 wheel hub, PETG",
+   "qty": "2",
+   "status": "Reserved",
+   "notes": "exp003 drive wheels; tires to follow in TPU"
+  },
+  {
+   "item": "exp003 hub coupon v2, PETG",
+   "qty": "1",
+   "status": "Active",
+   "notes": "Fit gauge and phase 0 spin indicator"
+  },
+  {
+   "item": "exp003 servo cradle, PETG",
+   "qty": "2",
+   "status": "Reserved",
+   "notes": "Fitted to both exp003 wheel servos 2026-11-19"
+  },
+  {
+   "item": "exp003 hub coupon v1, PETG",
+   "qty": "1",
+   "status": "Spare",
+   "notes": "Retired (too close to the servo case)"
+  }
+ ],
+ "petg_used_g": 154.0,
+ "consumables": {
+  "stock": [
+   {
+    "item": "PETG Basic Orange, spool 1 (AMS A1)",
+    "start": "1000 g",
+    "used": "154 g",
+    "left": "about 846 g",
+    "planned": "about 750 g est. (base plate, shells, mounts)",
+    "reorder": "Order a spool when both spools together drop under 500 g after planned use",
+    "lead_time": "Bambu store about 1 week"
+   },
+   {
+    "item": "PETG Basic Orange, spool 2 (sealed)",
+    "start": "1000 g",
+    "used": "0",
+    "left": "1000 g",
+    "planned": "",
+    "reorder": "",
+    "lead_time": ""
+   },
+   {
+    "item": "PLA Basic x 4, PLA Pure x 1",
+    "start": "1000 g each",
+    "used": "Calibration only (not weighed)",
+    "left": "about 1000 g each",
+    "planned": "Not planned yet",
+    "reorder": "One spool per colour is enough for now",
+    "lead_time": ""
+   },
+   {
+    "item": "SUNLU TPU 95A, black",
+    "start": "On order",
+    "used": "",
+    "left": "",
+    "planned": "about 250 g est. (2 tires about 75 g each with purge, bumper about 100 g)",
+    "reorder": "Order when under 300 g",
+    "lead_time": "Amazon 1 to 2 days"
+   },
+   {
+    "item": "M3 x 8 button head (Mywish kit)",
+    "start": "Not counted: per-size counts are not published; similar kits hold 20 per length",
+    "used": "8 (wheel hubs)",
+    "left": "about 12 if 20",
+    "planned": "Cradle-to-plate screws (length set by the plate design)",
+    "reorder": "Count the compartment when the plate design picks lengths",
+    "lead_time": "Amazon 1 to 2 days"
+   },
+   {
+    "item": "M2 self-tapping screws (servo bags)",
+    "start": "One bag per servo",
+    "used": "8 (two cradles)",
+    "left": "Rest of the bags",
+    "planned": "None planned",
+    "reorder": "Keep the bags with the servos",
+    "lead_time": ""
+   },
+   {
+    "item": "Brass heat-set inserts M2 to M5",
+    "start": "On order, 520",
+    "used": "",
+    "left": "",
+    "planned": "Base plate and shells est. 20 to 40",
+    "reorder": "Plenty",
+    "lead_time": ""
+   },
+   {
+    "item": "M2.5 brass standoffs",
+    "start": "On order, 160",
+    "used": "",
+    "left": "",
+    "planned": "Pi 5 and boards est. 12 to 16",
+    "reorder": "Plenty",
+    "lead_time": ""
+   }
+  ],
+  "usage": [
+   {
+    "date": "2026-11-18",
+    "what": "Hub coupon v1",
+    "used": "PETG 8.3 g"
+   },
+   {
+    "date": "2026-11-19",
+    "what": "Hub coupon v2",
+    "used": "PETG 7.2 g"
+   },
+   {
+    "date": "2026-11-19",
+    "what": "Two wheel hubs",
+    "used": "PETG 118.5 g"
+   },
+   {
+    "date": "2026-11-19",
+    "what": "Hubs fitted to horns",
+    "used": "8 x M3 x 8 button head"
+   },
+   {
+    "date": "2026-11-19",
+    "what": "Servo cradle 1, fitted",
+    "used": "PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag)"
+   },
+   {
+    "date": "2026-11-19",
+    "what": "Servo cradle 2, fitted",
+    "used": "PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag)"
+   }
+  ]
+ },
+ "bom": [
+  {
+   "n": 1,
+   "item": "Raspberry Pi 5 8GB",
+   "asin": "B0CK2FCG1K",
+   "check": "Genuine board",
+   "group": "Compute"
+  },
+  {
+   "n": 2,
+   "item": "Official Pi 5 Active Cooler",
+   "asin": "B0CLXZBR5P",
+   "check": "",
+   "group": "Compute"
+  },
+  {
+   "n": 3,
+   "item": "CanaKit 45W USB-C PD supply (27W at 5V 5A for Pi 5)",
+   "asin": "B07H125ZRL",
+   "check": "Bench power only; not the official PSU",
+   "group": "Compute"
+  },
+  {
+   "n": 4,
+   "item": "SanDisk Extreme 64GB A2 microSD",
+   "asin": "B09X7C7LL1",
+   "check": "",
+   "group": "Compute"
+  },
+  {
+   "n": 5,
+   "item": "M2.5 brass standoff kit, 160 pcs",
+   "asin": "B07KM5B3PT",
+   "check": "",
+   "group": "Compute"
+  },
+  {
+   "n": 6,
+   "item": "Serial bus servo driver board for Feetech ST/SC, USB",
+   "asin": "B0CTMM4LWK",
+   "check": "Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215",
+   "group": "Drive"
+  },
+  {
+   "n": 7,
+   "item": "608-ZZ bearings 8x22x7 mm, 10-pack",
+   "asin": "B07XLV1W2M",
+   "check": "Optional outboard wheel support",
+   "group": "Drive"
+  },
+  {
+   "n": 8,
+   "item": "1.5\" PU swivel plate casters, set of 8",
+   "asin": "B0DHHJRDDV",
+   "check": "Measure overall height (expect about 50 mm); 1 used, 7 spare",
+   "group": "Drive"
+  },
+  {
+   "n": 9,
+   "item": "SUNLU TPU 95A, 1 kg",
+   "asin": "B0BXNWK6NS",
+   "check": "(also listed under Printing)",
+   "group": "Printing"
+  },
+  {
+   "n": 10,
+   "item": "Brass heat-set inserts M2 to M5, 520 pcs",
+   "asin": "B0D5V3TZLB",
+   "check": "",
+   "group": "Printing"
+  },
+  {
+   "n": 11,
+   "item": "ExpertPower 12V 10Ah LiFePO4, built-in BMS",
+   "asin": "B07X3Y3LS5",
+   "check": "152 x 66 x 94 mm, 1.07 kg. No charger included",
+   "group": "Power"
+  },
+  {
+   "n": 12,
+   "item": "14.6V 2A LiFePO4 charger, 5.5x2.1 mm barrel, center positive",
+   "asin": "B09HKDPLQ9",
+   "check": "Confirm center positive with the multimeter",
+   "group": "Power"
+  },
+  {
+   "n": 13,
+   "item": "UCTRONICS 9-36V to 5V (5.2V) buck, up to 6A",
+   "asin": "B07XXWQ49N",
+   "check": "Stand-in for Pololu D36V50F5. Check 5.1 to 5.25V out under load",
+   "group": "Power"
+  },
+  {
+   "n": 14,
+   "item": "DROK buck-boost, 9-36V in, 12V 5A out, potted",
+   "asin": "B0B6VK8BPN",
+   "check": "Check 12.0V out before connecting servos",
+   "group": "Power"
+  },
+  {
+   "n": 15,
+   "item": "INA226 I2C current/voltage module, 0-36V 20A",
+   "asin": "B0DRNG1VKM",
+   "check": "Shunt must be R010 (or lower), not R100",
+   "group": "Power"
+  },
+  {
+   "n": 16,
+   "item": "XT60 pairs with 14 AWG leads, 5 pairs",
+   "asin": "B085HF31K7",
+   "check": "",
+   "group": "Power"
+  },
+  {
+   "n": 17,
+   "item": "Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A",
+   "asin": "B07426WCLM, B0DNCJRX18",
+   "check": "10A main, 5A servo rail",
+   "group": "Power"
+  },
+  {
+   "n": 18,
+   "item": "DaierTek 12V 20A SPST rocker switch",
+   "asin": "B07S2QJKTX",
+   "check": "Main power",
+   "group": "Power"
+  },
+  {
+   "n": 19,
+   "item": "5.5x2.1 mm panel-mount DC jacks, 5A, 6 sets",
+   "asin": "B0D9B7WR23",
+   "check": "Charge port; matches item 12",
+   "group": "Power"
+  },
+  {
+   "n": 20,
+   "item": "22 mm red mushroom e-stop, latching, 2NC 10A, 2-pack",
+   "asin": "B07R8PTTDX",
+   "check": "1 used, 1 spare",
+   "group": "Power"
+  },
+  {
+   "n": 21,
+   "item": "16 AWG silicone wire, 10 ft red + 10 ft black",
+   "asin": "B0D93K21TN",
+   "check": "",
+   "group": "Power"
+  },
+  {
+   "n": 22,
+   "item": "22 AWG silicone wire, 6 colors x 10 ft",
+   "asin": "B089CQHRDT",
+   "check": "",
+   "group": "Power"
+  },
+  {
+   "n": 23,
+   "item": "Heat-shrink kit, 580 pcs",
+   "asin": "B01MFA3OFA",
+   "check": "",
+   "group": "Power"
+  },
+  {
+   "n": 24,
+   "item": "Hook-and-loop battery straps, 6-pack",
+   "asin": "B08HHHFMCJ",
+   "check": "",
+   "group": "Power"
+  },
+  {
+   "n": 25,
+   "item": "VL53L1X ToF modules (TOF400C), 3-pack",
+   "asin": "B0HC653J8F",
+   "check": "XSHUT pin broken out (needed to give each its own address)",
+   "group": "Sensing and wiring"
+  },
+  {
+   "n": 26,
+   "item": "VL53L0X ToF modules (GY-VL53L0XV2), 3-pack",
+   "asin": "B0B6ZT7NRW",
+   "check": "Cliff sensors",
+   "group": "Sensing and wiring"
+  },
+  {
+   "n": 27,
+   "item": "KW12-3 roller-lever limit switches, 10-pack",
+   "asin": "B07X142VGC",
+   "check": "Bumpers; 2 used",
+   "group": "Sensing and wiring"
+  },
+  {
+   "n": 28,
+   "item": "Dupont jumper wires, 120 pcs",
+   "asin": "B01EV70C78",
+   "check": "",
+   "group": "Sensing and wiring"
+  },
+  {
+   "n": 29,
+   "item": "JST-XH pre-crimped connector kit",
+   "asin": "B08G18PWQ6",
+   "check": "",
+   "group": "Sensing and wiring"
+  },
+  {
+   "n": 30,
+   "item": "AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged",
+   "asin": "B007OYAVLI",
+   "check": "",
+   "group": "Audio"
+  }
+ ],
+ "phases": [
+  {
+   "track": "v1",
+   "n": 0,
+   "phase": "Bench: Xbox controller drives two servos in wheel mode with a dead-man button; voice loop on the Mac",
+   "done_when": "Both work for 10 minutes"
+  },
+  {
+   "track": "v1",
+   "n": 1,
+   "phase": "Chassis printed and assembled, teleop over Wi-Fi",
+   "done_when": "10 minutes of driving; dead-man and e-stop both stop it"
+  },
+  {
+   "track": "v1",
+   "n": 2,
+   "phase": "Safety interlocks: bumpers, forward ToF, cliff, speed cap about 0.3 m/s, battery",
+   "done_when": "Stops before a box 20/20; stops at a test edge 10/10"
+  },
+  {
+   "track": "v1",
+   "n": 3,
+   "phase": "Voice on the robot: one guest-level personality, parent controls, privacy mode",
+   "done_when": "15-minute conversation; no audio leaves the house; mute stops listening 10/10"
+  },
+  {
+   "track": "v1",
+   "n": 4,
+   "phase": "Remote driving over Tailscale",
+   "done_when": "Stops within 300 ms when the link drops"
+  },
+  {
+   "track": "v1",
+   "n": 5,
+   "phase": "Mapping with LiDAR, named places, self-docking",
+   "done_when": "Reaches a named place 9/10 from 3 starts; docks 9/10"
+  },
+  {
+   "track": "v1",
+   "n": 6,
+   "phase": "Household rules: zones, time zones, quiet hours, as gate interlocks",
+   "done_when": "Refuses to enter a no-go zone 20/20; silent in quiet hours"
+  },
+  {
+   "track": "v1",
+   "n": 7,
+   "phase": "Recognition of family and pets",
+   "done_when": "Right person or pet in at least 95 of 100 encounters; mistakes one family member for another at most once; strangers treated as guests 20/20"
+  },
+  {
+   "track": "v1",
+   "n": 8,
+   "phase": "Per-person behaviour and memory",
+   "done_when": "A parent can tell from transcripts whom the robot was talking to, 9/10; \"forget that\" works 10/10; never reveals one person's memories to another across 20 probing prompts"
+  },
+  {
+   "track": "v1",
+   "n": 9,
+   "phase": "Voice-commanded navigation with role permissions",
+   "done_when": "\"Go to the couch\" works 9/10; a child's request into a no-go zone is refused 10/10"
+  },
+  {
+   "track": "v1",
+   "n": 10,
+   "phase": "VLA trained on teleop demos with spoken instructions",
+   "done_when": "Beats a scripted baseline on a fixed test"
+  },
+  {
+   "track": "v2",
+   "n": 11,
+   "phase": "Arm on the deck, teleop with the leader arm, reach interlock",
+   "done_when": "Tip test passes; arm stops within 0.5 s when a person comes within reach, 10/10"
+  },
+  {
+   "track": "v2",
+   "n": 12,
+   "phase": "Tidy-up demos (\"put the blocks in the bin\") and a trained policy",
+   "done_when": "Policy picks and places a known toy 8/10 from fixed starts"
+  },
+  {
+   "track": "v2",
+   "n": 13,
+   "phase": "Autonomous tidy-up: find toys on the map, drive, pick, place",
+   "done_when": "Clears 5 scattered toys into the bin in one run, 4/5 runs"
+  }
+ ],
+ "timeline": [
+  {
+   "date": "2026-11-17",
+   "text": "design chosen (two-wheel plus caster for carpet and hard floor, LiFePO4 battery). Parametric hub and coupon modelled in CadQuery; servo.toml holds placeholders until measured."
+  },
+  {
+   "date": "2026-11-17",
+   "text": "scope widened to a household robot (recognition, per-person behaviour, memory, household rules) with a v2 arm for tidying toys. Privacy rules handed to the owner (ADR 0013, superseding 0007 and 0012); folder renamed from exp003-home-robot."
+  },
+  {
+   "date": "2026-11-17",
+   "text": "horn measured on a spare STS3215 (19.9 mm aluminium horn, 4 M3 holes on 13.6 mm, centre screw 2 mm proud). Hub web thickened so the centre pocket stays below the screw counterbores. Coupon ready to print."
+  },
+  {
+   "date": "2026-11-18",
+   "text": "the lab's screw kit is button head with M3 only from 8 mm, so the model now takes the screws on hand ([screws] in servo.toml) and thickens the web (7.95 mm) until an M3 x 8 stops 0.5 mm short of the servo case. Fixed with 4 x M3 x 8 button head."
+  },
+  {
+   "date": "2026-11-18",
+   "text": "H2D set up (firmware 01.04.20.00, AMS 2 Pro on the right nozzle). First print: the hub coupon in PETG Basic, servo side down, 0.2 mm layers, 4 walls, 30% infill, no supports, textured PEI plate (22 min, 8.3 g). Snug fit on the horn with 4 x M3 x 8 button head and the default 0.2 mm clearance; screws pull it flat and it spins free. But it cleared the servo by only about two sheets of paper (design: 2.5 mm): the case is low round the shaft, and a raised block under the label starts right at the horn's edge, 2.0 mm below the horn top (new measurement I, raised_case_mm). A 1.5 mm recess wrapping round the horn left 0.5 mm over it."
+  },
+  {
+   "date": "2026-11-18",
+   "text": "hub redesigned to sit flat on the horn's top face, centred by the centre pocket (5.4 mm over the 5.0 mm screw head) and the screws. It now clears the case by 2.0 mm, the new minimum (it was 1.0); the model steps the underside up beyond the horn if a case needs more. Web 6.45 mm, still 4 x M3 x 8. Reprint the coupon to confirm before the full hub."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "coupon v2 (flat seat) printed in PETG (20 min, 7.2 g) and fits well on the horn. Kept as the fit gauge and phase 0 spin indicator. Next: two full wheel hubs."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "both full wheel hubs printed together in PETG, servo side down, no supports (2 h 44 min, 118.5 g). Clean prints; each seats on the horn like the coupon and spins true without touching the case. Next: the TPU tire, once the TPU arrives."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "STS3215 CAD model vendored from The Robot Studio's SO-ARM100 repo (Apache-2.0) in cad/vendor/. A caliper on a spare confirmed the case (45.4 x 24.8 mm) and the top mounting holes (20.7 x 20.4 mm centre to centre) exactly; the horn differs by 0.3 to 0.5 mm, so the hub keeps its measured numbers. The idler disc on the bottom stands about 4.1 mm proud of the case bottom round the shaft, so anything under the servo needs a pocket. Case numbers in servo.toml [case], checked by the tests."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "TPU tire modelled (cad/exp003_cad/tire.py): a 120 mm ring with a 107 mm bore that grips the 108 mm rim seat (0.9% stretch) and a lip over each flange, 0.2 mm clear, so it cannot walk off sideways. Fitting it means stretching 3.7% over one flange. Tests check the only contact with the hub is the grip band on the seat. Prints flat in TPU 95A, no supports."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "printed rim measured across the top flange (110.6 mm, design 111.0), so the seat is about 107.6 mm. The tire's bore is now sized to it (106.6 mm, [tire] in servo.toml)."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "full survey of the STS3215 model after a bracket was pitched for the top holes without checking the rest of the case. The bottom has its own four holes (24.5 x 20.5 mm, confirmed present), the two bus connectors, a step and a raised pad. All recorded in cad/vendor/README.md and servo.toml; a \"Before designing a part\" checklist now gates every printed part (cad/README, pointed to from AGENTS.md)."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "servo cradle modelled (cad/exp003_cad/cradle.py), following the new checklist. It holds the servo by its bottom holes because the top holes sit only about 2.5 mm under the spinning hub. It is a U: the back wall has four 0.5 mm pads and one opening for the idler disc, connectors and pad; cheeks hug the case 0.2 mm clear; the lower cheek is the foot, with M3 ears. The supplied M2 x 6 screws go 3.5 mm into the case. Tests load the vendored servo model into the cradle and find no clashes; the clash check fails as it should on a servo lowered 0.6 mm. The wheel axle sits 15.6 mm above the foot, which the base plate will need."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "servo cradle sent to print in PETG (34 min, 10.0 g). Base plate inputs gathered with sources in cad/BASE_PLATE.md; the caster's mounting height is not published anywhere and is measured on arrival. Owner chose the widest stance: battery across between the servos, 330 mm over the tires, a 300 x 262 mm one-piece plate. Balance check: centre of mass 46 mm behind the axle, 18 mm with a 1 kg v2 arm at full forward reach."
+  },
+  {
+   "date": "2026-11-19",
+   "text": "the first servo cradle is printed and fitted. The servo slides in well, sits flat on the pads and holds solid with the supplied M2 x 6 screws. The loose metal idler disc on the servo's bottom comes off first (only a two-sided bracket holds it) and goes with the spares. The second cradle printed and fitted perfectly too: both wheel servos are in their cradles."
+  }
+ ],
+ "design": {
+  "tire": {
+   "od_mm": 120.0,
+   "interference_mm": 1.0,
+   "clearance_mm": 0.2,
+   "edge_chamfer_mm": 1.5,
+   "rim_measured_od_mm": 107.6
+  },
+  "cradle": {
+   "wall_mm": 2.0,
+   "pad_mm": 0.5,
+   "pad_diameter_mm": 4.3,
+   "cheek_mm": 3.0,
+   "cheek_height_mm": 20.0,
+   "side_clearance_mm": 0.2,
+   "disc_clearance_mm": 1.0,
+   "keepout_margin_mm": 0.4,
+   "ear_length_mm": 10.0,
+   "ear_mm": 4.0,
+   "ear_screw": "M3"
+  }
+ }
+}

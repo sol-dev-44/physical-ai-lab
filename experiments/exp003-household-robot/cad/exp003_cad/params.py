@@ -273,6 +273,33 @@ def derive_tire(p: HubParams, t: Tire) -> TireDerived:
     )
 
 
+def tire_profile(p: HubParams, t: Tire) -> list[tuple[float, float]]:
+    """The tire's cross-section as (radius, z) points, round the ring once.
+
+    Same axes as the hub: z is the wheel axis, z = 0 the servo-side face. Each flange slope is the
+    line r + z = r_out + land (mirrored at the far edge); the tire's face follows it, moved out by
+    the clearance.
+    """
+    d, w = derive_tire(p, t), p.wheel
+    width, land, ch = w.width_mm, w.flange_land_mm, t.edge_chamfer_mm
+    r_out = d.rim_seat_od_mm / 2 + w.flange_mm  # flange land radius
+    r_tread, r_bore, r_lip = t.od_mm / 2, d.bore_mm / 2, d.lip_bore_mm / 2
+    slope = r_out + land + t.clearance_mm * math.sqrt(2)
+    z_lip, z_bore = slope - r_lip, slope - r_bore
+    return [
+        (r_lip, 0.0),
+        (r_tread - ch, 0.0),
+        (r_tread, ch),
+        (r_tread, width - ch),
+        (r_tread - ch, width),
+        (r_lip, width),
+        (r_lip, width - z_lip),
+        (r_bore, width - z_bore),
+        (r_bore, z_bore),
+        (r_lip, z_lip),
+    ]
+
+
 @dataclass(frozen=True)
 class Case:
     """The STS3215 body, for brackets and the base plate. Origin: the shaft axis.

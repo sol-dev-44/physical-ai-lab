@@ -1,0 +1,257 @@
+---
+title: Household robot
+date: 2026-11-17
+status: building
+summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The wheels and servo cradles are printed and fitted; the base plate waits on one measurement.
+tags: [robot, mobile-base, cad, 3d-printing, exp003]
+parts:
+  - 2 × Feetech STS3215 12V servos, wheel mode
+  - Printed PETG hubs, TPU 95A tires
+  - Raspberry Pi 5 8GB
+  - ExpertPower 12V 10Ah LiFePO4
+  - '1.5" PU swivel caster'
+  - VL53L1X and VL53L0X ToF sensors
+  - Logitech C920x front camera
+  - Seeed reSpeaker XVF3800 mic array
+---
+
+## Overview
+
+A small Wi-Fi robot that lives with the family. It should know each person and the pets, talk with
+each of them in a way that suits them, remember them and the house, keep to the household's rules
+about where it may go and when, and take remote driving. This is lab experiment 3.
+
+- **v1** is the rolling robot. It drives on carpet and hard floor without hitting anything,
+  converses, recognises people and pets, remembers, follows the household's rules and goes where
+  it is told. It ends with a vision-language-action policy trained on its own driving.
+- **v2** adds an arm to pick up light toys and put them away.
+
+Where it stands: the design is settled and the parts are on order. Both wheel hubs and both servo
+cradles are printed and fitted, and the tire is modelled. The base plate's layout is decided.
+Nothing runs against hardware yet.
+
+<Callout>
+  Every dimension, mass and count on this page is exported from the CAD parameters and the lab's
+  docs by a script next to the models, and a test fails when that export goes stale. Numbers in the
+  text are read from the same file.
+</Callout>
+
+## Design
+
+Two driven wheels and one swivel caster at the back. That works on carpet and hard floor and keeps
+the base simple.
+
+- **Drive.** The lab's two spare STS3215 12V servos, in wheel mode, turn printed wheels. The
+  estimate is about 0.28 m/s at 12V; it gets measured on the bench before anything else.
+- **Compute.** A Raspberry Pi 5 on the robot runs the motors, the sensors and the safety gate. The
+  Mac does speech-to-text, recognition, vision and policy inference over Wi-Fi. Conversation goes
+  through the Claude API.
+- **Power.** A 12.8V 10Ah LiFePO4 pack (about 128 Wh) with its own BMS. A main switch and fuse,
+  then an INA226 fuel gauge. The motor rail runs through the e-stop, a 12V buck-boost and its own
+  fuse; the compute rail is a 5V buck to the Pi. The e-stop cuts motor power only, so the Pi stays
+  up and logs what happened.
+- **Sensing.** Three forward time-of-flight sensors in a soft TPU bumper, two bumper switches, and
+  downward time-of-flight cliff sensors. Infrared reflectance sensors mistake dark carpet for a
+  drop, so they are out. A front camera now, and a 2D LiDAR later for mapping.
+- **Audio.** A reSpeaker mic array on top of the head and a small speaker.
+- **Privacy mode.** A mic mute and a printed camera shutter that the gate can see, and a light that
+  shows when the robot is listening.
+
+### Who it knows
+
+Recognition and memory run on the lab machine and the robot, and their data stays in a local store
+by default. Faces and voices are recognised together, on device, from live frames that are then
+dropped. Anyone the robot does not recognise with confidence is treated as a guest.
+
+After a conversation the robot writes short notes, not transcripts or audio, and anyone can say
+"forget that". The household's rules (named rooms, no-go zones, rooms closed at certain times,
+quiet hours) live on the map and are enforced by the safety gate. They change only on the lab
+machine, never by voice alone.
+
+What gets saved, shared or published is the owner's call
+([ADR 0013](https://github.com/sol-dev-44/physical-ai-lab/blob/main/docs/adr/0013-owner-governs-personal-data.md)).
+
+## Wheels
+
+Each wheel is a printed PETG hub with a TPU tire, <Val k="wheel.od_mm" digits="0" /> across and
+<Val k="wheel.width_mm" digits="0" /> wide.
+
+<WheelSection />
+
+The hub bolts straight to the servo's aluminium horn with <Val k="wheel.screw" /> screws. It sits
+flat on the horn's top face, centred by a <Val k="wheel.center_pocket_diameter_mm" /> pocket over
+the <Val k="servo.horn.center_head_mm" digits="1" /> centre screw head, and clears the servo case
+by <Val k="wheel.case_gap_mm" digits="1" />. The web is <Val k="wheel.web_mm" /> thick, with
+<Val k="wheel.lightening_holes" /> holes to take weight out.
+
+Both hubs printed together in one run, servo side down, with no supports. The rim is a cup that
+opens upward, so that is the only way it prints. Each one seats on its horn like the test coupon
+and spins true without touching the case.
+
+The tire is a TPU 95A ring with a <Val k="tire.bore_mm" /> bore. It grips the rim seat with
+<Val k="tire.grip_stretch" pct /> stretch, and a lip over each flange stops it walking off
+sideways. Fitting it means stretching it <Val k="tire.mount_stretch" pct /> over one flange. The
+bore is sized to the printed rim rather than the drawing: a caliper reading puts the seat at
+<Val k="tire.rim_seat_od_mm" />. It prints flat with no supports once the TPU arrives.
+
+## Servo mount
+
+Each wheel servo sits in a printed cradle that holds it from below. Its top mounting holes sit only
+about 2.5 mm under the spinning hub, which leaves no room for a plate, a screw head and the 2 mm of
+air the hub needs. The bottom holes are free, and that is how the SO-101 arm holds its servos.
+
+<CradleViews />
+
+The cradle is a U. The back wall carries four <Val k="cradle.pad_mm" digits="1" /> pads for the
+servo to sit on, and one opening for the idler disc, the two bus connectors and the raised pad on
+the servo's bottom. The cheeks hug the case <Val k="design.cradle.side_clearance_mm" digits="1" />
+clear, and the lower cheek is the foot, with an <Val k="design.cradle.ear_screw" /> ear at each
+end.
+
+The servos came with bags of M2 x 6 self-tapping screws. They go <Val k="cradle.screw_depth_mm" />
+into the case, short of the <Val k="servo.case.max_screw_depth_mm" /> its holes allow. The wheel
+axle ends up <Val k="cradle.axle_above_foot_mm" /> above the foot, which is the number the base
+plate needs.
+
+Tests load the vendored servo model into the cradle and check for clashes; the check fails, as it
+should, on a servo lowered 0.6 mm. Both cradles are printed and fitted: each servo slides in, sits
+flat on its pads and holds solid. The loose metal idler disc on the servo's bottom comes off first
+and goes with the spares.
+
+<ServoSheet />
+
+The servo's numbers come from two places. The vendored STS3215 model, from The Robot Studio's
+SO-ARM100 repository (Apache-2.0), matched every caliper check on the case and its holes, so it is
+trusted for the case. The horn on the lab's servos differs from the model by 0.3 to 0.5 mm, so the
+hub keeps its own measured numbers.
+
+## Base and balance
+
+The owner asked for the stoutest base, so the battery lies across the robot between the two
+servos.
+
+<BasePlan />
+
+That gives <Val k="base.width_over_tires_mm" digits="0" /> over the tires on a
+<Val k="base.track_mm" digits="0" /> track, and a one-piece plate
+<Val k="base.plate_length_mm" digits="0" /> long, fore and aft, that stops short of the wheels and
+fits the printer's bed.
+
+Along the robot: the battery is centred <Val k="base.battery_x_mm" abs digits="0" /> behind the
+axle, the electronics deck sits behind it, and the caster is
+<Val k="base.caster_x_mm" abs digits="0" /> behind the axle. A strip ahead of the axle carries the
+bumper and the forward sensors. The v2 arm's base will sit
+<Val k="base.arm_base_x_mm" abs digits="0" /> behind the axle, on a top deck.
+
+With the estimated masses, the centre of mass is <Val k="base.com_x_mm" abs digits="0" /> behind
+the axle and the caster carries about <Val k="base.caster_share" pct digits="0" /> of the weight.
+That is stable under braking and keeps most of the weight on the wheels for grip. A
+<Val k="base.arm_kg" digits="0" /> v2 arm at full forward reach moves it to
+<Val k="base.com_x_with_arm_mm" abs digits="0" /> behind the axle, so the robot should still not
+tip forward. A tip test with a dummy weight decides before v2 starts.
+
+Still open: the plate's height. The caster's mounting height is not published anywhere, so it gets
+measured when the caster arrives. It decides whether the cradles sit on top of the plate or hang
+under it.
+
+## Printed parts
+
+Everything so far is printed on the lab's Bambu H2D in PETG: servo side down, 0.2 mm layers, four
+walls, 30% infill, no supports.
+
+<PrintedParts />
+
+Still to print: the two tires, in TPU 95A once it arrives, and the base plate, once its height is
+set.
+
+## Parts list
+
+The robot's own parts were ordered on 17 November and are due between 21 and 23 November. Each row
+says what to check when it lands. Two boards are stand-ins for the parts the design names, so they
+are tested before use.
+
+<PartsList />
+
+The servos, the front camera, the mic array and the Xbox controller for teleop come from the lab's
+existing stock, so they are not on this order.
+
+## Materials
+
+Filament and fasteners from the lab's inventory. The PETG meter adds up the usage log, so it moves
+only when a print is logged. TPU feeds the left nozzle from the external spool holder, never
+through the AMS.
+
+<Materials />
+
+## Build log
+
+From the experiment's progress log, in the order things happened.
+
+<BuildLog />
+
+## Roadmap
+
+Each phase ends with a test it has to pass before the next one starts. The build is in phases 0 and
+1: the bench test and the chassis.
+
+<Roadmap current="0,1" />
+
+## Rules and safety
+
+- **One path to the motors, on the robot.** A lab-agent on the Pi is the only path to the motors,
+  and losing Wi-Fi means stop. The decision record gets written before phase 1.
+- **Sensor rules are interlocks.** The bumpers, the forward and cliff sensors, the speed cap and the
+  battery check run as interlocks in the safety gate, and so will the household's rules once there
+  is a map.
+- **The e-stop cuts motor power only.** The Pi stays up and logs what happened.
+- **Remote driving goes over a private VPN (Tailscale), not the website.** The website stays
+  queue-only
+  ([ADR 0003](https://github.com/sol-dev-44/physical-ai-lab/blob/main/docs/adr/0003-web-never-touches-hardware.md)):
+  it can ask, and the agent on the robot decides.
+- **The arm moves light toys only.** In v2 it puts toys into a bin, and an interlock stops it
+  whenever a person or a pet is within reach.
+- **Personal data is the owner's call.** The wake word and speech-to-text run locally by default.
+  Nothing personal goes in the repo or on this site unless the owner puts it there.
+
+## Lessons
+
+Measure twice, cut once. The first three days produced three misses. None cost more than a small
+test print, and each one changed how the next part gets designed.
+
+### The coupon that nearly touched
+
+The first hub coupon was designed to clear the servo case by 2.5 mm. It cleared it by about two
+sheets of paper. The case is low round the shaft, but a raised block beside the horn sits only
+2.0 mm below the horn's top, and the coupon's recess round the horn left only 0.5 mm above it. The hub
+was redesigned to sit flat on the horn's top face. It now clears by
+<Val k="wheel.case_gap_mm" digits="1" />, the new minimum, and a second coupon proved the fit before
+the full hubs were printed.
+
+### The holes on the other side
+
+A bracket was pitched for the servo's top mounting holes before anyone checked the rest of the
+case. The bottom has its own four holes, the two bus connectors, a step and a raised pad, and the
+top holes sit too close under the spinning hub to use. A full survey of the servo model followed,
+and the cradle now mounts from below.
+
+### The measurement nobody could take
+
+The tire needed the printed rim's seat diameter, and it was asked for even though caliper jaws
+cannot reach across a <Val k="wheel.rim_od_mm" digits="0" /> seat with the flanges in the way. The
+fix was a reading that can actually be taken: across the top flange's flat land, minus the two
+flanges. The tire's bore is sized to that.
+
+### The checklist
+
+Since then, a "before designing a part" checklist gates every printed part:
+
+1. Gather every source for each component the part touches: the datasheet, the vendor's CAD model,
+   how other builds mount it, and what is already measured.
+2. Survey every face, not just the one you plan to use: holes, bosses, steps, connectors, screw
+   heads, and anything that moves.
+3. List every way to mount it, with what each needs and blocks, and pick one with reasons.
+4. For each fastener, check the thread, the hole depth, the screws on hand and room for the driver.
+5. Never ask for a measurement the sources already give. When one is needed, say why and check it
+   can be taken with the tool on hand.
+6. Ask whatever is still open in one go, before modelling.
+7. Record what was measured and what was read from a model, so the next part starts from facts.
