@@ -286,7 +286,11 @@ class Case:
     shaft_to_near_end_mm: float  # shaft centre to the near end of the case
     holes_along_mm: float  # top mounting holes, centre to centre along the case
     holes_across_mm: float  # and across it
-    holes_near_offset_mm: float  # shaft centre to the nearer pair of mounting holes
+    holes_near_offset_mm: (
+        float  # shaft centre to the nearer pair of mounting holes (top and bottom)
+    )
+    bottom_holes_along_mm: float  # bottom mounting holes, centre to centre along the case
+    bottom_holes_across_mm: float  # and across it
     height_shaft_end_mm: float  # case top round the shaft to case bottom round the shaft
     height_far_end_mm: float  # the far end is taller: raised strips on top, a step underneath
     bottom_disc_od_mm: float  # the idler disc on the bottom, on the shaft axis
@@ -305,6 +309,10 @@ def load_case(path: Path) -> Case:
     far_hole = c.holes_near_offset_mm + c.holes_along_mm
     if far_hole >= c.length_mm - c.shaft_to_near_end_mm:
         raise ValueError("the far pair of mounting holes falls past the end of the case")
+    if c.bottom_holes_across_mm >= c.width_mm:
+        raise ValueError("bottom mounting holes across must fall inside the case width")
+    if c.holes_near_offset_mm + c.bottom_holes_along_mm >= c.length_mm - c.shaft_to_near_end_mm:
+        raise ValueError("the far pair of bottom mounting holes falls past the end of the case")
     if c.height_far_end_mm < c.height_shaft_end_mm:
         raise ValueError("height_far_end is measured over the raised strips, so it is the larger")
     if c.bottom_disc_od_mm > c.width_mm:

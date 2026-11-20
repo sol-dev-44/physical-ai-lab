@@ -167,3 +167,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   contact with the hub is the grip band on the seat. Prints flat in TPU 95A, no supports.
 - 2026-11-19: printed rim measured across the top flange (110.6 mm, design 111.0), so the seat is
   about 107.6 mm. The tire's bore is now sized to it (106.6 mm, `[tire]` in `servo.toml`).
+- 2026-11-19: full survey of the STS3215 model after a bracket was pitched for the top holes
+  without checking the rest of the case. The bottom has its own four holes (24.5 x 20.5 mm,
+  confirmed present), the two bus connectors, a step and a raised pad. All recorded in
+  `cad/vendor/README.md` and `servo.toml`; a "Before designing a part" checklist now gates every
+  printed part (cad/README, pointed to from AGENTS.md).

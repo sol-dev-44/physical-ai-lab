@@ -16,6 +16,30 @@ uv run --no-project --python 3.12 --with cadquery --with pytest pytest -q experi
 
 The plain `uv run pytest` runs the measurement checks and skips the geometry tests.
 
+## Before designing a part (measure twice, cut once)
+
+Do all of this before proposing a design, modelling it or asking for a print. It exists because
+of two misses on 2026-11-19: a bracket was pitched for the servo's top holes before anyone noticed
+the bottom holes and connectors, and the rim seat was asked for although caliper jaws cannot
+reach it.
+
+1. **Gather every source** for each component the part touches: datasheet, the vendor CAD model,
+   how other builds mount it (the SO-101 guide for STS3215s), and what `servo.toml` already holds.
+2. **Survey every face**, not just the one you plan to use: holes (top, bottom, ends, sides),
+   threads, bosses, discs, steps, connectors and cable exits, screw heads, moving parts and what
+   they sweep. With a CAD model, probe all its cylinders and faces and write the result down (as
+   in `vendor/README.md`).
+3. **List every way to mount it**, with what each needs and what it blocks, and pick one with
+   reasons. Say the choice and the alternatives when proposing the part.
+4. **For each fastener:** thread size, hole depth, screws on hand (`[screws]`), and room for the
+   driver to reach the head.
+5. **For each measurement you ask for:** check it can be taken with the tool on hand (caliper jaws
+   reach about 40 mm; flanges and bosses block jaws) and say exactly where the jaws or depth rod go.
+   Prefer a drawing.
+6. **Ask every open question in one go**, before modelling. Do not model around a guess.
+7. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
+   `servo.toml` and the docs, so the next part starts from facts.
+
 ## Parts
 
 | Part | File | What it is |

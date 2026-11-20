@@ -165,6 +165,8 @@ def test_checked_in_case_has_the_caliper_confirmed_body():
     assert (c.holes_along_mm, c.holes_across_mm) == (20.7, 20.4)
     assert c.holes_near_offset_mm + c.holes_along_mm == pytest.approx(29.0)
     assert c.bottom_disc_proud_mm == pytest.approx(4.1)
+    # The bottom has its own four holes, longer-spaced, sharing the near pair's position.
+    assert (c.bottom_holes_along_mm, c.bottom_holes_across_mm) == (24.5, 20.5)
 
 
 def test_hub_loader_ignores_the_case_table():
@@ -178,6 +180,8 @@ CASE_FIELDS = {
     "holes_along_mm": 20.7,
     "holes_across_mm": 20.4,
     "holes_near_offset_mm": 8.3,
+    "bottom_holes_along_mm": 24.5,
+    "bottom_holes_across_mm": 20.5,
     "height_shaft_end_mm": 28.8,
     "height_far_end_mm": 32.9,
     "bottom_disc_od_mm": 20.0,
@@ -203,6 +207,8 @@ def test_load_case_reads_every_field(tmp_path):
         ({"shaft_to_near_end_mm": 30.0}, "near half"),
         ({"holes_across_mm": 25.0}, "inside the case width"),
         ({"holes_along_mm": 30.0}, "past the end"),
+        ({"bottom_holes_across_mm": 25.0}, "bottom mounting holes across"),
+        ({"bottom_holes_along_mm": 30.0}, "bottom mounting holes falls past"),
         ({"height_far_end_mm": 20.0}, "the larger"),
         ({"bottom_disc_od_mm": 30.0}, "wider than the case"),
     ],

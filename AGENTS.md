@@ -24,6 +24,9 @@ Read `docs/architecture.md` first. Rules that matter most:
   each has its own gate and rate limits.
 - Camera work (exp001): read its README's "Gotchas and hints" first. Camera commands run in macOS Terminal, never in this app.
 - Hardware facts (which remotes are IR, RM4 setup, bench notes): `experiments/exp000-ir-bridge/README.md`.
+- Printed parts: before proposing, modelling or printing a part, work through "Before designing a part"
+  in `experiments/exp003-household-robot/cad/README.md` (every face of every component, every mounting
+  option, every fastener, and whether each requested measurement can actually be taken).
 - What the lab owns, where it is, and what's on order: `docs/inventory.md`. Check it before ordering,
   and update it in the same change when a part arrives, gets assigned, breaks or is used up.
 - Never commit `events/` or `.env*` (except `.env.example`). Commit media or personal information
