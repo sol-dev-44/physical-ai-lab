@@ -30,6 +30,10 @@ Read `docs/architecture.md` first. Rules that matter most:
   already gives; ask only for what no source can show.
 - What the lab owns, where it is, and what's on order: `docs/inventory.md`. Check it before ordering,
   and update it in the same change when a part arrives, gets assigned, breaks or is used up.
+  Consumables (filament, screws, inserts, wire): log every print's slicer weight and every
+  assembly's fasteners in its usage log in the same change, keep "Planned next" current, and
+  propose an order (with links; the owner places it) when stock minus planned use falls below
+  the reorder point.
 - Never commit `events/` or `.env*` (except `.env.example`). Commit media or personal information
   only when the owner asks (ADR 0013). Published arm clips live in `apps/web/public/clips/` (ADR 0011).
 - Keep strict settings on: no `ignoreBuildErrors`, no skipping lint, no `any` without a comment saying why.

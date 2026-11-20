@@ -10,9 +10,10 @@ household's rules about where it may go and when, and can be driven by remote.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
 **Status (2026-11-19):** design settled, parts on order (due 2026-11-21 to 23; see
-[docs/inventory.md](../../docs/inventory.md)). Both PETG wheel hubs are printed and fit the horns.
-The servo body is measured and its CAD model is vendored, ready for the bracket. The TPU tire is
-modelled. The servo cradle is modelled. Next: print and fit a cradle, and print the tires when the TPU arrives. Nothing here runs against hardware yet. Photos and personal data are the
+[docs/inventory.md](../../docs/inventory.md)). Both wheel hubs and both servo cradles are printed
+and fitted, and the TPU tire is modelled. The base plate's plan layout is decided (widest stance).
+Next: print the tires when the TPU arrives, and model the base plate once the caster is measured.
+Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
 ## Design: the body
@@ -124,7 +125,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
-| Servo cradle x 2 | PETG | First one printed 2026-11-19 (34 min, 10.0 g) and fitted: solid. Second printing 2026-11-19 |
+| Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
@@ -188,4 +189,4 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 - 2026-11-19: the first servo cradle is printed and fitted. The servo slides in well, sits flat
   on the pads and holds solid with the supplied M2 x 6 screws. The loose metal idler disc on the
   servo's bottom comes off first (only a two-sided bracket holds it) and goes with the spares.
-  Second cradle sent to print.
+  The second cradle printed and fitted perfectly too: both wheel servos are in their cradles.

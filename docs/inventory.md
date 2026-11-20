@@ -23,6 +23,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 |---|---|---|---|
 | exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels; tires to follow in TPU |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
+| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 
 ## Robot arms (exp002)
@@ -36,7 +37,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | Wrist cameras ("USB HD Camera", from the kits) | 2 | 1 Active, 1 Unknown | exp002 follower gripper |
 | 5V 4A adapter (leader power) | 1+ | Active | exp002 |
 | 12V 2A adapter (follower power, labelled theqingliupower) | 1+ | Active | exp002; also bench power for spare servos when the arms are off |
-| Feetech STS3215 12V servos (loose spares) | 2 | Reserved | exp003 wheel motors, each with a PETG wheel hub fitted to its horn. Dimensions: `experiments/exp003-household-robot/cad/servo.toml` and the vendored model in `cad/vendor/` |
+| Feetech STS3215 12V servos (loose spares) | 2 | Reserved | exp003 wheel motors, each with a PETG wheel hub on its horn and fitted in a PETG cradle; idler discs off, kept with the servo bags. Dimensions: `experiments/exp003-household-robot/cad/servo.toml` and the vendored model in `cad/vendor/` |
 
 ## Printing
 
@@ -122,6 +123,47 @@ Status for all: **On order**, reserved for exp003. "Check on arrival" is what to
 | 29 | JST-XH pre-crimped connector kit | B08G18PWQ6 | |
 | 30 | AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged | B007OYAVLI | |
 
+## Consumables: stock, usage and reorders
+
+The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of need. Rules:
+
+- **Log every use in the same change that uses it:** each print (slicer weight) and each
+  assembly (screws, inserts, wire). The usage log is below.
+- **Forecast from the plan:** "Planned" lists what the next exp003 parts will use, from the
+  models and slicer where they exist, estimates otherwise (marked "est.").
+- **Flag an order** when stock minus planned use falls below the reorder point, allowing for the
+  lead time. Claude proposes the order with links; the owner places it (Amazon blocks AI agents,
+  and checkout is the owner's).
+
+### Stock
+
+| Item | Start | Used | Left | Planned next | Reorder point | Lead time |
+|---|---|---|---|---|---|---|
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 154 g | about 846 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
+| PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
+| PLA Basic x 4, PLA Pure x 1 | 1000 g each | Calibration only (not weighed) | about 1000 g each | Not planned yet | One spool per colour is enough for now | |
+| SUNLU TPU 95A, black | On order | | | about 250 g est. (2 tires about 75 g each with purge, bumper about 100 g) | Order when under 300 g | Amazon 1 to 2 days |
+| M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | Cradle-to-plate screws (length set by the plate design) | Count the compartment when the plate design picks lengths | Amazon 1 to 2 days |
+| M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
+| Brass heat-set inserts M2 to M5 | On order, 520 | | | Base plate and shells est. 20 to 40 | Plenty | |
+| M2.5 brass standoffs | On order, 160 | | | Pi 5 and boards est. 12 to 16 | Plenty | |
+
+### Usage log
+
+| Date | What | Used |
+|---|---|---|
+| 2026-11-18 | Hub coupon v1 | PETG 8.3 g |
+| 2026-11-19 | Hub coupon v2 | PETG 7.2 g |
+| 2026-11-19 | Two wheel hubs | PETG 118.5 g |
+| 2026-11-19 | Hubs fitted to horns | 8 x M3 x 8 button head |
+| 2026-11-19 | Servo cradle 1, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
+| 2026-11-19 | Servo cradle 2, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
+
+### Orders to place
+
+None yet. PETG covers the planned parts with about 1100 g to spare. The TPU on order covers the
+tires and bumper.
+
 ## Wishlist (Amazon list "Robot - later")
 
 | Item | ASIN | Price seen | For |
@@ -169,3 +211,5 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-18: screw kit identified from the order (button heads, 8 to 20 mm); exp003 hub sized for M3 x 8.
 - 2026-11-18: filament audited against the Bambu order email (all 7 spools match); colour codes, spool weights and Studio presets added; H2D confirmed Standard.
 - 2026-11-19: AMS 2 Pro and its slots, printer firmware, PETG used, and the printed exp003 parts added; STS3215 spares point to their dimensions.
+- 2026-11-19: consumables tracking added (stock, usage log, forecast, reorder points); servo cradles added to printed parts.
+- 2026-11-19: second servo cradle printed and fitted; both wheel servos now in cradles.
