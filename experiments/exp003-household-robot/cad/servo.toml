@@ -1,0 +1,54 @@
+# STS3215 wheel-servo measurements for the wheel hub. How to take each one: MEASURING.md.
+# Measured 2026-11-17 on a spare STS3215-12V with its 4-hole aluminium horn fitted; I added
+# 2026-11-18 after the first coupon nearly touched the raised block beside the horn.
+measured = true
+
+[horn]
+od_mm = 19.9                # A: outside diameter of the round horn
+thickness_mm = 2.08         # B: thickness of the horn disc
+bolt_count = 4              # C: screw holes around the horn (not counting the centre screw)
+bolt_circle_mm = 13.6       # D: centre-to-centre across the holes (16.6 outside edges - 3.0 hole)
+bolt_size = "M3"            # E: screw that threads into the holes
+center_head_mm = 5.0        # F: centre screw head diameter
+center_head_height_mm = 2.0 # G: how far the centre screw head stands above the horn face
+shaft_height_mm = 4.0       # H: horn top face down to the case right round the shaft
+raised_case_mm = 2.0        # I: horn top face down to the raised block beside the horn
+
+# The screws on hand: the lab's Mywish 1290-piece M2-M5 kit (button-head hex socket, ISO 7380).
+# Its M3 lengths are 8, 12, 16 and 20 mm; the model thickens the hub to suit the shortest.
+[screws]
+head = "button"
+lengths_mm = [8, 12, 16, 20]
+
+# The servo body, for the brackets and base plate. Origin: the shaft axis. Marked (lab) where a
+# caliper confirmed it on 2026-11-19, (model) where read from vendor/STS3215_03a.step only.
+[case]
+length_mm = 45.4             # 1 (lab): shaft end to far end
+width_mm = 24.8              # 2 (lab)
+shaft_to_near_end_mm = 10.2  # (model) shaft centre to the near end
+holes_along_mm = 20.7        # 3 (lab): top-face mounting holes, centre to centre along the case
+holes_across_mm = 20.4       # 3 (lab): and across it (model: 20.5)
+holes_near_offset_mm = 8.3   # (model) shaft centre to the nearer pair, top and bottom
+bottom_holes_along_mm = 24.5   # (model) bottom holes; the far pair is 32.8 from the shaft. Lab: present
+bottom_holes_across_mm = 20.5  # (model)
+height_shaft_end_mm = 28.8   # (model) case top round the shaft to case bottom round the shaft
+height_far_end_mm = 32.9     # (model) the far end has 1.5 mm strips on top and a 1.5 mm step below
+bottom_disc_od_mm = 20.0     # (model) idler disc on the bottom, on the shaft axis
+bottom_disc_proud_mm = 4.1   # (lab) below the case bottom round the shaft; about 0.1 more than H
+# The bottom is not flat. All (model; the pad confirmed on the lab's servo):
+bottom_step_mm = 1.5           # the bottom steps this much lower ...
+bottom_step_from_mm = 5.3      # ... from this far along to the far end; the mounting holes are on it
+bottom_keepout_from_mm = 11.55 # connector recess and pad, along the case, from ...
+bottom_keepout_to_mm = 29.9    # ... to
+bottom_keepout_half_width_mm = 10.1
+bottom_keepout_proud_mm = 3.5  # connector pins below the step face; the pad is 1.8
+# Mounting screws: the servos came with a bag of M2 self-tapping screws, and an M2 bites in the
+# 1.5 mm holes (lab). The SO-101's own motor holders put M2 x 6 through 1.9 to 2.7 mm of plastic,
+# so the holes take at least 4.1 mm of screw (from their CAD, 2026-11-19).
+mount_screw_length_mm = 6
+max_screw_depth_mm = 4.1
+
+# The printed PETG rim, for sizing the tire's bore. The caliper's jaws cannot reach the seat, so
+# measure across the top flange's flat land and subtract 3.0 (two 1.5 mm flanges).
+[tire]
+rim_measured_od_mm = 107.6  # 2026-11-19: flange read 110.6 on a printed hub

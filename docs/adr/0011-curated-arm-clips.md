@@ -1,6 +1,7 @@
 # 0011: Curated arm clips may be published on the site
 
 Status: Accepted (approved by owner, 2026-11-15). Amends [0010](0010-external-gpu-training.md) for curated clips only.
+Its conditions about people and the home are replaced by [0013](0013-owner-governs-personal-data.md).
 
 **Context.** The site is becoming the lab's portfolio and the companion to its research write-up. A few
 seconds of the arm picking up a block explain exp002 better than any table. ADR 0010 says raw frames

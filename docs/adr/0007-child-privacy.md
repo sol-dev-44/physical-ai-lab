@@ -1,5 +1,7 @@
 # 0007: No identifiable child data, ever
 
+Status: Superseded by [0013](0013-owner-governs-personal-data.md) (2026-11-17).
+
 **Context.** The Learning Together track records how a child and a robot learn
 alongside each other. The repo and site are public.
 
