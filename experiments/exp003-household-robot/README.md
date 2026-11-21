@@ -9,10 +9,11 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-19):** design settled, parts on order (due 2026-11-21 to 23; see
-[docs/inventory.md](../../docs/inventory.md)). Both wheel hubs and both servo cradles are printed
-and fitted, and the TPU tire is modelled. The base plate's plan layout is decided (widest stance).
-Next: print the tires when the TPU arrives, and model the base plate once the caster is measured.
+**Status (2026-11-21):** design settled; most parts arrived 2026-11-20, the rest due 2026-11-21
+(see [docs/inventory.md](../../docs/inventory.md)). Both wheels are complete: hubs, servo cradles
+and TPU tires are printed and fitted. The base plate's plan layout is decided (widest stance).
+The caster is measured, which fixes the plate's height. Next: model the base plate; check the
+power parts on arrival.
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
@@ -124,7 +125,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v1 (recess round the horn) | PETG | Printed 2026-11-18; too close to the case, retired |
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
-| Tire x 2 | TPU 95A | Printing 2026-11-20 (8 h 8 min, 105 g), right hotend through the rear TPU inlet |
+| Tire x 2 | TPU 95A | Printed 2026-11-21 (8 h 8 min, 105 g), right hotend through the rear TPU inlet; fit snug, first try |
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
@@ -194,3 +195,11 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   2026-11-21). The two TPU tires are printing on the right hotend: TPU 95A goes through the rear
   TPU inlet once the right hotend's tube is moved there from the AMS buffer (Bambu's H2 TPU guide).
   Generic TPU profile, 3 walls, 25% gyroid, 8 h 8 min, 105 g.
+- 2026-11-21: both tires printed cleanly and fit the hubs snugly on the first try, with the bore
+  sized to the caliper reading of the printed rim (107.6 mm seat, 1.0 mm interference). Both
+  wheels are complete. No reprint needed. The printer is now laid out with the AMS on the left
+  nozzle and the right nozzle kept for TPU (docs/printing.md), so the bumper prints with no tube swap.
+- 2026-11-21: caster measured (50 mm to the top of its plate, holes on 36 x 28 mm centres). That
+  settles the base plate's height: the cradles sit on top of the plate, whose top face is 44.4 mm
+  off the floor, and the caster bolts into a raised pocket (`cad/BASE_PLATE.md`, "Height"). The
+  bumper waits until the plate is modelled.

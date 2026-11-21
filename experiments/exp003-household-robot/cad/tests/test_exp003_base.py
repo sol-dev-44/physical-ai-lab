@@ -50,3 +50,36 @@ def test_centre_of_mass_sits_behind_the_axle_even_with_the_arm_reaching_forward(
 def test_unworkable_layouts_are_rejected(changes, message):
     with pytest.raises(ValueError, match=message):
         base(**changes)
+
+
+def heights(**changes):
+    from exp003_cad.params import Caster, derive_heights
+
+    return derive_heights(CASE, HORN, Cradle(), replace(Caster(), **changes))
+
+
+def test_cradles_on_top_put_the_plate_low_and_the_caster_in_a_raised_pocket():
+    h = heights()
+    assert h.axle_mm == pytest.approx(60.0)
+    assert h.plate_top_mm == pytest.approx(60.0 - 15.6)
+    assert h.plate_underside_mm == pytest.approx(40.4)
+    # The 50 mm caster mounts 9.6 mm above the underside: a boss 5.6 mm above the plate's top.
+    assert h.caster_mount_mm == pytest.approx(9.6)
+    assert h.caster_boss_mm == pytest.approx(5.6)
+    assert h.caster_wheel_gap_mm == pytest.approx(40.4 - 38.1)
+
+
+def test_caster_swing_circle():
+    from exp003_cad.params import Caster
+
+    assert Caster().swing_radius_mm == pytest.approx(13 + 19.05)
+
+
+def test_a_short_caster_is_refused_for_a_raised_pocket():
+    with pytest.raises(ValueError, match="inside the plate"):
+        heights(height_mm=42.0)
+
+
+def test_a_tall_caster_wheel_that_would_rub_the_plate_is_refused():
+    with pytest.raises(ValueError, match="rub"):
+        heights(wheel_mm=40.0)

@@ -572,6 +572,76 @@ def derive_base(case: Case, horn: Horn, cradle: Cradle, b: BaseLayout) -> BaseDe
     )
 
 
+@dataclass(frozen=True)
+class Caster:
+    """The rear swivel caster (1.5 in PU, 8-pack, inventory row 8), measured 2026-11-21.
+
+    Its plate is the common 46 x 38 mm caster plate; the Tente 1430 sheet gives that plate holes on
+    36 x 28 mm centres and a 5.3 mm hole (other makers about 4.2 mm), which the readings match. Size
+    the plate's screws to M4: they pass either hole.
+    """
+
+    height_mm: float = 50.0  # floor to the top face of its mounting plate
+    plate_long_mm: float = 46.0  # over the corners; both long ends are concave
+    plate_waist_mm: float = 40.5  # the long length across the middle of the concave ends
+    plate_short_mm: float = 38.25
+    holes_long_mm: float = 35.75  # hole centres
+    holes_short_mm: float = 27.75
+    swivel_offset_mm: float = 13.0  # swivel axis to wheel axle, sideways
+    wheel_mm: float = 38.1  # 1.5 in, from the listing
+
+    @property
+    def swing_radius_mm(self) -> float:
+        """Swivel axis to the far side of the wheel: the circle it sweeps as it turns."""
+        return self.swivel_offset_mm + self.wheel_mm / 2
+
+
+PLATE_MM = 4.0  # base plate thickness (design choice, PETG)
+MIN_CASTER_WHEEL_GAP_MM = 1.0  # plate underside above the caster wheel's top
+
+
+@dataclass(frozen=True)
+class Heights:
+    """Heights above the floor with the cradles sitting on top of the base plate."""
+
+    axle_mm: float
+    plate_top_mm: float
+    plate_underside_mm: float
+    caster_mount_mm: float  # how far above the plate's underside the caster's plate must sit
+    caster_boss_mm: float  # how far the caster's mounting face stands above the plate's top
+    caster_wheel_gap_mm: float  # plate underside above the top of the caster wheel
+
+
+def derive_heights(
+    case: Case, horn: Horn, cradle: Cradle, caster: Caster, plate_mm: float = PLATE_MM
+) -> Heights:
+    """Where the base plate sits so the cradles hold the axle at the wheel radius and the plate is
+    level on the caster. Decided 2026-11-21: cradles on top of the plate (the low, stout option);
+    the caster then mounts in a raised pocket. Raises ValueError naming what does not work."""
+    axle = Tire().od_mm / 2
+    top = axle - derive_cradle(case, horn, cradle).axle_above_foot_mm
+    under = top - plate_mm
+    mount = caster.height_mm - under
+    if mount < plate_mm:
+        raise ValueError(
+            f"the caster's plate would sit {mount:.1f} mm above the plate's underside, inside the "
+            "plate; use a flat mount or a spacer instead of a raised pocket"
+        )
+    gap = under - caster.wheel_mm
+    if gap < MIN_CASTER_WHEEL_GAP_MM:
+        raise ValueError(
+            f"the plate's underside is only {gap:.1f} mm above the caster wheel; it would rub"
+        )
+    return Heights(
+        axle_mm=axle,
+        plate_top_mm=top,
+        plate_underside_mm=under,
+        caster_mount_mm=mount,
+        caster_boss_mm=caster.height_mm - top,
+        caster_wheel_gap_mm=gap,
+    )
+
+
 def load(path: Path) -> HubParams:
     data = tomllib.loads(path.read_text())
     screws = Screws()

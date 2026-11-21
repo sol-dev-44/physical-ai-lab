@@ -131,6 +131,9 @@ Design numbers are `Tire` in `exp003_cad/params.py`; the build prints the bore a
   flange at one point, then work round, rolling the lip over. It stretches about 3.7% to pass the
   flange. If it fights, a few minutes in hot tap water softens it.
 
+Result 2026-11-21: both tires fit snugly first time at the design numbers (1.0 mm interference
+on the measured 107.6 mm seat, 0.2 mm lip clearance). Keep them for the next tire.
+
 | Result | Change |
 |---|---|
 | Tire turns on the rim under load | Raise `Tire.interference_mm` by 0.5 and reprint |

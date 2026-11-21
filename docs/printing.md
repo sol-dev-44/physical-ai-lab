@@ -9,9 +9,14 @@ something new is learned.
   textured PEI plate.
 - **Build area:** 325 x 320 x 325 mm on one nozzle; 300 x 320 x 320 mm where both nozzles reach.
   Larger parts split into pieces.
-- **AMS 2 Pro** (firmware 02.04.19.87) feeds the **right** nozzle and has a drying mode. The
-  **left** nozzle feeds from the external spool holder. Soft TPU (95A and below) never goes through
-  the AMS; it feeds the **right** hotend through the TPU inlet (see "TPU" below).
+- **Nozzle layout (since 2026-11-21):** the **AMS 2 Pro** (firmware 02.04.19.87, has a drying mode)
+  feeds the **left** nozzle: its tube and 6-pin cable go to the left side of the filament buffer
+  (the lower buffer connector is the left extruder). The **right** nozzle is the TPU nozzle: its
+  tube stays in the rear "TPU filament inlet", so soft TPU loads with no tube swap. Soft TPU (95A
+  and below) never goes through the AMS, and the printer refuses Generic TPU on the left extruder.
+  Before 2026-11-21 the AMS fed the right nozzle; moving it means re-running the AMS
+  initialization on the touchscreen (Detect, or assign it to the left by hand), or the printer
+  and Bambu Studio still treat it as the right nozzle's AMS.
 - **What is loaded where:** see `docs/inventory.md` ("Printing" and the AMS row), which is kept
   current. On 2026-11-19: A1 PETG Orange, A2 PLA Jade White, A3 PLA Blue, A4 PLA Sunflower Yellow.
 
@@ -56,7 +61,10 @@ something new is learned.
 - **Heating from the Device tab:** the nozzle target fields take a typed value plus Return, and work
   from the background. The printer drops a manually set nozzle target back to about 38 C after a
   few idle minutes, so heat it only when the owner is at the printer, ready to load (about a
-  minute to 250 C). The extruder arrows next to it are drawn, not real buttons: background clicks
+  minute to 250 C). In the background the field needs app_type with mode replace (it
+  selects its text on focus), then Return; on 2026-11-21 the target showed 250 but the reading
+  had not moved before the owner's Unload took over, so confirm the temperature climbs, and
+  prefer the printer's own Unload and Load, which heat for you. The extruder arrows next to it are drawn, not real buttons: background clicks
   on them gave no confirmation and did not seem to run the motor (2026-11-20), so load filament
   from the printer's touchscreen instead.
 - **Progress:** the Device tab's "Printing Progress" shows layer, percent and finish time. Its
@@ -74,7 +82,8 @@ something new is learned.
   blocks automated fetches, so read it in the built-in browser):
   - It feeds the **right** hotend, not the left. The marked "TPU filament inlet" on the back is a
     bare pass-through: filament pushed in just drops inside until a tube is fitted.
-  - Inside, at the filament buffer, unplug the right hotend's PTFE tube (this takes the AMS off
+  - Set up once (done 2026-11-21, see "Nozzle layout"; kept here for a rebuild): inside, at the
+    filament buffer, unplug the right hotend's PTFE tube (this takes the AMS off
     that hotend) and plug it into the TPU inlet. Push the toolhead to its rear limit (behind the
     screen) so the tube length is right.
   - Unplug the tube at the toolhead, push the TPU through until it comes out, and heat the right
@@ -82,8 +91,16 @@ something new is learned.
     Once it extrudes steadily, plug the tube back into the toolhead.
   - Dry the TPU first. The guide lists glue stick or liquid glue on textured PEI for 95A. A 0.4 mm
     standard nozzle is fine for 95A; 85A needs 0.6 mm or more and direct feed.
-  - In Bambu Studio, use the "Generic TPU" preset on the right nozzle. Afterwards, put the buffer
-    tube back so the AMS feeds the right hotend again.
+  - Loading with the toolhead end left plugged in also works (owner, 2026-11-20): move only the
+    buffer end of the tube to the TPU inlet and push the TPU up the tube to the extruder.
+  - In Bambu Studio, use the "Generic TPU" preset on the right nozzle.
+  - **Unload with the printer's Unload** (touchscreen, or the Device tab's Unload button): it heats
+    the nozzle, cuts the filament in the toolhead, then asks you to pull it back. Pull the TPU out
+    from the rear inlet (the cut end is clean, so it slides out) and seal it in a bag with
+    desiccant straight away: TPU soaks up moisture. Never pull TPU out cold without the cut; the
+    end in the hotend is swollen and the gears hold it.
+  - Proven 2026-11-21: two 120 mm tires (Generic TPU, 3 walls, 25% gyroid, 4 top and bottom
+    layers, no brim) printed in 8 h 8 min from a freshly opened spool.
 - **Fit tolerances on this printer** (PETG, measured): 0.2 mm per side for parts that slip together;
   printed outer diameters come out about 0.4 mm under on 108 mm (measured rim). Print a 20-minute
   test coupon of any interface before the full part.

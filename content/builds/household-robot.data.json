@@ -365,7 +365,13 @@
    "item": "exp003 wheel hub, PETG",
    "qty": "2",
    "status": "Reserved",
-   "notes": "exp003 drive wheels; tires to follow in TPU"
+   "notes": "exp003 drive wheels, tires fitted 2026-11-21"
+  },
+  {
+   "item": "exp003 tire, TPU 95A",
+   "qty": "2",
+   "status": "Reserved",
+   "notes": "On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try"
   },
   {
    "item": "exp003 hub coupon v2, PETG",
@@ -522,7 +528,7 @@
    },
    {
     "date": "2026-11-20",
-    "what": "Two TPU tires (sent to print, 8 h 8 min)",
+    "what": "Two TPU tires (printed 2026-11-21, 8 h 8 min, fitted)",
     "used": "TPU 105.0 g (slicer), right hotend via the TPU inlet"
    },
    {
@@ -591,7 +597,7 @@
    "n": 8,
    "item": "1.5\" PU swivel plate casters, set of 8",
    "asin": "B0DHHJRDDV",
-   "check": "Measure overall height (expect about 50 mm); 1 used, 7 spare",
+   "check": "Checked 2026-11-21: 50 mm to the top of the plate; plate 46 x 38.25 mm, holes on 35.75 x 27.75 mm centres, swivel offset 13 mm (Caster in exp003 params.py); 1 used, 7 spare",
    "group": "Drive"
   },
   {
@@ -899,6 +905,14 @@
   {
    "date": "2026-11-20",
    "text": "most of the 2026-11-17 order arrived (Pi 5, XT60s, fuses and limit switches due 2026-11-21). The two TPU tires are printing on the right hotend: TPU 95A goes through the rear TPU inlet once the right hotend's tube is moved there from the AMS buffer (Bambu's H2 TPU guide). Generic TPU profile, 3 walls, 25% gyroid, 8 h 8 min, 105 g."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "both tires printed cleanly and fit the hubs snugly on the first try, with the bore sized to the caliper reading of the printed rim (107.6 mm seat, 1.0 mm interference). Both wheels are complete. No reprint needed. The printer is now laid out with the AMS on the left nozzle and the right nozzle kept for TPU (docs/printing.md), so the bumper prints with no tube swap."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "caster measured (50 mm to the top of its plate, holes on 36 x 28 mm centres). That settles the base plate's height: the cradles sit on top of the plate, whose top face is 44.4 mm off the floor, and the caster bolts into a raised pocket (cad/BASE_PLATE.md, \"Height\"). The bumper waits until the plate is modelled."
   }
  ],
  "design": {
