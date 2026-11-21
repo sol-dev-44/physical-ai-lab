@@ -16,7 +16,11 @@ something new is learned.
   and below) never goes through the AMS, and the printer refuses Generic TPU on the left extruder.
   Before 2026-11-21 the AMS fed the right nozzle; moving it means re-running the AMS
   initialization on the touchscreen (Detect, or assign it to the left by hand), or the printer
-  and Bambu Studio still treat it as the right nozzle's AMS.
+  and Bambu Studio still treat it as the right nozzle's AMS. Check it before slicing: Prepare
+  tab, **Sync info**; the Printer panel shows the AMS under the nozzle it feeds (the Device tab
+  draws it on that side too). Restarting Bambu Studio does not change it; the printer holds it.
+  The first try at re-binding on 2026-11-21 still read right; the owner fixed it on the
+  touchscreen on the second try.
 - **What is loaded where:** see `docs/inventory.md` ("Printing" and the AMS row), which is kept
   current. On 2026-11-19: A1 PETG Orange, A2 PLA Jade White, A3 PLA Blue, A4 PLA Sunflower Yellow.
 

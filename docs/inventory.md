@@ -26,6 +26,8 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
 | exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
+| exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
+| exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
 
@@ -140,7 +142,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 154 g | about 846 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 168 g | about 832 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | 35 g (toy truck coupon) | about 965 g | about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.) | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 160 g (toy truck tyres) | about 840 g | about 360 g (toy truck: body and tailgate 360 g slicer) | | |
@@ -163,6 +165,8 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-19 | Servo cradle 1, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
 | 2026-11-19 | Servo cradle 2, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
 | 2026-11-20 | Two TPU tires (printed 2026-11-21, 8 h 8 min, fitted) | TPU 105.0 g (slicer), right hotend via the TPU inlet |
+| 2026-11-21 | Caster cup v1, test piece (24 min 47 s, left nozzle) | PETG 8.32 g (slicer); 4 x M4 x 12 button head and 4 M4 nuts to fit |
+| 2026-11-21 | Caster cup v2 light, test piece (22 min 30 s, left nozzle) | PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 

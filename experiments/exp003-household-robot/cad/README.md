@@ -40,7 +40,11 @@ reach it.
    a thread's feel), say why the source cannot settle it, and check it can be taken with the tool
    on hand (caliper jaws reach about 40 mm; flanges and bosses block jaws), with a drawing of where
    the jaws or depth rod go.
-6. **Ask whatever is still open in one go**, before modelling. Do not model around a guess.
+6. **Ask whatever is still open in one go**, before modelling. Do not model around a guess. A
+   test print checks a fit; it never stands in for a number nobody measured. If no source gives
+   a dimension and the owner can measure it in a minute, ask. The miss behind this rule
+   (2026-11-21): the caster cup was printed knowing the fork's sweep was unpublished, "so the
+   print is the test", and the fork hit the walls. One caliper reading would have caught it.
 7. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
    `servo.toml` and the docs, so the next part starts from facts.
 
@@ -77,6 +81,7 @@ reach it.
 | Wheel hub | `out/wheel_hub.step` | 108 mm rim, 32 mm wide, flanges for a 6 mm TPU tire (120 mm wheel). |
 | Servo cradle | `out/servo_cradle.step` | Holds a wheel servo by its bottom holes. Cheeks hug the case; the lower cheek is the foot, with an M3 ear at each end. |
 | Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
+| Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 12.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`
 and the vendored STS3215 model in [vendor/](vendor/README.md).
@@ -139,6 +144,33 @@ on the measured 107.6 mm seat, 0.2 mm lip clearance). Keep them for the next tir
 | Tire turns on the rim under load | Raise `Tire.interference_mm` by 0.5 and reprint |
 | Cannot get it over the flange | Lower `Tire.interference_mm` by 0.5 |
 | Lip does not sit down over a flange | Raise `Tire.clearance_mm` by 0.1 |
+
+## Caster cup (H2D, PETG)
+
+Numbers are `CasterCup` and `derive_caster_cup` in `params.py`; heights come from `derive_heights`.
+
+- Roof on the bed, open end up: no supports. Default 2 walls, 15% infill: about 25 minutes.
+- For a fit test print `out/caster_cup_test.step` (`CASTER_CUP_TEST`: 1.2 mm walls, 2 mm roof,
+  34 mm centre hole): same cavity, holes and depth at half the plastic (5.4 g, 22 min).
+- Fit: put the caster's plate against the roof inside the cup, then 4 x M4 x 12 button head
+  from below through the caster and the roof, a nut on each on top (Mywish kit).
+- Check: (1) the caster's plate drops in without forcing; (2) spin the caster all the way round
+  by hand: the fork must not touch the walls (the fork's sweep is not published, so this is the
+  test, and v1 failed it); (3) the open end of the cup is the plate's underside, 40.4 mm off the floor: stand the
+  cup on its caster and the open rim should be 40.4 mm up.
+
+| Result | Change |
+|---|---|
+| Plate will not drop in | Raise `CasterCup.clearance_mm` by 0.2 |
+
+Result 2026-11-21 (first cup): the plate drops in with a little play and the four holes line up,
+but the fork hits the walls as it swivels. The fork reaches 24 mm from the swivel axis (owner's
+reading: 47 mm from a point of one short end to the fork's far side, fork turned out past the
+other end; minus half the 46 mm plate). v2 adds a circle of 25.5 mm radius to the cavity.
+Result 2026-11-21 (v2, light version): the fork swivels clear all the way round. Settled.
+
+| Fork rubs a wall as it swivels | Make the cavity round the sweep (a circle) and move the caster forward so the cup stays on the plate (`BASE_PLATE.md`, "Height") |
+| Screws do not line up | Re-measure the hole centres into `Caster` |
 
 ## Servo cradle (H2D, PETG)
 

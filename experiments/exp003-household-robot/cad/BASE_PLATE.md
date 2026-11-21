@@ -40,11 +40,11 @@ The caster measured 50 mm from the floor to the top of its plate. Two ways to ho
 Numbers come from `derive_heights` in `params.py` (tested). The caster wheel's top is 2.3 mm under
 the plate. Still to settle when the plate is modelled:
 
-- The pocket's footprint: it must take the caster's plate (46 x 38 mm) and whatever of the
-  swivel and fork sweeps above the plate's underside. The wheel sweeps a 32 mm radius circle but
-  stays below the plate; the fork's sweep radius is not published. With the caster at 165 mm
-  behind the axle a boss much over 25 mm in radius runs off the 190 mm back edge, so move the
-  caster forward a little if the pocket needs more room.
+- The pocket is a separate caster cup (`exp003_cad/caster_cup.py`) so the plate prints flat. The
+  plate needs a hole the same shape as the cup's cavity: a box for the caster's plate plus a
+  25.5 mm radius circle for the fork (the fork reaches 24 mm, measured 2026-11-21). The cup is
+  27.5 mm in radius outside, so with the plate's back edge 190 mm behind the axle the caster
+  must sit at least 163 mm behind it, not 165: move it to about 160 mm when the plate is modelled.
 - Screws: M4 through the caster's holes (published holes are 4.2 to 5.3 mm) into heat-set
   inserts in the boss.
 

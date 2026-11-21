@@ -589,6 +589,14 @@ class Caster:
     holes_short_mm: float = 27.75
     swivel_offset_mm: float = 13.0  # swivel axis to wheel axle, sideways
     wheel_mm: float = 38.1  # 1.5 in, from the listing
+    # Upside down, fork turned out past one short end: from a point of the other short end to the
+    # fork's farthest point (not the wheel). Measured after the first cup's walls hit the fork.
+    fork_reach_mm: float = 47.0
+
+    @property
+    def fork_radius_mm(self) -> float:
+        """Swivel axis (the plate's centre) to the fork's farthest point: what it sweeps."""
+        return self.fork_reach_mm - self.plate_long_mm / 2
 
     @property
     def swing_radius_mm(self) -> float:
@@ -639,6 +647,69 @@ def derive_heights(
         caster_mount_mm=mount,
         caster_boss_mm=caster.height_mm - top,
         caster_wheel_gap_mm=gap,
+    )
+
+
+@dataclass(frozen=True)
+class CasterCup:
+    """A light open cup the caster bolts up into: the raised pocket from `derive_heights`, made as
+    its own part so the base plate can print flat. The cavity is the caster's plate (a box) plus
+    the fork's sweep (a circle). v1 (2026-11-21) had the box only and the fork hit its walls.
+
+    Frame: x along the caster plate's long side, y across, z down from the mounting face (the cup
+    prints roof-down, so the model's z = 0 is the roof's outer face on the bed).
+    """
+
+    wall_mm: float = 2.0
+    roof_mm: float = 3.0
+    clearance_mm: float = 0.5  # per side round the caster's plate
+    fork_clearance_mm: float = 1.5  # round the fork's sweep (swivel play, centre not exact)
+    inner_corner_mm: float = 1.0
+    hole_mm: float = 4.5  # M4 clearance, through the roof; nut on top
+    center_hole_mm: float = 22.0  # clears the swivel rivet and saves plastic
+
+
+# Fit tests only check the caster's plate, holes and fork sweep, so they skimp on plastic.
+CASTER_CUP_TEST = CasterCup(wall_mm=1.2, roof_mm=2.0, center_hole_mm=34.0)
+
+M4_NUT_MM = 3.2  # ISO 4032 thickness
+
+
+@dataclass(frozen=True)
+class CasterCupDerived:
+    inner_mm: tuple[float, float]  # the box that takes the caster's plate
+    outer_mm: tuple[float, float]
+    sweep_radius_mm: float  # the round part of the cavity, for the fork
+    outer_radius_mm: float
+    depth_mm: float  # roof's inner face to the open end: the plate's underside
+    height_mm: float
+    holes: tuple[tuple[float, float], ...]
+    screw: str
+
+
+def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterCupDerived:
+    inner = (
+        caster.plate_long_mm + 2 * c.clearance_mm,
+        caster.plate_short_mm + 2 * c.clearance_mm,
+    )
+    outer = (inner[0] + 2 * c.wall_mm, inner[1] + 2 * c.wall_mm)
+    sweep = caster.fork_radius_mm + c.fork_clearance_mm
+    hx, hy = caster.holes_long_mm / 2, caster.holes_short_mm / 2
+    holes = tuple((sx * hx, sy * hy) for sx in (-1, 1) for sy in (-1, 1))
+    if c.center_hole_mm / 2 + c.hole_mm / 2 + 2.0 > (hx**2 + hy**2) ** 0.5:
+        raise ValueError("the centre hole runs into the caster's screw holes")
+    # Screw: caster plate (about 3 mm) + roof + nut, rounded up to a length in the Mywish kit.
+    need = 3.0 + c.roof_mm + M4_NUT_MM
+    length = next(n for n in (8, 12, 16, 20) if n >= need)
+    return CasterCupDerived(
+        inner_mm=inner,
+        outer_mm=outer,
+        sweep_radius_mm=sweep,
+        outer_radius_mm=sweep + c.wall_mm,
+        depth_mm=heights.caster_mount_mm,
+        height_mm=heights.caster_mount_mm + c.roof_mm,
+        holes=holes,
+        screw=f"M4 x {length} button head and nut",
     )
 
 

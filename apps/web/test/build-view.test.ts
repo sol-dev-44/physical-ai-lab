@@ -30,7 +30,8 @@ describe("build view helpers", () => {
     const cards = view.printedCards(data);
     expect(cards).toHaveLength(data.printed.length);
     const total = cards.reduce((g, c) => g + (c.grams ?? 0), 0);
-    expect(total).toBeCloseTo(data.petg_used_g, 1);
+    // Each card rounds its grams to 0.1 g, so allow that much per card.
+    expect(Math.abs(total - data.petg_used_g)).toBeLessThanOrEqual(0.05 * cards.length + 1e-9);
     expect(cards.every((c) => c.dates.length > 0)).toBe(true);
   });
 

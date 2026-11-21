@@ -127,6 +127,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Printed 2026-11-21 (8 h 8 min, 105 g), right hotend through the rear TPU inlet; fit snug, first try |
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
+| Caster cup v1 (test piece) | PETG | Printed 2026-11-21 (24 min 47 s, 8.3 g), first print from the AMS on the left nozzle. Plate and holes fit; the fork hit the walls |
+| Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. The full-strength cup prints with the base plate |
 | Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
@@ -203,3 +205,12 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   settles the base plate's height: the cradles sit on top of the plate, whose top face is 44.4 mm
   off the floor, and the caster bolts into a raised pocket (`cad/BASE_PLATE.md`, "Height"). The
   bumper waits until the plate is modelled.
+- 2026-11-21: the caster's raised pocket is a separate light cup (`cad/exp003_cad/caster_cup.py`), so the
+  base plate can print flat. The cup is printing as the fit test: the caster's plate must drop
+  in and the fork must swivel clear of its walls.
+- 2026-11-21: first cup fitted. The caster's plate drops in (slight play) and the holes line
+  up, but the fork hits the walls when it swivels. Its sweep was never measured; it reaches 24 mm
+  from the swivel axis. Cup v2 adds a 25.5 mm radius circle to the cavity.
+- 2026-11-21: cup v2 (light fit-test version) passed: the caster's plate drops in, the holes line
+  up, and the fork swivels clear all the way round. The caster mount is settled; the base plate
+  takes a matching hole.
