@@ -805,8 +805,8 @@
   {
    "track": "v1",
    "n": 0,
-   "phase": "Bench: Xbox controller drives two servos in wheel mode with a dead-man button; voice loop on the Mac",
-   "done_when": "Both work for 10 minutes"
+   "phase": "Bench: Xbox controller and the control app's Drive screen drive two servos in wheel mode with a dead-man (drive lease); voice loop on the Mac",
+   "done_when": "Both work for 10 minutes; releasing the button, closing the tab or dropping Wi-Fi stops the wheels"
   },
   {
    "track": "v1",

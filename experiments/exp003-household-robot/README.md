@@ -25,7 +25,7 @@ owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 - **Compute:** Raspberry Pi 5 on the robot for motors, sensors and the safety gate. The Mac does
   speech-to-text, recognition, vision and policy inference over Wi-Fi. Conversation goes through the
   Claude API.
-- **Power:** 12.8V 10Ah LiFePO4 pack (about 128 Wh, ExpertPower, 1.07 kg) with a BMS. Main
+- **Power:** 12.8V 10Ah LiFePO4 pack (about 128 Wh, ExpertPower EP1210, 1.22 kg) with a BMS. Main
   switch and 10A fuse, then an INA226 fuel gauge. Motor rail: e-stop, 12V buck-boost, 5A fuse.
   Compute rail: 5V 5A buck to the Pi. The e-stop cuts motor power only, so the Pi stays up and logs
   what happened. Estimated run time: about 6 h of active play, 8.5 h of chatting, 20 h listening.
@@ -34,6 +34,12 @@ owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
   downward ToF cliff sensors (infrared reflectance sensors mistake dark carpet for a drop), a
   front camera (Logitech C920x), and later a 2D LiDAR.
 - **Audio:** reSpeaker XVF3800 mic array on top of the head, small speaker.
+- **Connectivity:** the Pi 5's on-board dual-band Wi-Fi is the main link (to the Mac and for the
+  control app; use 5 GHz, since Wi-Fi and Bluetooth share one radio). The Xbox controller pairs
+  over the Pi's Bluetooth 5.0. Losing either link stops the wheels.
+- **Control app:** the robot serves a web app on the home network: drive (joystick or Xbox
+  controller), live sensors, a live camera view for debugging (never saved), the event log and the
+  lab's inventory. Design: [CONTROL_APP.md](CONTROL_APP.md).
 - **Privacy mode:** a mic mute and a printed camera shutter that the gate can see, and a light that
   shows when the robot is listening.
 
@@ -95,7 +101,7 @@ its leader records teleop demos). v1 leaves room for it:
 
 | # | Phase | Done when |
 |---|---|---|
-| 0 | Bench: Xbox controller drives two servos in wheel mode with a dead-man button; voice loop on the Mac | Both work for 10 minutes |
+| 0 | Bench: Xbox controller and the control app's Drive screen drive two servos in wheel mode with a dead-man (drive lease); voice loop on the Mac | Both work for 10 minutes; releasing the button, closing the tab or dropping Wi-Fi stops the wheels |
 | 1 | Chassis printed and assembled, teleop over Wi-Fi | 10 minutes of driving; dead-man and e-stop both stop it |
 | 2 | Safety interlocks: bumpers, forward ToF, cliff, speed cap about 0.3 m/s, battery | Stops before a box 20/20; stops at a test edge 10/10 |
 | 3 | Voice on the robot: one guest-level personality, parent controls, privacy mode | 15-minute conversation; no audio leaves the house; mute stops listening 10/10 |
