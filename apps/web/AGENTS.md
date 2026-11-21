@@ -66,6 +66,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   half its width.
 - A hidden Browser pane never runs ResizeObserver callbacks and throttles animation. Read the first
   size straight from the element, and to check a drawing's final state, force it with a style.
+- Screenshots of a drawing for sharing: plain headless Chrome `--screenshot` never scrolls, so the
+  draw-on animations never run and the drawings come out blank. Use Playwright with the installed
+  Chrome (`uv run --no-project --with playwright`, `chromium.launch(channel="chrome")`, no browser
+  download). Set a 1280 x 1400 viewport at `device_scale_factor=2`, and for each figure: scroll it
+  into view, wait about 3.5 s, hide sticky and fixed elements outside it (the site header covers
+  the top otherwise), scroll its top to about 40 px from the top, then screenshot with a clip
+  padded by 24 px.
 
 ## Design system
 

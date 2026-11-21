@@ -124,7 +124,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v1 (recess round the horn) | PETG | Printed 2026-11-18; too close to the case, retired |
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
-| Tire x 2 | TPU 95A | Modelled 2026-11-19; print when the TPU arrives |
+| Tire x 2 | TPU 95A | Printing 2026-11-20 (8 h 8 min, 105 g), right hotend through the rear TPU inlet |
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Base plate | PETG | Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
@@ -190,3 +190,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   on the pads and holds solid with the supplied M2 x 6 screws. The loose metal idler disc on the
   servo's bottom comes off first (only a two-sided bracket holds it) and goes with the spares.
   The second cradle printed and fitted perfectly too: both wheel servos are in their cradles.
+- 2026-11-20: most of the 2026-11-17 order arrived (Pi 5, XT60s, fuses and limit switches due
+  2026-11-21). The two TPU tires are printing on the right hotend: TPU 95A goes through the rear
+  TPU inlet once the right hotend's tube is moved there from the AMS buffer (Bambu's H2 TPU guide).
+  Generic TPU profile, 3 walls, 25% gyroid, 8 h 8 min, 105 g.
