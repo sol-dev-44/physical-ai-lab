@@ -51,7 +51,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | Bambu PLA Basic, Pumpkin Orange (10301), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Pure, Baby Blue (17600), 1 kg | 1 | Spare | Studio preset: Bambu PLA Pure |
 | Bambu PETG Basic, Orange (30301), 1 kg | 2 | Reserved | exp003 wheel hubs, brackets. Studio preset: Bambu PETG Basic. About 134 g used from the first spool by 2026-11-19 (two coupons, two hubs) |
-| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | On order | exp003 tires and bumper. Studio preset: Generic TPU. Feed from the external spool holder, not the AMS |
+| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | Reserved | Arrived 2026-11-20. exp003 tires and bumper. Studio preset: Generic TPU. Feed through the rear TPU inlet to the right hotend, not the AMS (docs/printing.md) |
 
 All Bambu spools are 1 kg with RFID tags, so the AMS reads type and colour itself. Amounts left are
 not tracked yet; the AMS shows an estimate per spool.
@@ -88,40 +88,40 @@ not tracked yet; the AMS shows an estimate per spool.
 
 ## exp003 household robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
 
-Status for all: **On order**, reserved for exp003. "Check on arrival" is what to verify before use.
+All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse assortment and limit switches are due 2026-11-21. "Check on arrival" is what to verify before use; a part counts as on hand only once it passes.
 
-| # | Item | ASIN | Check on arrival |
-|---|---|---|---|
-| 1 | Raspberry Pi 5 8GB | B0CK2FCG1K | Genuine board |
-| 2 | Official Pi 5 Active Cooler | B0CLXZBR5P | |
-| 3 | CanaKit 45W USB-C PD supply (27W at 5V 5A for Pi 5) | B07H125ZRL | Bench power only; not the official PSU |
-| 4 | SanDisk Extreme 64GB A2 microSD | B09X7C7LL1 | |
-| 5 | M2.5 brass standoff kit, 160 pcs | B07KM5B3PT | |
-| 6 | Serial bus servo driver board for Feetech ST/SC, USB | B0CTMM4LWK | Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215 |
-| 7 | 608-ZZ bearings 8x22x7 mm, 10-pack | B07XLV1W2M | Optional outboard wheel support |
-| 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Measure overall height (expect about 50 mm); 1 used, 7 spare |
-| 9 | SUNLU TPU 95A, 1 kg | B0BXNWK6NS | (also listed under Printing) |
-| 10 | Brass heat-set inserts M2 to M5, 520 pcs | B0D5V3TZLB | |
-| 11 | ExpertPower 12V 10Ah LiFePO4, built-in BMS | B07X3Y3LS5 | 152 x 66 x 94 mm, 1.07 kg. No charger included |
-| 12 | 14.6V 2A LiFePO4 charger, 5.5x2.1 mm barrel, center positive | B09HKDPLQ9 | Confirm center positive with the multimeter |
-| 13 | UCTRONICS 9-36V to 5V (5.2V) buck, up to 6A | B07XXWQ49N | Stand-in for Pololu D36V50F5. Check 5.1 to 5.25V out under load |
-| 14 | DROK buck-boost, 9-36V in, 12V 5A out, potted | B0B6VK8BPN | Check 12.0V out before connecting servos |
-| 15 | INA226 I2C current/voltage module, 0-36V 20A | B0DRNG1VKM | **Shunt must be R010 (or lower), not R100** |
-| 16 | XT60 pairs with 14 AWG leads, 5 pairs | B085HF31K7 | |
-| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail |
-| 18 | DaierTek 12V 20A SPST rocker switch | B07S2QJKTX | Main power |
-| 19 | 5.5x2.1 mm panel-mount DC jacks, 5A, 6 sets | B0D9B7WR23 | Charge port; matches item 12 |
-| 20 | 22 mm red mushroom e-stop, latching, 2NC 10A, 2-pack | B07R8PTTDX | 1 used, 1 spare |
-| 21 | 16 AWG silicone wire, 10 ft red + 10 ft black | B0D93K21TN | |
-| 22 | 22 AWG silicone wire, 6 colors x 10 ft | B089CQHRDT | |
-| 23 | Heat-shrink kit, 580 pcs | B01MFA3OFA | |
-| 24 | Hook-and-loop battery straps, 6-pack | B08HHHFMCJ | |
-| 25 | VL53L1X ToF modules (TOF400C), 3-pack | B0HC653J8F | **XSHUT pin broken out** (needed to give each its own address) |
-| 26 | VL53L0X ToF modules (GY-VL53L0XV2), 3-pack | B0B6ZT7NRW | Cliff sensors |
-| 27 | KW12-3 roller-lever limit switches, 10-pack | B07X142VGC | Bumpers; 2 used |
-| 28 | Dupont jumper wires, 120 pcs | B01EV70C78 | |
-| 29 | JST-XH pre-crimped connector kit | B08G18PWQ6 | |
-| 30 | AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged | B007OYAVLI | |
+| # | Item | ASIN | Check on arrival | Arrived |
+|---|---|---|---|---|
+| 1 | Raspberry Pi 5 8GB | B0CK2FCG1K | Genuine board | Due 2026-11-21 |
+| 2 | Official Pi 5 Active Cooler | B0CLXZBR5P | | 2026-11-20 |
+| 3 | CanaKit 45W USB-C PD supply (27W at 5V 5A for Pi 5) | B07H125ZRL | Bench power only; not the official PSU | 2026-11-20 |
+| 4 | SanDisk Extreme 64GB A2 microSD | B09X7C7LL1 | | 2026-11-20 |
+| 5 | M2.5 brass standoff kit, 160 pcs | B07KM5B3PT | | 2026-11-20 |
+| 6 | Serial bus servo driver board for Feetech ST/SC, USB | B0CTMM4LWK | Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215 | 2026-11-20 |
+| 7 | 608-ZZ bearings 8x22x7 mm, 10-pack | B07XLV1W2M | Optional outboard wheel support | 2026-11-20 |
+| 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Measure overall height (expect about 50 mm); 1 used, 7 spare | 2026-11-20 |
+| 9 | SUNLU TPU 95A, 1 kg | B0BXNWK6NS | (also listed under Printing) | 2026-11-20 |
+| 10 | Brass heat-set inserts M2 to M5, 520 pcs | B0D5V3TZLB | | 2026-11-20 |
+| 11 | ExpertPower 12V 10Ah LiFePO4, built-in BMS | B07X3Y3LS5 | 152 x 66 x 94 mm, 1.07 kg. No charger included | 2026-11-20 |
+| 12 | 14.6V 2A LiFePO4 charger, 5.5x2.1 mm barrel, center positive | B09HKDPLQ9 | Confirm center positive with the multimeter | 2026-11-20 |
+| 13 | UCTRONICS 9-36V to 5V (5.2V) buck, up to 6A | B07XXWQ49N | Stand-in for Pololu D36V50F5. Check 5.1 to 5.25V out under load | 2026-11-20 |
+| 14 | DROK buck-boost, 9-36V in, 12V 5A out, potted | B0B6VK8BPN | Check 12.0V out before connecting servos | 2026-11-20 |
+| 15 | INA226 I2C current/voltage module, 0-36V 20A | B0DRNG1VKM | **Shunt must be R010 (or lower), not R100** | 2026-11-20 |
+| 16 | XT60 pairs with 14 AWG leads, 5 pairs | B085HF31K7 | | Due 2026-11-21 |
+| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail | Holders 2026-11-20; fuse assortment due 2026-11-21 |
+| 18 | DaierTek 12V 20A SPST rocker switch | B07S2QJKTX | Main power | 2026-11-20, as a 10-pack of mini rockers: check the rating printed on the switch carries 10 A at 12 V before using one as the main switch |
+| 19 | 5.5x2.1 mm panel-mount DC jacks, 5A, 6 sets | B0D9B7WR23 | Charge port; matches item 12 | 2026-11-20 |
+| 20 | 22 mm red mushroom e-stop, latching, 2NC 10A, 2-pack | B07R8PTTDX | 1 used, 1 spare | 2026-11-20 |
+| 21 | 16 AWG silicone wire, 10 ft red + 10 ft black | B0D93K21TN | | 2026-11-20 |
+| 22 | 22 AWG silicone wire, 6 colors x 10 ft | B089CQHRDT | | 2026-11-20 |
+| 23 | Heat-shrink kit, 580 pcs | B01MFA3OFA | | 2026-11-20 |
+| 24 | Hook-and-loop battery straps, 6-pack | B08HHHFMCJ | | 2026-11-20 |
+| 25 | VL53L1X ToF modules (TOF400C), 3-pack | B0HC653J8F | **XSHUT pin broken out** (needed to give each its own address) | 2026-11-20 |
+| 26 | VL53L0X ToF modules (GY-VL53L0XV2), 3-pack | B0B6ZT7NRW | Cliff sensors | 2026-11-20 |
+| 27 | KW12-3 roller-lever limit switches, 10-pack | B07X142VGC | Bumpers; 2 used | Due 2026-11-21 |
+| 28 | Dupont jumper wires, 120 pcs | B01EV70C78 | | 2026-11-20 |
+| 29 | JST-XH pre-crimped connector kit | B08G18PWQ6 | | 2026-11-20 |
+| 30 | AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged | B007OYAVLI | | 2026-11-20 |
 
 ## Consumables: stock, usage and reorders
 
@@ -141,8 +141,11 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 |---|---|---|---|---|---|---|
 | PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 154 g | about 846 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
-| PLA Basic x 4, PLA Pure x 1 | 1000 g each | Calibration only (not weighed) | about 1000 g each | Not planned yet | One spool per colour is enough for now | |
-| SUNLU TPU 95A, black | On order | | | about 250 g est. (2 tires about 75 g each with purge, bumper about 100 g) | Order when under 300 g | Amazon 1 to 2 days |
+| PLA Basic Jade White (AMS A2) | 1000 g | 35 g (toy truck coupon) | about 965 g | about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.) | One spool per colour is enough for now | Bambu store about 1 week |
+| PLA Basic Blue (AMS A3) | 1000 g | about 160 g (toy truck tyres) | about 840 g | about 360 g (toy truck: body and tailgate 360 g slicer) | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 13 g (toy truck hub caps) | about 987 g | about 200 g est. (toy truck: cab, arm) | | |
+| PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
+| SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | Cradle-to-plate screws (length set by the plate design) | Count the compartment when the plate design picks lengths | Amazon 1 to 2 days |
 | M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
 | Brass heat-set inserts M2 to M5 | On order, 520 | | | Base plate and shells est. 20 to 40 | Plenty | |
@@ -158,6 +161,9 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-19 | Hubs fitted to horns | 8 x M3 x 8 button head |
 | 2026-11-19 | Servo cradle 1, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
 | 2026-11-19 | Servo cradle 2, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
+| 2026-11-20 | Two TPU tires (sent to print, 8 h 8 min) | TPU 105.0 g (slicer), right hotend via the TPU inlet |
+| 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
+| 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 
 ### Orders to place
 
@@ -213,3 +219,6 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-19: AMS 2 Pro and its slots, printer firmware, PETG used, and the printed exp003 parts added; STS3215 spares point to their dimensions.
 - 2026-11-19: consumables tracking added (stock, usage log, forecast, reorder points); servo cradles added to printed parts.
 - 2026-11-19: second servo cradle printed and fitted; both wheel servos now in cradles.
+- 2026-11-19: PLA rows split per spool; toy truck joint coupon logged (35 g white) and the truck's planned PLA use forecast.
+- 2026-11-20: toy truck wheel plate logged (172.75 g: blue tyres, yellow caps).
+- 2026-11-20: most of the 2026-11-17 exp003 order arrived (Arrived column); Pi 5, XT60, fuse assortment and limit switches due 2026-11-21. TPU on hand.

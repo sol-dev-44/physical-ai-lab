@@ -123,8 +123,8 @@ Design numbers are `Tire` in `exp003_cad/params.py`; the build prints the bore a
   land. Take three readings 60 degrees apart; the seat is the middle one minus 3.0. Put it in
   `[tire]` in `servo.toml` (2026-11-19: flange 110.6, seat 107.6) and rebuild. The build refuses
   a seat over 1 mm off the design.
-- Left nozzle, filament from the external spool holder, never through the AMS. Studio preset:
-  Generic TPU. A sealed spool is dry enough; if it strings or pops, dry it.
+- TPU 95A feeds the **right** hotend through the rear TPU inlet, never the AMS: see `docs/printing.md`
+  (TPU) for the tube swap. Studio preset: Generic TPU. A sealed spool is dry enough; if it strings or pops, dry it.
 - Flat, either face down, no supports, no brim. 3 walls, 25% gyroid infill (some give, still
   holds its shape), 4 top and bottom layers. Use the preset's slow speeds.
 - Fitting: hub off the servo, servo-side face down. Push the tire over the top (outboard)
