@@ -302,20 +302,26 @@
   "width_over_tires_mm": 329.6,
   "plate_half_width_mm": 130.8,
   "plate_length_mm": 300.0,
-  "com_x_mm": -45.86,
-  "com_x_with_arm_mm": -17.64,
+  "com_x_mm": -44.53,
+  "com_x_with_arm_mm": -18.05,
   "caster_share": 0.28,
   "masses": [
    {
     "name": "battery",
-    "kg": 1.07,
+    "kg": 1.22,
     "x_mm": -40.0,
-    "source": "inventory; EP1210 sheet says 1.22"
+    "source": "EP1210 sheet (model on the label)"
    },
    {
-    "name": "servos and cradles",
-    "kg": 0.14,
+    "name": "servo and cradle, +y",
+    "kg": 0.07,
     "x_mm": -12.5,
+    "source": "estimate"
+   },
+   {
+    "name": "servo and cradle, -y",
+    "kg": 0.07,
+    "x_mm": 12.5,
     "source": "estimate"
    },
    {
@@ -339,7 +345,7 @@
    {
     "name": "caster",
     "kg": 0.04,
-    "x_mm": -165.0,
+    "x_mm": -158.0,
     "source": "estimate"
    }
   ],
@@ -351,7 +357,7 @@
   "battery_x_mm": -40.0,
   "front_mm": 110.0,
   "back_mm": -190.0,
-  "caster_x_mm": -165.0,
+  "caster_x_mm": -158.0,
   "electronics_x_mm": [
    -80.0,
    -185.0
@@ -398,22 +404,28 @@
    "notes": "Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired"
   },
   {
+   "item": "exp003 base plate, PETG",
+   "qty": "1",
+   "status": "Reserved",
+   "notes": "Printing 2026-11-21 (4 h 56 min)"
+  },
+  {
    "item": "exp003 caster cup v2 light, PETG",
    "qty": "1",
    "status": "Spare",
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 167.8,
+ "petg_used_g": 390.9,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "168 g",
-    "left": "about 832 g",
-    "planned": "about 750 g est. (base plate, shells, mounts)",
-    "reorder": "Order a spool when both spools together drop under 500 g after planned use",
+    "used": "391 g",
+    "left": "about 609 g",
+    "planned": "about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts)",
+    "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
    {
@@ -554,6 +566,11 @@
     "used": "PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts"
    },
    {
+    "date": "2026-11-21",
+    "what": "Base plate (4 h 56 min, left nozzle, 4 walls, 30% infill)",
+    "used": "PETG 223.19 g (slicer)"
+   },
+   {
     "date": "2026-11-19",
     "what": "Toy truck joint coupon (home project, files in ~/toys/garbage-truck)",
     "used": "PLA Jade White 35.3 g (slicer)"
@@ -640,7 +657,7 @@
    "n": 11,
    "item": "ExpertPower 12V 10Ah LiFePO4, built-in BMS",
    "asin": "B07X3Y3LS5",
-   "check": "152 x 66 x 94 mm, 1.07 kg. No charger included",
+   "check": "Checked 2026-11-21: model EP1210 on the label (152 x 66 x 94 mm, 1.22 kg on its sheet; not weighed). F2 6.35 mm spade terminals on top at one short end, + at the label side. 10 A continuous, 15 A for 5 s. No charger included. Needs 6.3 mm female spade terminals (not on hand)",
    "group": "Power"
   },
   {
@@ -731,7 +748,7 @@
    "n": 24,
    "item": "Hook-and-loop battery straps, 6-pack",
    "asin": "B08HHHFMCJ",
-   "check": "",
+   "check": "Checked 2026-11-21: 21.5 mm wide, 27.5 mm at the buckle",
    "group": "Power"
   },
   {
@@ -775,6 +792,13 @@
    "asin": "B007OYAVLI",
    "check": "",
    "group": "Audio"
+  },
+  {
+   "n": 31,
+   "item": "AIRIC blue female spade terminals, 16 to 14 AWG, 100-pack",
+   "asin": "",
+   "check": "For the battery's F2 (6.35 mm) tabs: check they are 6.3 mm (0.250\") on arrival",
+   "group": "Power"
   }
  ],
  "phases": [
@@ -947,6 +971,18 @@
   {
    "date": "2026-11-21",
    "text": "cup v2 (light fit-test version) passed: the caster's plate drops in, the holes line up, and the fork swivels clear all the way round. The caster mount is settled; the base plate takes a matching hole."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "battery confirmed as an EP1210 from its label. Its F2 spade terminals sit on top at one short end, so the base plate needs only the footprint and straps. 6.3 mm female spade terminals are not on hand: ordered the same day (AIRIC 100-pack, due by 2026-11-25)."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "base plate modelled. It holds the cradles, the caster cup (now bolted to the plate through four bosses), the battery with fences and strap slots, and hole patterns for the electronics deck, bumper, forward sensors and cliff sensors. Every screw is M3 or M4 with a nut. Checking it against the real cradle model caught a layout error: two identical cradles cannot both point their servos' far ends back, so one points forward. The caster moved to 158 mm behind the axle to keep the cup on the plate."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "battery straps measured (21.5 mm wide, 27.5 mm at the buckle); the strap slots are sized to the strap, threaded free end first. The plate is ready to print."
   }
  ],
  "design": {

@@ -46,7 +46,14 @@ BOM_GROUPS: dict[int, str] = {
     **dict.fromkeys(range(11, 25), "Power"),
     **dict.fromkeys(range(25, 30), "Sensing and wiring"),
     30: "Audio",
-}
+    31: "Power",
+}  # A new row in docs/inventory.md's exp003 order table needs its number here.
+
+
+def _group(n: int) -> str:
+    if n not in BOM_GROUPS:
+        raise SystemExit(f"order row {n} has no group: add it to BOM_GROUPS in export_site.py")
+    return BOM_GROUPS[n]
 
 
 def _plain(text: str) -> str:
@@ -185,7 +192,7 @@ def build() -> dict[str, Any]:
             "item": r["Item"],
             "asin": r["ASIN"],
             "check": r["Check on arrival"],
-            "group": BOM_GROUPS[int(r["#"])],
+            "group": _group(int(r["#"])),
         }
         for r in bom_table
     ]

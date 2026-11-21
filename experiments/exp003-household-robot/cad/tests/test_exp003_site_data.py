@@ -34,7 +34,9 @@ def test_site_data_has_every_section():
         "consumables",
     ):
         assert data[key]
-    assert len(data["bom"]) == 30  # the 2026-11-17 order, items 1 to 30
+    # The 2026-11-17 order (items 1 to 30) plus later rows, numbered without gaps.
+    assert [r["n"] for r in data["bom"]] == list(range(1, len(data["bom"]) + 1))
+    assert len(data["bom"]) >= 30
     assert {p["track"] for p in data["phases"]} == {"v1", "v2"}
 
 

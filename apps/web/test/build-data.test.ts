@@ -19,6 +19,6 @@ describe("household robot build data", () => {
     const data = BuildData.parse(JSON.parse(readFileSync(file, "utf8")));
     expect(data.wheel.od_mm).toBe(120);
     expect(data.base.com_x_mm).toBeLessThan(0); // centre of mass behind the axle
-    expect(data.bom).toHaveLength(30);
+    expect(data.bom.length).toBeGreaterThanOrEqual(30); // the 2026-11-17 order plus later rows
   });
 });

@@ -26,7 +26,7 @@ def test_one_light_solid_of_the_right_size(part):
     assert len(part.solids().vals()) == 1
     bb = part.val().BoundingBox()
     assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((55.0, 55.0, 12.6))
-    assert part.val().Volume() < 11000  # mm3: about 14 g of PETG at most
+    assert part.val().Volume() < 12500  # mm3, with the four mounting bosses: about 15 g at most
 
 
 def test_roof_has_the_four_screw_holes_and_the_centre_hole(part):
@@ -60,3 +60,12 @@ def test_light_version_is_much_lighter(part):
     assert light.val().Volume() < 0.6 * part.val().Volume()
     r = Caster().fork_radius_mm + 0.5
     assert not light.val().isInside(cq.Vector(0, r, 8.0))
+
+
+def test_mounting_bosses_have_through_holes_clear_of_the_cavity(part):
+    from exp003_cad.params import CasterCup, derive_caster_cup
+
+    d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
+    for x, y in d.mount_holes:
+        assert not inside(part, x, y, 6.0)  # the M3 hole, full height
+        assert inside(part, x * 1.12, y * 1.12, 6.0)  # boss round it, outside
