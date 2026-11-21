@@ -365,7 +365,13 @@
    "item": "exp003 wheel hub, PETG",
    "qty": "2",
    "status": "Reserved",
-   "notes": "exp003 drive wheels; tires to follow in TPU"
+   "notes": "exp003 drive wheels, tires fitted 2026-11-21"
+  },
+  {
+   "item": "exp003 tire, TPU 95A",
+   "qty": "2",
+   "status": "Reserved",
+   "notes": "On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try"
   },
   {
    "item": "exp003 hub coupon v2, PETG",
@@ -384,16 +390,28 @@
    "qty": "1",
    "status": "Spare",
    "notes": "Retired (too close to the servo case)"
+  },
+  {
+   "item": "exp003 caster cup v1, PETG",
+   "qty": "1",
+   "status": "Spare",
+   "notes": "Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired"
+  },
+  {
+   "item": "exp003 caster cup v2 light, PETG",
+   "qty": "1",
+   "status": "Spare",
+   "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 154.0,
+ "petg_used_g": 167.8,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "154 g",
-    "left": "about 846 g",
+    "used": "168 g",
+    "left": "about 832 g",
     "planned": "about 750 g est. (base plate, shells, mounts)",
     "reorder": "Order a spool when both spools together drop under 500 g after planned use",
     "lead_time": "Bambu store about 1 week"
@@ -522,8 +540,18 @@
    },
    {
     "date": "2026-11-20",
-    "what": "Two TPU tires (sent to print, 8 h 8 min)",
+    "what": "Two TPU tires (printed 2026-11-21, 8 h 8 min, fitted)",
     "used": "TPU 105.0 g (slicer), right hotend via the TPU inlet"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Caster cup v1, test piece (24 min 47 s, left nozzle)",
+    "used": "PETG 8.32 g (slicer); 4 x M4 x 12 button head and 4 M4 nuts to fit"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Caster cup v2 light, test piece (22 min 30 s, left nozzle)",
+    "used": "PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts"
    },
    {
     "date": "2026-11-19",
@@ -591,7 +619,7 @@
    "n": 8,
    "item": "1.5\" PU swivel plate casters, set of 8",
    "asin": "B0DHHJRDDV",
-   "check": "Measure overall height (expect about 50 mm); 1 used, 7 spare",
+   "check": "Checked 2026-11-21: 50 mm to the top of the plate; plate 46 x 38.25 mm, holes on 35.75 x 27.75 mm centres, swivel offset 13 mm (Caster in exp003 params.py); 1 used, 7 spare",
    "group": "Drive"
   },
   {
@@ -899,6 +927,26 @@
   {
    "date": "2026-11-20",
    "text": "most of the 2026-11-17 order arrived (Pi 5, XT60s, fuses and limit switches due 2026-11-21). The two TPU tires are printing on the right hotend: TPU 95A goes through the rear TPU inlet once the right hotend's tube is moved there from the AMS buffer (Bambu's H2 TPU guide). Generic TPU profile, 3 walls, 25% gyroid, 8 h 8 min, 105 g."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "both tires printed cleanly and fit the hubs snugly on the first try, with the bore sized to the caliper reading of the printed rim (107.6 mm seat, 1.0 mm interference). Both wheels are complete. No reprint needed. The printer is now laid out with the AMS on the left nozzle and the right nozzle kept for TPU (docs/printing.md), so the bumper prints with no tube swap."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "caster measured (50 mm to the top of its plate, holes on 36 x 28 mm centres). That settles the base plate's height: the cradles sit on top of the plate, whose top face is 44.4 mm off the floor, and the caster bolts into a raised pocket (cad/BASE_PLATE.md, \"Height\"). The bumper waits until the plate is modelled."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "the caster's raised pocket is a separate light cup (cad/exp003_cad/caster_cup.py), so the base plate can print flat. The cup is printing as the fit test: the caster's plate must drop in and the fork must swivel clear of its walls."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "first cup fitted. The caster's plate drops in (slight play) and the holes line up, but the fork hits the walls when it swivels. Its sweep was never measured; it reaches 24 mm from the swivel axis. Cup v2 adds a 25.5 mm radius circle to the cavity."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "cup v2 (light fit-test version) passed: the caster's plate drops in, the holes line up, and the fork swivels clear all the way round. The caster mount is settled; the base plate takes a matching hole."
   }
  ],
  "design": {

@@ -17,9 +17,23 @@ import cadquery as cq
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from exp003_cad.caster_cup import caster_cup  # noqa: E402
 from exp003_cad.cradle import cradle  # noqa: E402
 from exp003_cad.hub import full_hub, hub_coupon  # noqa: E402
-from exp003_cad.params import Cradle, derive, derive_cradle, derive_tire, load, load_case, load_tire  # noqa: E402
+from exp003_cad.params import (  # noqa: E402
+    CASTER_CUP_TEST,
+    Caster,
+    CasterCup,
+    Cradle,
+    derive,
+    derive_caster_cup,
+    derive_cradle,
+    derive_heights,
+    derive_tire,
+    load,
+    load_case,
+    load_tire,
+)
 from exp003_cad.tire import tire  # noqa: E402
 
 PARTS = {
@@ -27,7 +41,13 @@ PARTS = {
     "wheel_hub": full_hub,
     "tire": lambda p: tire(p, load_tire(HERE / "servo.toml")),
     "servo_cradle": lambda p: cradle(load_case(HERE / "servo.toml"), p.horn),
+    "caster_cup": lambda p: caster_cup(Caster(), _heights(p)),
+    "caster_cup_test": lambda p: caster_cup(Caster(), _heights(p), CASTER_CUP_TEST),
 }
+
+
+def _heights(p):
+    return derive_heights(load_case(HERE / "servo.toml"), p.horn, Cradle(), Caster())
 
 
 def main() -> None:
@@ -62,6 +82,15 @@ def main() -> None:
     print(
         f"servo cradle: supplied M2 x 6 screws go {cr.screw_depth_mm:.1f} mm into the case; "
         f"wheel axle {cr.axle_above_foot_mm:.1f} mm above the foot"
+    )
+    h = _heights(p)
+    cup = derive_caster_cup(Caster(), h, CasterCup())
+    print(
+        f"caster cup: {max(cup.outer_mm[0], 2 * cup.outer_radius_mm):.1f} x "
+        f"{max(cup.outer_mm[1], 2 * cup.outer_radius_mm):.1f} x {cup.height_mm:.1f} mm, "
+        f"fork circle r {cup.sweep_radius_mm:.1f}, "
+        f"{cup.depth_mm:.1f} mm deep; plate top {h.plate_top_mm:.1f} mm off the floor; "
+        f"4 x {cup.screw}"
     )
     if not p.measured:
         print("\nservo.toml is still placeholders (measured = false). Do not print these files.")

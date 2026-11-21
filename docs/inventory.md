@@ -21,10 +21,13 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 
 | Item | Qty | Status | Where / notes |
 |---|---|---|---|
-| exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels; tires to follow in TPU |
+| exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels, tires fitted 2026-11-21 |
+| exp003 tire, TPU 95A | 2 | Reserved | On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
 | exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
+| exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
+| exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
 
@@ -44,14 +47,14 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | Item | Qty | Status | Where / notes |
 |---|---|---|---|
 | Bambu Lab H2D AMS Combo, Standard (not Pro) | 1 | Active | All printed parts. Delivered 2026-11-12; firmware 01.04.20.00 |
-| Bambu AMS 2 Pro (in the combo) | 1 | Active | On the right nozzle; firmware 02.04.19.87; has a drying mode (use it for PETG). Slots on 2026-11-19: A1 PETG Orange, A2 PLA Jade White, A3 PLA Blue, A4 PLA Sunflower Yellow. The left nozzle feeds from the external spool holder (TPU) |
+| Bambu AMS 2 Pro (in the combo) | 1 | Active | On the left nozzle since 2026-11-21 (right before that); firmware 02.04.19.87; has a drying mode (use it for PETG). Slots on 2026-11-19: A1 PETG Orange, A2 PLA Jade White, A3 PLA Blue, A4 PLA Sunflower Yellow. TPU bypasses it: the right nozzle is the TPU nozzle, fed through the rear TPU inlet (docs/printing.md) |
 | Bambu PLA Basic, Jade White (10100), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Basic, Blue (10601), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Basic, Sunflower Yellow (10402), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Basic, Pumpkin Orange (10301), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Pure, Baby Blue (17600), 1 kg | 1 | Spare | Studio preset: Bambu PLA Pure |
 | Bambu PETG Basic, Orange (30301), 1 kg | 2 | Reserved | exp003 wheel hubs, brackets. Studio preset: Bambu PETG Basic. About 134 g used from the first spool by 2026-11-19 (two coupons, two hubs) |
-| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | Reserved | Arrived 2026-11-20. exp003 tires and bumper. Studio preset: Generic TPU. Feed through the rear TPU inlet to the right hotend, not the AMS (docs/printing.md) |
+| SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | Reserved | Arrived 2026-11-20. exp003 tires and bumper. Studio preset: Generic TPU. Feed through the rear TPU inlet to the right hotend, not the AMS (docs/printing.md). Stored sealed in a bag with desiccant between prints (unloaded 2026-11-21, about 895 g) |
 
 All Bambu spools are 1 kg with RFID tags, so the AMS reads type and colour itself. Amounts left are
 not tracked yet; the AMS shows an estimate per spool.
@@ -99,7 +102,7 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse ass
 | 5 | M2.5 brass standoff kit, 160 pcs | B07KM5B3PT | | 2026-11-20 |
 | 6 | Serial bus servo driver board for Feetech ST/SC, USB | B0CTMM4LWK | Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215 | 2026-11-20 |
 | 7 | 608-ZZ bearings 8x22x7 mm, 10-pack | B07XLV1W2M | Optional outboard wheel support | 2026-11-20 |
-| 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Measure overall height (expect about 50 mm); 1 used, 7 spare | 2026-11-20 |
+| 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Checked 2026-11-21: 50 mm to the top of the plate; plate 46 x 38.25 mm, holes on 35.75 x 27.75 mm centres, swivel offset 13 mm (`Caster` in exp003 `params.py`); 1 used, 7 spare | 2026-11-20 |
 | 9 | SUNLU TPU 95A, 1 kg | B0BXNWK6NS | (also listed under Printing) | 2026-11-20 |
 | 10 | Brass heat-set inserts M2 to M5, 520 pcs | B0D5V3TZLB | | 2026-11-20 |
 | 11 | ExpertPower 12V 10Ah LiFePO4, built-in BMS | B07X3Y3LS5 | 152 x 66 x 94 mm, 1.07 kg. No charger included | 2026-11-20 |
@@ -139,7 +142,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 154 g | about 846 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 168 g | about 832 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | 35 g (toy truck coupon) | about 965 g | about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.) | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 160 g (toy truck tyres) | about 840 g | about 360 g (toy truck: body and tailgate 360 g slicer) | | |
@@ -161,7 +164,9 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-19 | Hubs fitted to horns | 8 x M3 x 8 button head |
 | 2026-11-19 | Servo cradle 1, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
 | 2026-11-19 | Servo cradle 2, fitted | PETG 10.0 g; 4 x M2 x 6 self-tapping (servo bag) |
-| 2026-11-20 | Two TPU tires (sent to print, 8 h 8 min) | TPU 105.0 g (slicer), right hotend via the TPU inlet |
+| 2026-11-20 | Two TPU tires (printed 2026-11-21, 8 h 8 min, fitted) | TPU 105.0 g (slicer), right hotend via the TPU inlet |
+| 2026-11-21 | Caster cup v1, test piece (24 min 47 s, left nozzle) | PETG 8.32 g (slicer); 4 x M4 x 12 button head and 4 M4 nuts to fit |
+| 2026-11-21 | Caster cup v2 light, test piece (22 min 30 s, left nozzle) | PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 

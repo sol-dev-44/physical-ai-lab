@@ -28,8 +28,25 @@ Balance, from the estimated masses in `BaseLayout` (battery at its low 1.07 kg):
 | v1 | 46 mm behind the axle; caster carries about 28% | Stable under braking; the wheels keep most of the weight for grip |
 | v2, 1 kg arm at full forward reach | 18 mm behind the axle | Still does not tip forward. The README's tip test with a dummy weight decides |
 
-Still open: the plate's height. It waits on the caster's mounting height (below), which decides
-whether the cradles sit on top of the plate or hang under it.
+## Height (decided 2026-11-21)
+
+The caster measured 50 mm from the floor to the top of its plate. Two ways to hold the axle at 60 mm:
+
+| Option | Plate | Caster | Verdict |
+|---|---|---|---|
+| Cradles on top of the plate | Top face 44.4 mm off the floor, underside 40.4 mm (4 mm plate) | Bolts into a raised pocket: its plate sits 9.6 mm above the underside, a boss 5.6 mm above the top | **Chosen:** lowest centre of mass (owner: "the stouter the better"), servos protected inside the plate's outline, 40 mm floor clearance |
+| Cradles hung under the plate | Underside 75.6 mm off the floor | 25.6 mm spacer block | Higher centre of mass, servos exposed underneath |
+
+Numbers come from `derive_heights` in `params.py` (tested). The caster wheel's top is 2.3 mm under
+the plate. Still to settle when the plate is modelled:
+
+- The pocket is a separate caster cup (`exp003_cad/caster_cup.py`) so the plate prints flat. The
+  plate needs a hole the same shape as the cup's cavity: a box for the caster's plate plus a
+  25.5 mm radius circle for the fork (the fork reaches 24 mm, measured 2026-11-21). The cup is
+  27.5 mm in radius outside, so with the plate's back edge 190 mm behind the axle the caster
+  must sit at least 163 mm behind it, not 165: move it to about 160 mm when the plate is modelled.
+- Screws: M4 through the caster's holes (published holes are 4.2 to 5.3 mm) into heat-set
+  inserts in the boss.
 
 ## Fixed by our own parts
 
@@ -59,9 +76,10 @@ whether the cradles sit on top of the plate or hang under it.
 
 ## On arrival (no source gives these)
 
-- **Caster:** mounting height (floor to the top of its plate), plate size and hole pattern. This
-  sets the plate's height, so it comes first: the wheels hold the axle at 60 mm, and the caster
-  must hold the plate level at whatever height that leaves.
+- **Caster:** measured 2026-11-21 (`Caster` in `params.py`): 50 mm floor to the top of its plate;
+  plate 46 x 38.25 mm, its long ends concave to 40.5 mm across the middle; holes on 35.75 x 27.75 mm
+  centres (the common 46 x 38 plate is 36 x 28, [Tente 1430 sheet](https://media.tente.com/en-us/pdf/17/1/1430POI038P60-46x38_EN.pdf));
+  swivel offset 13 mm, so the wheel sweeps a 32 mm radius.
 - **Battery:** which long edge the terminals are on; weigh it (1.07 or 1.22 kg).
 - **DROK, UCTRONICS, INA226, servo driver:** outline and mounting holes or tabs.
 - **Rocker switch, DC jack:** panel cutout (the switch model is not identified).
