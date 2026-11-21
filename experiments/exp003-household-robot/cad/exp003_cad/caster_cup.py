@@ -1,6 +1,7 @@
 """The caster cup: a light open cup the rear caster bolts up into. Frame: see params.CasterCup.
 
-The cavity is a box for the caster's plate joined with a circle for the fork's sweep. Prints
+The cavity is a box for the caster's plate joined with a circle for the fork's sweep. Four
+bosses outside the walls take M3 screws up from under the base plate, nuts on the roof. Prints
 roof-down with the open end up: no overhangs, no supports. The caster's plate sits against the
 roof's inner face; M4 screws come up through the caster and the roof, nuts on top.
 """
@@ -9,7 +10,7 @@ from __future__ import annotations
 
 import cadquery as cq
 
-from .params import Caster, CasterCup, Heights, derive_caster_cup
+from .params import CLEARANCE_MM, Caster, CasterCup, Heights, derive_caster_cup
 
 
 def caster_cup(caster: Caster, heights: Heights, c: CasterCup | None = None) -> cq.Workplane:
@@ -38,6 +39,20 @@ def caster_cup(caster: Caster, heights: Heights, c: CasterCup | None = None) -> 
             .extrude(d.depth_mm + 1)
         )
     )
+    if d.mount_holes:  # bosses outside the walls, full height, for the M3 screws to the plate
+        bosses = (
+            cq.Workplane("XY")
+            .pushPoints(list(d.mount_holes))
+            .circle(c.boss_mm / 2)
+            .extrude(d.height_mm)
+        )
+        outer = outer.union(bosses)
+        mounts = (
+            cq.Workplane("XY")
+            .pushPoints(list(d.mount_holes))
+            .circle(CLEARANCE_MM["M3"] / 2)
+            .extrude(d.height_mm + 1)
+        )
     holes = (
         cq.Workplane("XY")
         .pushPoints(list(d.holes))
@@ -45,4 +60,5 @@ def caster_cup(caster: Caster, heights: Heights, c: CasterCup | None = None) -> 
         .extrude(c.roof_mm + 1)
         .union(cq.Workplane("XY").circle(c.center_hole_mm / 2).extrude(c.roof_mm + 1))
     )
-    return outer.cut(cavity).cut(holes)
+    part = outer.cut(cavity).cut(holes)
+    return part.cut(mounts) if d.mount_holes else part

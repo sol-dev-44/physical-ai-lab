@@ -17,15 +17,19 @@ import cadquery as cq
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from exp003_cad.base_plate import base_plate  # noqa: E402
 from exp003_cad.caster_cup import caster_cup  # noqa: E402
 from exp003_cad.cradle import cradle  # noqa: E402
 from exp003_cad.hub import full_hub, hub_coupon  # noqa: E402
 from exp003_cad.params import (  # noqa: E402
     CASTER_CUP_TEST,
+    BaseLayout,
+    BasePlate,
     Caster,
     CasterCup,
     Cradle,
     derive,
+    derive_base_plate,
     derive_caster_cup,
     derive_cradle,
     derive_heights,
@@ -46,6 +50,18 @@ PARTS = {
 }
 
 
+def _plate(p):
+    return derive_base_plate(
+        load_case(HERE / "servo.toml"),
+        p.horn,
+        Cradle(),
+        Caster(),
+        BaseLayout(),
+        BasePlate(),
+        CasterCup(),
+    )
+
+
 def _heights(p):
     return derive_heights(load_case(HERE / "servo.toml"), p.horn, Cradle(), Caster())
 
@@ -57,7 +73,10 @@ def main() -> None:
     out.mkdir(exist_ok=True)
     suffix = "" if p.measured else "_UNMEASURED"
 
-    for name, make in PARTS.items():
+    plate = _plate(p)
+    parts = dict(PARTS)
+    parts["base_plate" + ("" if plate.measured else "_UNMEASURED")] = lambda _p: base_plate(plate)
+    for name, make in parts.items():
         part = make(p)
         for ext in ("step", "stl"):
             path = out / f"{name}{suffix}.{ext}"
@@ -92,6 +111,13 @@ def main() -> None:
         f"{cup.depth_mm:.1f} mm deep; plate top {h.plate_top_mm:.1f} mm off the floor; "
         f"4 x {cup.screw}"
     )
+    print(
+        f"base plate: {plate.x_front_mm - plate.x_back_mm:.0f} x {2 * plate.half_width_mm:.1f} mm, "
+        f"caster {-plate.caster_xy[0]:.0f} mm behind the axle; screws: "
+        + "; ".join(plate.screws.values())
+    )
+    if not plate.measured:
+        print("base plate: strap width not measured (BasePlate.strap_width_mm); do not print it")
     if not p.measured:
         print("\nservo.toml is still placeholders (measured = false). Do not print these files.")
 

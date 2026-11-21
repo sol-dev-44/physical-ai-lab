@@ -62,6 +62,16 @@ something new is learned.
   - Clicks near the top toolbar can be refused in full-screen mode; cmd+R slices instead.
   - The send window maps filament to spools; it is another process, so the owner maps the TPU to
     the right external spool and clicks Send.
+- **Move tool fields and process settings take typing only with full-screen control**
+  (2026-11-21): in the background the X/Y fields and the Strength tab's fields ignore typed text.
+  With full-screen control: triple-click the field, cmd+A, type, Return.
+- **Never scroll the settings panel while a number field has focus:** the scroll changes the
+  field's value. Scrolling up after setting infill to 30% turned it into 0 and an "Invalid numeric"
+  error; the first slice of the base plate came out at 163 g instead of 223 g. Click empty canvas
+  to leave a field before scrolling, and re-check the values before slicing.
+- **The left nozzle (the AMS's) cannot reach the grey "Right nozzle only area".** A 300 mm part
+  fits with its centre at X 160; at the default X 175 it ran into that strip and Studio flagged
+  "laid over the boundary of plate".
 - **Heating from the Device tab:** the nozzle target fields take a typed value plus Return, and work
   from the background. The printer drops a manually set nozzle target back to about 38 C after a
   few idle minutes, so heat it only when the owner is at the printer, ready to load (about a

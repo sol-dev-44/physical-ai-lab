@@ -63,6 +63,19 @@ reach it.
 - **Look at a render before calling a part done.** The tests passed while a 0.15 mm sliver of wall
   sat between two openings; the rear-view render showed it. Quick renders: tessellate and plot with
   matplotlib (`uv run --no-project --with cadquery --with matplotlib`).
+- **Identical parts on both sides are not mirror images.** One cradle design on both sides means
+  the second is the first turned half a turn about z, so its servo points the other way. Check
+  handedness with the real solid placed on the assembly (`cradle_to_plate` and
+  `tests/test_exp003_base_plate_geometry.py`), not with a sketch. The plan said "both far ends
+  back" for two days before the plate model caught it.
+- **Line up holes against the other part's solid, not its numbers:** the plate test places the
+  real cradle and checks each plate hole lands in an ear hole, plus a self-test 3 mm off. That
+  caught an ear offset computed from the wrong face.
+- **Quick line drawings without matplotlib:** export an SVG
+  (`cq.exporters.export(part, "x.svg", opt={"projectionDir": (0, 0, 1), ...})`) and turn it into a
+  PNG with `qlmanage -t -s 1100 -o . x.svg`.
+- **A new row in the inventory's exp003 order table** needs its number added to `BOM_GROUPS` in
+  `export_site.py`, or the export stops and names the row.
 - **Probe the vendored model first:** list every cylinder and planar face (axis, diameter, extent)
   before designing against it. Its holes are drawn only 1.5 mm deep; real depths come from related
   parts (the SO-101 holders' STEP files gave the screw depth).
@@ -81,6 +94,7 @@ reach it.
 | Wheel hub | `out/wheel_hub.step` | 108 mm rim, 32 mm wide, flanges for a 6 mm TPU tire (120 mm wheel). |
 | Servo cradle | `out/servo_cradle.step` | Holds a wheel servo by its bottom holes. Cheeks hug the case; the lower cheek is the foot, with an M3 ear at each end. |
 | Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
+| Base plate | `out/base_plate.step` | 300 x 261.6 x 4 mm. Carries the cradles, the caster cup, the battery (fences and strap slots) and hole patterns for the electronics deck, bumper and sensors. See `BASE_PLATE.md`. |
 | Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 12.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`

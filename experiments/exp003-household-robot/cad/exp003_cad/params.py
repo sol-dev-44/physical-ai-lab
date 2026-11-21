@@ -492,7 +492,9 @@ class BaseLayout:
     cable_room_mm: float = 20.0  # battery end to cradle back: the servo plugs come out there
     front_mm: float = 110.0  # plate edges, fore-aft
     back_mm: float = -190.0
-    caster_x_mm: float = -165.0
+    caster_x_mm: float = (
+        -158.0
+    )  # moved from -165 so the caster cup and its screws stay on the plate
     electronics_x_mm: tuple[float, float] = (-80.0, -185.0)  # deck zone behind the battery
     arm_base_x_mm: float = -110.0  # v2: SO-101 base on a top deck
     arm_reach_com_mm: float = 150.0  # the arm's centre of mass ahead of its base at full reach
@@ -500,9 +502,9 @@ class BaseLayout:
     other: tuple[Mass, ...] = (
         Mass("plate", 0.25, -40.0, "estimate: about 300 x 260 x 4 mm PETG, part infill"),
         Mass("electronics", 0.25, -130.0, "estimate: Pi 5, driver, converters, wiring"),
-        Mass("caster", 0.04, -165.0, "estimate"),
+        Mass("caster", 0.04, -158.0, "estimate"),
     )
-    battery_kg: float = 1.07  # inventory figure; the EP1210 sheet says 1.22, so this is the low end
+    battery_kg: float = 1.22  # EP1210 sheet; the model is confirmed from its label (2026-11-21)
     servo_kg: float = 0.07  # each, with its cradle (estimate)
     wheel_kg: float = 0.146  # each: printed hub 59 g (118.5 g for two) + TPU tire about 87 g
 
@@ -543,8 +545,10 @@ def derive_base(case: Case, horn: Horn, cradle: Cradle, b: BaseLayout) -> BaseDe
         raise ValueError("the caster must sit behind the battery and on the plate")
 
     masses = (
-        Mass("battery", b.battery_kg, b.battery_x_mm, "inventory; EP1210 sheet says 1.22"),
-        Mass("servos and cradles", 2 * b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "estimate"),
+        Mass("battery", b.battery_kg, b.battery_x_mm, "EP1210 sheet (model on the label)"),
+        # Identical cradles: one servo's far end points back, the other's forward.
+        Mass("servo and cradle, +y", b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "estimate"),
+        Mass("servo and cradle, -y", b.servo_kg, (d.a_min_mm + d.a_max_mm) / 2, "estimate"),
         Mass("wheels", 2 * b.wheel_kg, 0.0, "printed hubs weighed by the slicer; tire estimate"),
         *b.other,
     )
@@ -667,12 +671,18 @@ class CasterCup:
     inner_corner_mm: float = 1.0
     hole_mm: float = 4.5  # M4 clearance, through the roof; nut on top
     center_hole_mm: float = 22.0  # clears the swivel rivet and saves plastic
+    # Four bosses outside the walls, at 45 degrees, bolt the cup to the plate: M3 from under the
+    # plate up through the boss, nut on the roof. Off on the fit-test version.
+    mount_bosses: bool = True
+    boss_at_mm: float = 33.0  # boss centres from the swivel axis
+    boss_mm: float = 8.0  # boss diameter
 
 
 # Fit tests only check the caster's plate, holes and fork sweep, so they skimp on plastic.
-CASTER_CUP_TEST = CasterCup(wall_mm=1.2, roof_mm=2.0, center_hole_mm=34.0)
+CASTER_CUP_TEST = CasterCup(wall_mm=1.2, roof_mm=2.0, center_hole_mm=34.0, mount_bosses=False)
 
 M4_NUT_MM = 3.2  # ISO 4032 thickness
+M3_NUT_MM = 2.4
 
 
 @dataclass(frozen=True)
@@ -685,6 +695,8 @@ class CasterCupDerived:
     height_mm: float
     holes: tuple[tuple[float, float], ...]
     screw: str
+    mount_holes: tuple[tuple[float, float], ...]  # M3 through the bosses, into the base plate
+    mount_screw: str
 
 
 def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterCupDerived:
@@ -701,6 +713,19 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
     # Screw: caster plate (about 3 mm) + roof + nut, rounded up to a length in the Mywish kit.
     need = 3.0 + c.roof_mm + M4_NUT_MM
     length = next(n for n in (8, 12, 16, 20) if n >= need)
+    mount: tuple[tuple[float, float], ...] = ()
+    mount_screw = ""
+    if c.mount_bosses:
+        k = c.boss_at_mm / math.sqrt(2)
+        mount = tuple((sx * k, sy * k) for sx in (-1, 1) for sy in (-1, 1))
+        r = CLEARANCE_MM["M3"] / 2
+        if k - r - inner[1] / 2 < 1.5 or c.boss_at_mm - r - sweep < 1.5:
+            raise ValueError("the cup's mounting holes come within 1.5 mm of its cavity")
+        m_need = PLATE_MM + heights.caster_mount_mm + c.roof_mm + M3_NUT_MM
+        m_len = next((n for n in (8, 12, 16, 20) if n >= m_need), None)
+        if m_len is None:
+            raise ValueError(f"the cup's mounting screws need {m_need:.1f} mm, longer than the kit")
+        mount_screw = f"M3 x {m_len} button head and nut"
     return CasterCupDerived(
         inner_mm=inner,
         outer_mm=outer,
@@ -710,7 +735,206 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
         height_mm=heights.caster_mount_mm + c.roof_mm,
         holes=holes,
         screw=f"M4 x {length} button head and nut",
+        mount_holes=mount,
+        mount_screw=mount_screw,
     )
+
+
+@dataclass(frozen=True)
+class BasePlate:
+    """The base plate: one flat 4 mm PETG piece, printed underside down. Design choices.
+
+    Frame: x fore-aft (+ forward, axle at 0), y across, z up from the plate's underside. Every
+    screw is M3 with a nut, so the plate needs no inserts. Parts that are not designed yet (the
+    electronics deck, the bumper, sensor brackets) bolt to hole patterns here and copy them.
+    """
+
+    corner_radius_mm: float = 10.0
+    edge_margin_mm: float = 5.0  # hole edge to plate edge, at least
+    battery_clearance_mm: float = 1.0  # per side round the battery's footprint
+    fence_mm: float = 2.0  # corner stops round the battery
+    fence_height_mm: float = 3.0
+    fence_leg_mm: float = 12.0
+    # Hook-and-loop straps go up one slot, over the battery and down the other. Measured
+    # 2026-11-21 (inventory row 24): the strap is 21.5 mm wide, its buckle 27.5 mm. Thread the free
+    # end through the slots, so only the strap passes and the buckle stays on top. None means not
+    # measured, and the build then marks the plate unmeasured.
+    strap_width_mm: float | None = 21.5
+    strap_slot_mm: float = 4.0  # slot width, for the strap's thickness
+    strap_y_mm: float = 40.0  # two straps, at +- this
+    grid_pitch_mm: float = 20.0  # electronics deck holes
+    grid_x_mm: tuple[float, ...] = (-95.0, -115.0, -135.0, -155.0, -175.0)
+    grid_y_max_mm: float = 100.0
+    grid_caster_keepout_mm: float = 42.0  # no grid holes this close to the caster's axis
+    bumper_x_mm: float = 100.0  # front row: the bumper
+    sensor_x_mm: float = 75.0  # second row: forward sensor brackets
+    row_pitch_mm: float = 30.0
+    row_y_max_mm: float = 120.0
+    cliff_window_mm: float = 14.0  # downward ToF sensors look through these
+    cliff_x_mm: float = 88.0
+    cliff_y_mm: tuple[float, ...] = (-105.0, 0.0, 105.0)
+
+
+STRAP_PLACEHOLDER_MM = 25.0  # used for drawing only, while BasePlate.strap_width_mm is None
+
+
+@dataclass(frozen=True)
+class BasePlateDerived:
+    x_back_mm: float
+    x_front_mm: float
+    half_width_mm: float
+    thickness_mm: float
+    measured: bool  # False while the strap width is a placeholder
+    cradle_holes: tuple[tuple[float, float], ...]
+    cradle_feet: tuple[tuple[float, float, float, float], ...]  # x0, x1, y0, y1 on the top
+    caster_xy: tuple[float, float]
+    cup: CasterCupDerived
+    cup_holes: tuple[tuple[float, float], ...]
+    battery_box: tuple[float, float, float, float]  # x0, x1, y0, y1 inside the fences
+    strap_slots: tuple[tuple[float, float, float, float], ...]  # x0, x1, y0, y1
+    grid_holes: tuple[tuple[float, float], ...]
+    front_holes: tuple[tuple[float, float], ...]
+    cliff_windows: tuple[tuple[float, float], ...]
+    screws: dict[str, str]
+
+
+def derive_base_plate(
+    case: Case,
+    horn: Horn,
+    cradle: Cradle,
+    caster: Caster,
+    layout: BaseLayout,
+    p: BasePlate,
+    cup: CasterCup,
+) -> BasePlateDerived:
+    """Every hole and feature on the base plate, or ValueError naming what collides."""
+    base = derive_base(case, horn, cradle, layout)
+    cd = derive_cradle(case, horn, cradle)
+    heights = derive_heights(case, horn, cradle, caster)
+    t = PLATE_MM
+    x0, x1, half = layout.back_mm, layout.front_mm, base.plate_half_width_mm
+
+    # Cradles: foot down, back face at +-cradle_back. The two cradles are identical, so the one at
+    # +y has its servo's far end pointing back (x = -a) and the one at -y is the same turned half a
+    # turn about z, its far end pointing forward (x = +a). See `cradle_to_plate`.
+    back_wall = cradle.wall_mm + cradle.pad_mm
+    ear_c = (cradle.cheek_height_mm + back_wall) / 2  # ear hole centre, out from the back face
+    ear_y = base.cradle_back_y_mm + ear_c
+    ear_a = (cd.a_min_mm - cradle.ear_length_mm / 2, cd.a_max_mm + cradle.ear_length_mm / 2)
+    cradle_holes = tuple((-s * a, s * ear_y) for s in (1, -1) for a in ear_a)
+    span = (cd.a_min_mm - cradle.ear_length_mm, cd.a_max_mm + cradle.ear_length_mm)
+    foot_y = (base.cradle_back_y_mm, base.cradle_back_y_mm + back_wall + cradle.cheek_height_mm)
+    feet = (
+        (-span[1], -span[0], foot_y[0], foot_y[1]),
+        (span[0], span[1], -foot_y[1], -foot_y[0]),
+    )
+
+    cupd = derive_caster_cup(caster, heights, cup)
+    cx = layout.caster_x_mm
+    cup_holes = tuple((cx + hx, hy) for hx, hy in cupd.mount_holes)
+
+    bw = layout.battery_mm[0] / 2 + p.battery_clearance_mm
+    bd = layout.battery_mm[1] / 2 + p.battery_clearance_mm
+    bx = layout.battery_x_mm
+    battery_box = (bx - bd, bx + bd, -bw, bw)
+    strap = p.strap_width_mm or STRAP_PLACEHOLDER_MM
+    slot_len = strap + 3.0
+    off = p.fence_mm + 0.5 + p.strap_slot_mm / 2
+    slots = tuple(
+        (sx - p.strap_slot_mm / 2, sx + p.strap_slot_mm / 2, sy - slot_len / 2, sy + slot_len / 2)
+        for sx in (bx - bd - off, bx + bd + off)
+        for sy in (-p.strap_y_mm, p.strap_y_mm)
+    )
+
+    n = int(p.grid_y_max_mm // p.grid_pitch_mm)
+    ys = [k * p.grid_pitch_mm for k in range(-n, n + 1)]
+    grid = tuple(
+        (x, y) for x in p.grid_x_mm for y in ys if math.hypot(x - cx, y) > p.grid_caster_keepout_mm
+    )
+    m = int(p.row_y_max_mm // p.row_pitch_mm)
+    row_y = [k * p.row_pitch_mm for k in range(-m, m + 1)]
+    front = tuple((x, y) for x in (p.bumper_x_mm, p.sensor_x_mm) for y in row_y)
+    cliffs = tuple((p.cliff_x_mm, y) for y in p.cliff_y_mm)
+
+    # Checks: every hole on the plate with margin, and no two features touching.
+    r3 = CLEARANCE_MM["M3"] / 2
+    circles = [(x, y, r3) for x, y in (*cradle_holes, *cup_holes, *grid, *front)]
+    circles += [(x, y, p.cliff_window_mm / 2) for x, y in cliffs]
+    for x, y, r in circles:
+        tol = 1e-6
+        if not (x0 + p.edge_margin_mm + r - tol <= x <= x1 - p.edge_margin_mm - r + tol):
+            raise ValueError(f"hole at ({x:.1f}, {y:.1f}) is too close to the front or back edge")
+        if abs(y) > half - p.edge_margin_mm - r + tol:
+            raise ValueError(f"hole at ({x:.1f}, {y:.1f}) is too close to a side edge")
+    for i, (xa, ya, ra) in enumerate(circles):
+        for xb, yb, rb in circles[i + 1 :]:
+            if math.hypot(xa - xb, ya - yb) < ra + rb + 2.0:
+                raise ValueError(f"holes at ({xa:.1f}, {ya:.1f}) and ({xb:.1f}, {yb:.1f}) touch")
+
+    def in_rect(x: float, y: float, r: float, rect: tuple[float, float, float, float]) -> bool:
+        rx0, rx1, ry0, ry1 = rect
+        return rx0 - r - 2.0 < x < rx1 + r + 2.0 and ry0 - r - 2.0 < y < ry1 + r + 2.0
+
+    keep = [*slots, battery_box]
+    for x, y, r in circles:
+        if (x, y) in cradle_holes:
+            continue
+        for rect in (*keep, *feet):
+            if in_rect(x, y, r, rect):
+                raise ValueError(f"hole at ({x:.1f}, {y:.1f}) runs into a slot, foot or battery")
+    cut_r = max(cupd.sweep_radius_mm, math.hypot(*[v / 2 for v in cupd.inner_mm]))
+    for x, y, r in circles:
+        if (x, y) in cup_holes:
+            continue
+        if math.hypot(x - cx, y) < cut_r + r + 2.0:
+            raise ValueError(f"hole at ({x:.1f}, {y:.1f}) runs into the caster cutout")
+    if cx - cupd.outer_radius_mm < x0 + 1.0:
+        raise ValueError("the caster cup hangs off the back edge; move the caster forward")
+    for fx0, fx1, fy0, fy1 in feet:
+        bx0, bx1, by0, by1 = battery_box
+        if fx0 < bx1 and bx0 < fx1 and fy0 < by1 + p.fence_mm and by0 - p.fence_mm < fy1:
+            raise ValueError("a servo cradle overlaps the battery's fences")
+
+    screws = {
+        "cradles": "4 x M3 x 12 button head and nut (ear 4 mm + plate 4 mm + nut)",
+        "caster": f"4 x {cupd.screw} (caster to cup)",
+        "cup": f"4 x {cupd.mount_screw} (cup to plate, from under the plate)",
+    }
+    return BasePlateDerived(
+        x_back_mm=x0,
+        x_front_mm=x1,
+        half_width_mm=half,
+        thickness_mm=t,
+        measured=p.strap_width_mm is not None,
+        cradle_holes=cradle_holes,
+        cradle_feet=feet,
+        caster_xy=(cx, 0.0),
+        cup=cupd,
+        cup_holes=cup_holes,
+        battery_box=battery_box,
+        strap_slots=slots,
+        grid_holes=grid,
+        front_holes=front,
+        cliff_windows=cliffs,
+        screws=screws,
+    )
+
+
+def cradle_to_plate(case: Case, horn: Horn, cradle: Cradle, layout: BaseLayout, side: int):
+    """The map from the cradle's frame (a, b, c) to the plate's (x, y, z), for side +1 or -1.
+
+    Returns (rotation as three column vectors, translation). The foot face (b = -b_outer) lands
+    on the plate's top face; the back face (c = -wall - pad) at y = +-cradle_back.
+    """
+    base = derive_base(case, horn, cradle, layout)
+    cd = derive_cradle(case, horn, cradle)
+    back = -(cradle.wall_mm + cradle.pad_mm)
+    s = 1 if side > 0 else -1
+    # a -> -s x, b -> z, c -> s y: a proper rotation for both sides (side -1 is side +1 turned
+    # half a turn about z).
+    cols = ((-s, 0, 0), (0, 0, 1), (0, s, 0))
+    shift = (0.0, s * (base.cradle_back_y_mm - back), PLATE_MM + cd.b_outer_mm)
+    return cols, shift
 
 
 def load(path: Path) -> HubParams:

@@ -27,6 +27,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
+| exp003 base plate, PETG | 1 | Reserved | Printing 2026-11-21 (4 h 56 min) |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
@@ -105,7 +106,7 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse ass
 | 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Checked 2026-11-21: 50 mm to the top of the plate; plate 46 x 38.25 mm, holes on 35.75 x 27.75 mm centres, swivel offset 13 mm (`Caster` in exp003 `params.py`); 1 used, 7 spare | 2026-11-20 |
 | 9 | SUNLU TPU 95A, 1 kg | B0BXNWK6NS | (also listed under Printing) | 2026-11-20 |
 | 10 | Brass heat-set inserts M2 to M5, 520 pcs | B0D5V3TZLB | | 2026-11-20 |
-| 11 | ExpertPower 12V 10Ah LiFePO4, built-in BMS | B07X3Y3LS5 | 152 x 66 x 94 mm, 1.07 kg. No charger included | 2026-11-20 |
+| 11 | ExpertPower 12V 10Ah LiFePO4, built-in BMS | B07X3Y3LS5 | Checked 2026-11-21: model EP1210 on the label (152 x 66 x 94 mm, 1.22 kg on its sheet; not weighed). F2 6.35 mm spade terminals on top at one short end, + at the label side. 10 A continuous, 15 A for 5 s. No charger included. Needs 6.3 mm female spade terminals (not on hand) | 2026-11-20 |
 | 12 | 14.6V 2A LiFePO4 charger, 5.5x2.1 mm barrel, center positive | B09HKDPLQ9 | Confirm center positive with the multimeter | 2026-11-20 |
 | 13 | UCTRONICS 9-36V to 5V (5.2V) buck, up to 6A | B07XXWQ49N | Stand-in for Pololu D36V50F5. Check 5.1 to 5.25V out under load | 2026-11-20 |
 | 14 | DROK buck-boost, 9-36V in, 12V 5A out, potted | B0B6VK8BPN | Check 12.0V out before connecting servos | 2026-11-20 |
@@ -118,13 +119,14 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse ass
 | 21 | 16 AWG silicone wire, 10 ft red + 10 ft black | B0D93K21TN | | 2026-11-20 |
 | 22 | 22 AWG silicone wire, 6 colors x 10 ft | B089CQHRDT | | 2026-11-20 |
 | 23 | Heat-shrink kit, 580 pcs | B01MFA3OFA | | 2026-11-20 |
-| 24 | Hook-and-loop battery straps, 6-pack | B08HHHFMCJ | | 2026-11-20 |
+| 24 | Hook-and-loop battery straps, 6-pack | B08HHHFMCJ | Checked 2026-11-21: 21.5 mm wide, 27.5 mm at the buckle | 2026-11-20 |
 | 25 | VL53L1X ToF modules (TOF400C), 3-pack | B0HC653J8F | **XSHUT pin broken out** (needed to give each its own address) | 2026-11-20 |
 | 26 | VL53L0X ToF modules (GY-VL53L0XV2), 3-pack | B0B6ZT7NRW | Cliff sensors | 2026-11-20 |
 | 27 | KW12-3 roller-lever limit switches, 10-pack | B07X142VGC | Bumpers; 2 used | Due 2026-11-21 |
 | 28 | Dupont jumper wires, 120 pcs | B01EV70C78 | | 2026-11-20 |
 | 29 | JST-XH pre-crimped connector kit | B08G18PWQ6 | | 2026-11-20 |
 | 30 | AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged | B007OYAVLI | | 2026-11-20 |
+| 31 | AIRIC blue female spade terminals, 16 to 14 AWG, 100-pack | | For the battery's F2 (6.35 mm) tabs: check they are 6.3 mm (0.250") on arrival | Due by 2026-11-25 |
 
 ## Consumables: stock, usage and reorders
 
@@ -135,14 +137,15 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 - **Forecast from the plan:** "Planned" lists what the next exp003 parts will use, from the
   models and slicer where they exist, estimates otherwise (marked "est.").
 - **Flag an order** when stock minus planned use falls below the reorder point, allowing for the
-  lead time. Claude proposes the order with links; the owner places it (Amazon blocks AI agents,
+  lead time. The owner prints every day (2026-11-21), so keep a bigger buffer: at least 2 kg of
+  PETG on hand after planned use, and a spare spool of each PLA colour that toys are using. Claude proposes the order with links; the owner places it (Amazon blocks AI agents,
   and checkout is the owner's).
 
 ### Stock
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 168 g | about 832 g | about 750 g est. (base plate, shells, mounts) | Order a spool when both spools together drop under 500 g after planned use | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 391 g | about 609 g | about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | 35 g (toy truck coupon) | about 965 g | about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.) | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 160 g (toy truck tyres) | about 840 g | about 360 g (toy truck: body and tailgate 360 g slicer) | | |
@@ -167,13 +170,22 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-20 | Two TPU tires (printed 2026-11-21, 8 h 8 min, fitted) | TPU 105.0 g (slicer), right hotend via the TPU inlet |
 | 2026-11-21 | Caster cup v1, test piece (24 min 47 s, left nozzle) | PETG 8.32 g (slicer); 4 x M4 x 12 button head and 4 M4 nuts to fit |
 | 2026-11-21 | Caster cup v2 light, test piece (22 min 30 s, left nozzle) | PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts |
+| 2026-11-21 | Base plate (4 h 56 min, left nozzle, 4 walls, 30% infill) | PETG 223.19 g (slicer) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 
 ### Orders to place
 
-None yet. PETG covers the planned parts with about 1100 g to spare. The TPU on order covers the
-tires and bumper.
+- **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
+  day on the robot or toys). After the base plate (223 g) spool 1 is down to about 609 g; with the
+  sealed spool that is about 1.6 kg, against about 530 g still planned (caster cup, electronics
+  deck, shells, bumper mounts) plus daily printing. Bambu store, about 1 week. Spools with the RFID
+  tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
+  a second colour for the shells is the owner's call.
+
+The battery's spade terminals were ordered 2026-11-21 (row 31).
+
+PETG covers the planned parts with about 1100 g to spare. The TPU on hand covers the bumper.
 
 ## Wishlist (Amazon list "Robot - later")
 
