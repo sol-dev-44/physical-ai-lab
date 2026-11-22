@@ -46,7 +46,8 @@ def build(lease: DriveLease | None = None, wheels: Wheels | None = None) -> Regi
     """Register the wheel tools.
 
     A lease created inside build() is never renewed, so base.drive is always refused with it.
-    Callers that drive (the console) must pass their own lease.
+    The console does not pass one: it takes the lease from the interlock (find_lease), so
+    callers that drive use that lease.
     """
     lease = lease if lease is not None else DriveLease(ttl_s=LEASE_S)
     wheels = wheels if wheels is not None else _wheels()

@@ -209,12 +209,30 @@ def cmd_agent(s: Settings, a: argparse.Namespace) -> int:
     return 0
 
 
+def resolve_static_dir(arg: str, starts: list[Path] | None = None) -> Path:
+    """Resolve a relative --static against the repo root, found by walking up to apps/robot-console.
+
+    Tries each start dir in turn (default: the cwd, then this package), so `lab console` works
+    from any directory. Absolute paths are kept. With no repo found, resolves against the cwd.
+    """
+    path = Path(arg)
+    if path.is_absolute():
+        return path
+    for start in starts if starts is not None else [Path.cwd(), Path(__file__).resolve().parent]:
+        for d in [start.resolve(), *start.resolve().parents]:
+            if (d / "apps" / "robot-console").is_dir():
+                return d / path
+    return path.absolute()
+
+
 def cmd_console(s: Settings, a: argparse.Namespace) -> int:
     from .console.server import serve
 
     registry = load_tools(a.tools or s.tools)
     runner = make_runner(s, a, registry, "console")
-    return serve(runner, a.experiment, host=a.host, port=a.port, static_dir=Path(a.static))
+    return serve(
+        runner, a.experiment, host=a.host, port=a.port, static_dir=resolve_static_dir(a.static)
+    )
 
 
 def cmd_discover(_s: Settings, a: argparse.Namespace) -> int:

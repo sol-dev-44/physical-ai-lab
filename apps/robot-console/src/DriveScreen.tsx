@@ -58,7 +58,11 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
           {status === "open" ? "Connected" : status === "unauthorised" ? "Pair again" : "Reconnecting"}
         </span>
         {state?.fake && <span className="pill warn">Fake devices</span>}
-        {state && <span className={`pill ${state.lease_alive ? "ok" : ""}`}>{state.lease_alive ? "Driving" : "Idle"}</span>}
+        {state && (
+          <span className={`pill ${state.moving ? "ok" : ""}`}>
+            {state.moving ? "Driving" : state.lease_alive ? "Held, stopped" : "Idle"}
+          </span>
+        )}
         {state && (
           <span className={`pill ${state.fake ? "muted" : ""}`}>
             {state.fake ? "Battery: no sensor" : `${state.battery.volts.toFixed(1)} V`}

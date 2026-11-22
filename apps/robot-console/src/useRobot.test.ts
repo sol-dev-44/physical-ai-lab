@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { StrictMode } from "react";
+import stateJson from "../../../packages/schema/fixtures/console/valid/server_state.json";
 import { useRobot } from "./useRobot";
 
 class FakeSocket {
@@ -84,6 +85,29 @@ describe("useRobot", () => {
       FakeSocket.last.say({ type: "refused", rule: "stop_file", reason: "STOP exists" });
     });
     expect(result.current.refused?.rule).toBe("stop_file");
+  });
+
+  it("clears the refusal on a welcome and when a state shows the robot moving", () => {
+    const { result } = renderHook(() => useRobot("ws://robot/ws", "tok", make));
+    const refuse = () => {
+      FakeSocket.last.say({ type: "refused", rule: "stop_file", reason: "STOP exists" });
+    };
+    act(() => {
+      refuse();
+    });
+    act(() => {
+      FakeSocket.last.say(welcome);
+    });
+    expect(result.current.refused).toBeNull();
+    act(() => {
+      refuse();
+      FakeSocket.last.say({ ...stateJson, moving: false });
+    });
+    expect(result.current.refused?.rule).toBe("stop_file");
+    act(() => {
+      FakeSocket.last.say({ ...stateJson, moving: true });
+    });
+    expect(result.current.refused).toBeNull();
   });
 
   it("reports a bad token and never reconnects", () => {

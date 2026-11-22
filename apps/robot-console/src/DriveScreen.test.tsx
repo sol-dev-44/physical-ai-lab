@@ -57,6 +57,23 @@ describe("DriveScreen", () => {
     expect(screen.getByText(/reconnecting/i)).toBeInTheDocument();
   });
 
+  it("says Driving only while the wheels move, Held, stopped when the lease is alive but still, else Idle", () => {
+    const view = (s: typeof state) => {
+      const { unmount } = render(<DriveScreen send={vi.fn()} status="open" state={s} {...props} />);
+      return unmount;
+    };
+    let unmount = view({ ...state, lease_alive: true, moving: true });
+    expect(screen.getByText("Driving")).toBeInTheDocument();
+    unmount();
+    unmount = view({ ...state, lease_alive: true, moving: false });
+    expect(screen.getByText("Held, stopped")).toBeInTheDocument();
+    expect(screen.queryByText("Driving")).not.toBeInTheDocument();
+    unmount();
+    unmount = view({ ...state, lease_alive: false, moving: false });
+    expect(screen.getByText("Idle")).toBeInTheDocument();
+    unmount();
+  });
+
   it("shows the last refusal with its rule", () => {
     render(
       <DriveScreen

@@ -103,8 +103,8 @@ card and queued commands. Each comes with the phase that makes it possible.
 
 - Browser to robot: `hello {token}`, `drive {v, w, seq}`, `heartbeat {seq}`, `stop {}`.
 - Robot to browser: `state {...}` at 10 Hz (battery, servos, distances, cliffs, bumpers, Wi-Fi,
-  Pi temperature, lease, e-stop, STOP file, controller), `event {...}` for each new log line,
-  `refused {rule, reason}` when the gate denies a drive.
+  Pi temperature, lease, e-stop, STOP file, controller), `event {...}` for each new log line
+  (step 3, not in step 1), `refused {rule, reason}` when the gate denies a drive.
 - The message types live in one schema shared by the server (pydantic) and the app (zod), with
   fixtures tested on both sides, the same way the event contract is kept in step.
 

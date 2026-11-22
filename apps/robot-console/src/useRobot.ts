@@ -43,9 +43,13 @@ export function useRobot(url: string, token: string, makeSocket: (url: string) =
         if (!msg.success) return;
         if (msg.data.type === "welcome") {
           setWelcome(msg.data);
+          setRefused(null);
           setStatus("open"); // connected and authorised: only now may the stick drive
         }
-        else if (msg.data.type === "state") setState(msg.data);
+        else if (msg.data.type === "state") {
+          setState(msg.data);
+          if (msg.data.moving) setRefused(null); // it is driving again: the old refusal is stale
+        }
         else setRefused(msg.data);
       };
       ws.onclose = (e: CloseEvent | { code: number }) => {

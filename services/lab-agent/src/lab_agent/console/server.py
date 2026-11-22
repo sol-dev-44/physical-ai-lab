@@ -14,8 +14,11 @@ import asyncio
 import contextlib
 import secrets
 import socket
+import subprocess
+import sys
 import time
 import traceback
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -232,10 +235,54 @@ def create_app(
     return app
 
 
-def pairing_url(port: int, token: str) -> str:
-    host = socket.gethostname().split(".")[0]  # "Mac.lan" -> "Mac": mDNS answers Mac.local
-    # In the fragment, so the token is never sent in a request line or logged by a server.
-    return f"http://{host}.local:{port}/#token={token}"
+def local_host_name(
+    platform: str = sys.platform,
+    *,
+    run: Callable[..., str] = subprocess.check_output,
+    hostname: Callable[[], str] = socket.gethostname,
+) -> str:
+    """The name Bonjour advertises as <name>.local.
+
+    On macOS that is `scutil --get LocalHostName`, which can differ from gethostname()
+    (DHCP may make that "Mac.lan"). Elsewhere, or if scutil fails, the first label of
+    gethostname().
+    """
+    if platform == "darwin":
+        try:
+            name = run(["scutil", "--get", "LocalHostName"], text=True, timeout=2).strip()
+        except (OSError, subprocess.SubprocessError):
+            name = ""
+        if name:
+            return name
+    return hostname().split(".")[0]
+
+
+def lan_ip(socket_factory: Callable[..., socket.socket] = socket.socket) -> str | None:
+    """This machine's LAN address: the source address the OS would use to reach 192.0.2.1.
+
+    A UDP connect sends nothing; it only makes the OS pick a route. None if there is none.
+    """
+    try:
+        with socket_factory(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("192.0.2.1", 9))
+            return str(s.getsockname()[0])
+    except OSError:
+        return None
+
+
+def pairing_urls(
+    port: int,
+    token: str,
+    *,
+    local_name: Callable[[], str] = local_host_name,
+    lan_ip: Callable[[], str | None] = lan_ip,
+) -> list[str]:
+    """The Bonjour link, then the LAN-IP link (when there is a route), each with the token.
+
+    The token is in the fragment, so it is never sent in a request line or logged by a server.
+    """
+    hosts = [f"{local_name()}.local", lan_ip()]
+    return [f"http://{h}:{port}/#token={token}" for h in hosts if h]
 
 
 def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: Path) -> int:
@@ -247,10 +294,20 @@ def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: 
     app = create_app(runner, session, FakeTelemetry(), token, static_dir=static_dir)
     runner.start(experiment)
     print(f"robot console: run {runner.log.run_id}", flush=True)
-    print(f"open on a phone or laptop on this Wi-Fi: {pairing_url(port, token)}", flush=True)
+    print(
+        "open on a phone or laptop on this Wi-Fi (try the second if the first does not load):",
+        flush=True,
+    )
+    for url in pairing_urls(port, token):
+        print(f"  {url}", flush=True)
+    print(
+        "(macOS may ask to allow incoming connections for Python the first time: choose Allow)",
+        flush=True,
+    )
     if not static_dir.is_dir():
         print(
-            f"(no app build at {static_dir}: run `pnpm --filter robot-console build`)", flush=True
+            f"(no app build at {static_dir.absolute()}: run `pnpm --filter robot-console build`)",
+            flush=True,
         )
     status = "completed"
     try:

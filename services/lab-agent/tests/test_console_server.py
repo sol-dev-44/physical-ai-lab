@@ -133,7 +133,12 @@ def test_the_watchdog_stops_the_wheels_when_the_lease_lapses(drive_rig):
         assert r.wheels.speeds == (0.0, 0.0)
 
 
-from lab_agent.console.server import find_lease, pairing_url  # noqa: E402
+from lab_agent.console.server import (  # noqa: E402
+    find_lease,
+    lan_ip,
+    local_host_name,
+    pairing_urls,
+)
 from lab_agent.registry import Registry  # noqa: E402
 
 
@@ -142,9 +147,39 @@ def test_console_refuses_a_tool_set_without_a_lease():
         find_lease(Registry())
 
 
-def test_pairing_url_names_a_local_host_and_the_token():
-    url = pairing_url(8080, "abc")
-    assert url.startswith("http://") and ".local:8080/#token=abc" in url
+def test_pairing_urls_give_a_bonjour_link_and_a_lan_ip_link_with_the_token_in_the_fragment():
+    urls = pairing_urls(8080, "abc", local_name=lambda: "Mac", lan_ip=lambda: "192.168.1.20")
+    assert urls == ["http://Mac.local:8080/#token=abc", "http://192.168.1.20:8080/#token=abc"]
+
+
+def test_pairing_urls_skip_the_ip_link_when_there_is_no_route():
+    urls = pairing_urls(8080, "abc", local_name=lambda: "Mac", lan_ip=lambda: None)
+    assert urls == ["http://Mac.local:8080/#token=abc"]
+
+
+def test_local_host_name_uses_the_bonjour_name_on_macos():
+    def run(cmd, **kw):
+        assert cmd == ["scutil", "--get", "LocalHostName"] and kw["timeout"] > 0
+        return "Alans-Mac\n"
+
+    assert local_host_name("darwin", run=run, hostname=lambda: "Mac.lan") == "Alans-Mac"
+
+
+def test_local_host_name_falls_back_to_the_first_label():
+    def broken(cmd, **kw):
+        raise FileNotFoundError("scutil")
+
+    assert local_host_name("darwin", run=broken, hostname=lambda: "Mac.lan") == "Mac"
+    assert local_host_name("darwin", run=lambda c, **k: " \n", hostname=lambda: "Mac.lan") == "Mac"
+    assert local_host_name("linux", run=broken, hostname=lambda: "pi.local") == "pi"
+
+
+def test_lan_ip_is_none_when_the_socket_fails():
+    class Boom:
+        def __init__(self, *a):
+            raise OSError("no route")
+
+    assert lan_ip(socket_factory=Boom) is None
 
 
 def lifespan_app(drive_rig, **kw):

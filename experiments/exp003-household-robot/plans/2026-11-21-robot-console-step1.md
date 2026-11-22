@@ -2520,7 +2520,8 @@ Open the printed link on a phone on the same Wi-Fi (or on the Mac). Check, and n
 2. Dragging the joystick shows Driving; releasing returns to Idle within half a second.
 3. Holding the stick, then closing the tab: the terminal run keeps going, and the log shows a
    `base.stop` by `system`.
-4. `touch STOP` while holding: the screen shows "Refused by stop_file"; the Stop button still
+4. `touch STOP`, then move the stick: the screen shows "Refused by stop_file" once the stick
+   moves (held still, the watchdog/STOP tick stops the wheels without a refusal); the Stop button still
    works (`rule: halt` in the log). Remove `STOP`.
 5. Ctrl-C, then `uv run lab validate events/exp003-household-robot/*.jsonl`: valid.
 
