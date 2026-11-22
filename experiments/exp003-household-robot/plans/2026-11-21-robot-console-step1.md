@@ -1935,6 +1935,11 @@ export class DriveController {
 const round = (n: number) => Math.round(n * 1000) / 1000 + 0; // + 0 turns -0 into 0
 ```
 
+> **Done 2026-11-21, then hardened after review:** like the server, the client snaps near-zero to
+> (0, 0), sends a move to centre at once, keeps a change dropped for timing as pending and sends it
+> on the next tick, re-sends after a speed-limit change while held, and ignores non-finite input.
+> The repo code is the reference.
+
 - [ ] **Step 3: Run the tests**
 
 Run: `pnpm --filter robot-console test`
@@ -2126,7 +2131,7 @@ hello in `onopen` is sent directly, so the first test passes without touching `r
 - [ ] **Step 4: Write `src/Joystick.tsx`**
 
 ```tsx
-import { type PointerEvent, useRef, useState } from "react";
+import { type PointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { stickVector } from "./stick";
 
 type Props = { onMove: (x: number, y: number) => void; onRelease: () => void; size?: number };
@@ -2135,8 +2140,10 @@ type Props = { onMove: (x: number, y: number) => void; onRelease: () => void; si
  * the finger leaves the circle. */
 export function Joystick({ onMove, onRelease, size = 220 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  // The pointer that is driving, in a ref so a late pointermove after pointerup can never
+  // restart driving (a dead-man path must not depend on React flushing state).
+  const pointer = useRef<number | null>(null);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
-  const [active, setActive] = useState(false);
 
   const move = (e: PointerEvent) => {
     if (!ref.current) return;
@@ -2144,29 +2151,44 @@ export function Joystick({ onMove, onRelease, size = 220 }: Props) {
     setKnob(v);
     onMove(v.x, v.y);
   };
-  const end = () => {
-    setActive(false);
+  const end = useCallback(() => {
+    if (pointer.current === null) return;
+    pointer.current = null;
     setKnob({ x: 0, y: 0 });
     onRelease();
-  };
+  }, [onRelease]);
+
+  // Hiding the tab or leaving the window releases the stick.
+  useEffect(() => {
+    const hidden = () => document.visibilityState === "hidden" && end();
+    document.addEventListener("visibilitychange", hidden);
+    window.addEventListener("blur", end);
+    return () => {
+      document.removeEventListener("visibilitychange", hidden);
+      window.removeEventListener("blur", end);
+    };
+  }, [end]);
 
   return (
     <div
       ref={ref}
       role="slider"
       aria-label="Drive joystick: drag to drive, release to stop"
-      aria-valuetext={active ? `forward ${knob.y.toFixed(2)}, turn ${knob.x.toFixed(2)}` : "released"}
+      aria-valuetext={knob.x || knob.y ? `forward ${knob.y.toFixed(2)}, turn ${knob.x.toFixed(2)}` : "released"}
       tabIndex={0}
       className="joystick"
       style={{ width: size, height: size }}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
-        setActive(true);
+        pointer.current = e.pointerId;
         move(e);
       }}
-      onPointerMove={(e) => active && move(e)}
+      onPointerMove={(e) => {
+        if (e.pointerId === pointer.current && e.buttons !== 0) move(e);
+      }}
       onPointerUp={end}
       onPointerCancel={end}
+      onLostPointerCapture={end}
     >
       <div
         className="knob"
@@ -2177,12 +2199,54 @@ export function Joystick({ onMove, onRelease, size = 220 }: Props) {
 }
 ```
 
-- [ ] **Step 5: Run the checks**
+- [ ] **Step 5: Test the joystick's release paths** `src/Joystick.test.tsx` (jsdom has no layout, so
+stub `getBoundingClientRect` to a 200 x 200 box; `setPointerCapture` may need a no-op stub on
+`HTMLElement.prototype`):
+
+```tsx
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Joystick } from "./Joystick";
+
+function setup() {
+  const onMove = vi.fn();
+  const onRelease = vi.fn();
+  render(<Joystick onMove={onMove} onRelease={onRelease} />);
+  const el = screen.getByRole("slider");
+  el.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 200, right: 200, bottom: 200, x: 0, y: 0, toJSON: () => ({}) });
+  HTMLElement.prototype.setPointerCapture = () => {};
+  return { el, onMove, onRelease };
+}
+
+describe("Joystick", () => {
+  it("a move after release never drives", () => {
+    const { el, onMove, onRelease } = setup();
+    fireEvent.pointerDown(el, { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
+    fireEvent.pointerUp(el, { pointerId: 1 });
+    onMove.mockClear();
+    fireEvent.pointerMove(el, { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
+    expect(onMove).not.toHaveBeenCalled();
+    expect(onRelease).toHaveBeenCalledTimes(1);
+  });
+
+  it("hiding the tab releases a held stick", () => {
+    const { el, onRelease } = setup();
+    fireEvent.pointerDown(el, { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    fireEvent(document, new Event("visibilitychange"));
+    expect(onRelease).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+If jsdom drops `pointerId` or `buttons` from `fireEvent.pointerDown`, build the events with
+`new MouseEvent(...)` plus `Object.defineProperty` for those two fields, and say so in the report.
+
+- [ ] **Step 6: Run the checks**
 
 Run: `pnpm --filter robot-console test && pnpm --filter robot-console typecheck && pnpm --filter robot-console lint`
 Expected: all pass.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add apps/robot-console/src
@@ -2308,11 +2372,10 @@ type Props = {
 
 export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props) {
   const [speed, setSpeed] = useState(Math.min(0.15, maxV));
-  const controller = useMemo(
-    () => new DriveController(send, { maxW, speedLimit: Math.min(0.15, maxV) }),
-    [send, maxW, maxV],
-  );
-  useEffect(() => controller.setSpeedLimit(speed), [controller, speed]);
+  // One controller per connection (send changes only on reconnect), so seq keeps rising on a
+  // socket; the welcome's limits are applied in place.
+  const controller = useMemo(() => new DriveController(send, { maxW, speedLimit: speed }), [send]); // eslint-disable-line react-hooks/exhaustive-deps -- limits are applied below, not by rebuilding
+  useEffect(() => controller.setLimits({ maxW, speedLimit: Math.min(speed, maxV) }), [controller, maxW, maxV, speed]);
   useEffect(() => {
     const id = setInterval(() => controller.tick(performance.now()), 50);
     return () => clearInterval(id);
