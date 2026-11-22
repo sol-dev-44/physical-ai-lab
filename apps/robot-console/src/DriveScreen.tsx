@@ -9,20 +9,22 @@ type Props = {
   status: Status;
   state: State | null;
   refused: Refused | null;
-  maxV: number;
-  maxW: number;
+  /** From the welcome; null until it arrives. Nothing drives without it. */
+  maxV: number | null;
+  maxW: number | null;
 };
 
 export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props) {
-  const [speed, setSpeed] = useState(Math.min(0.15, maxV));
+  const [speed, setSpeed] = useState(Math.min(0.15, maxV ?? 0.15));
+  const speedLimit = Math.min(speed, maxV ?? 0); // always inside the welcome's cap
   // `send` from useRobot is stable for the page's life (it follows the current socket), so one
   // controller serves the whole page and seq keeps rising across reconnects. The welcome's
   // limits are applied in place below.
-  const [controller] = useState(() => new DriveController(send, { maxW, speedLimit: Math.min(speed, maxV) }));
+  const [controller] = useState(() => new DriveController(send, { maxW: maxW ?? 0, speedLimit }));
 
   useEffect(() => {
-    controller.setLimits({ maxW, speedLimit: Math.min(speed, maxV) });
-  }, [controller, maxW, maxV, speed]);
+    controller.setLimits({ maxW: maxW ?? 0, speedLimit });
+  }, [controller, maxW, speedLimit]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -38,19 +40,21 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
     if (status !== "open") controller.release();
   }, [controller, status]);
 
-  // The joystick is re-created for every new connection, so a reconnect needs a fresh press.
-  // The Stop button bumps it too, so a finger still on the stick cannot resume driving.
-  const [connection, setConnection] = useState(0);
+  // The joystick is re-created on every status change, so a finger that was down across a drop
+  // or reconnect needs a fresh press. The Stop button bumps it too, so a finger still on the
+  // stick cannot resume driving.
+  const [presses, setPresses] = useState(0);
   const [seen, setSeen] = useState(status);
   if (status !== seen) {
     setSeen(status);
-    if (status === "open") setConnection((n) => n + 1);
+    setPresses((n) => n + 1);
   }
+  const ready = status === "open" && maxV !== null && maxW !== null;
 
   return (
     <main className="drive">
       <header className="pills">
-        <span className={`pill ${status === "open" ? "ok" : "warn"}`}>
+        <span className={`pill ${status === "open" ? "ok" : "warn"}`} role="status" aria-live="polite">
           {status === "open" ? "Connected" : status === "unauthorised" ? "Pair again" : "Reconnecting"}
         </span>
         {state?.fake && <span className="pill warn">Fake devices</span>}
@@ -69,9 +73,9 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
       </header>
 
       <Joystick
-        key={connection}
+        key={presses}
         onMove={(x, y) => {
-          controller.hold(x, y, performance.now());
+          if (ready) controller.hold(x, y, performance.now());
         }}
         onRelease={() => {
           controller.release();
@@ -83,7 +87,8 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
         <input
           type="range"
           min={0.05}
-          max={maxV}
+          max={maxV ?? 0.3}
+          disabled={maxV === null}
           step={0.01}
           value={speed}
           onChange={(e) => {
@@ -98,7 +103,7 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
         onClick={() => {
           // Stop must always reach the robot: release() sends it if a stick was held.
           if (!controller.release()) send({ type: "stop" });
-          setConnection((n) => n + 1);
+          setPresses((n) => n + 1);
         }}
       >
         Stop

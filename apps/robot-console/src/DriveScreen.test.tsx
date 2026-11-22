@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import stateJson from "../../../packages/schema/fixtures/console/valid/server_state.json";
 import { DriveScreen } from "./DriveScreen";
-import { State } from "./protocol";
+import { type ClientMessage, State } from "./protocol";
 
 const state = State.parse(stateJson);
 const real = State.parse({ ...stateJson, fake: false });
@@ -23,7 +23,7 @@ afterEach(() => {
   else Reflect.deleteProperty(HTMLElement.prototype, "setPointerCapture");
 });
 
-const props = { refused: null, maxV: 0.3, maxW: 1.5 };
+const props = { refused: null, maxV: 0.3 as number | null, maxW: 1.5 as number | null };
 
 describe("DriveScreen", () => {
   it("sends stop from the big stop button", () => {
@@ -106,5 +106,70 @@ describe("DriveScreen", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("a finger moving through a reconnect cannot leave the robot driving", () => {
+    vi.useFakeTimers();
+    try {
+      let now = 0;
+      vi.spyOn(performance, "now").mockImplementation(() => now);
+      let open = true;
+      const delivered: ClientMessage[] = [];
+      const send = (m: ClientMessage) => {
+        if (open) delivered.push(m);
+      };
+      const pad = () => screen.getByRole("slider", { name: /joystick/i });
+      const view = render(<DriveScreen send={send} status="open" state={state} {...props} />);
+      fireEvent.pointerDown(pad(), { pointerId: 1, button: 0, buttons: 1, clientX: 100, clientY: 0 });
+
+      open = false; // Wi-Fi drops
+      view.rerender(<DriveScreen send={send} status="closed" state={state} {...props} />);
+      view.rerender(<DriveScreen send={send} status="connecting" state={state} {...props} />);
+      for (let i = 0; i < 10; i++) {
+        now += 16;
+        fireEvent.pointerMove(pad(), { pointerId: 1, buttons: 1, clientX: 100 + i * 3, clientY: 0 });
+      }
+      open = true;
+      view.rerender(<DriveScreen send={send} status="open" state={state} {...props} />);
+      delivered.length = 0;
+      fireEvent.pointerUp(pad(), { pointerId: 1 });
+      for (let i = 0; i < 20; i++) {
+        now += 50;
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+      }
+      expect(delivered).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not drive before the welcome gives its limits", () => {
+    const send = vi.fn();
+    render(<DriveScreen send={send} status="open" state={state} refused={null} maxV={null} maxW={null} />);
+    fireEvent.pointerDown(screen.getByRole("slider", { name: /joystick/i }), {
+      pointerId: 1, button: 0, buttons: 1, clientX: 100, clientY: 0,
+    });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("does not drive while not connected", () => {
+    const send = vi.fn();
+    render(<DriveScreen send={send} status="connecting" state={state} {...props} />);
+    fireEvent.pointerDown(screen.getByRole("slider", { name: /joystick/i }), {
+      pointerId: 1, button: 0, buttons: 1, clientX: 100, clientY: 0,
+    });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("clamps the speed when the welcome lowers the limit", () => {
+    const send = vi.fn();
+    const view = render(<DriveScreen send={send} status="open" state={state} {...props} />);
+    view.rerender(<DriveScreen send={send} status="open" state={state} refused={null} maxV={0.05} maxW={1.5} />);
+    fireEvent.pointerDown(screen.getByRole("slider", { name: /joystick/i }), {
+      pointerId: 1, button: 0, buttons: 1, clientX: 100, clientY: 0,
+    });
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: "drive", v: 0.05 }));
   });
 });

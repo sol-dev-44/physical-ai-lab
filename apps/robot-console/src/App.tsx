@@ -1,35 +1,51 @@
+import { useEffect, useState } from "react";
 import { DriveScreen } from "./DriveScreen";
-import { takeToken } from "./token";
+import { forgetToken, takeToken } from "./token";
 import { useRobot } from "./useRobot";
 
-const token = takeToken(window.location.href, (u) => {
-  window.history.replaceState(null, "", u);
-});
 const wsUrl = `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
 
 export function App() {
+  const [token, setToken] = useState(() =>
+    takeToken(window.location.href, (u) => {
+      window.history.replaceState(null, "", u);
+    }),
+  );
   if (!token) {
     return (
       <main className="drive">
         <p>
-          Open the pairing link that <code>lab console</code> printed on the robot.
+          Open the new link that <code>lab console</code> printed on the robot. This pairing link
+          is needed once per browser.
         </p>
       </main>
     );
   }
-  return <Connected token={token} />;
+  return (
+    <Connected
+      token={token}
+      onRejected={() => {
+        forgetToken();
+        setToken(null);
+      }}
+    />
+  );
 }
 
-function Connected({ token }: { token: string }) {
+function Connected({ token, onRejected }: { token: string; onRejected: () => void }) {
   const robot = useRobot(wsUrl, token);
+  const rejected = robot.status === "unauthorised";
+  useEffect(() => {
+    if (rejected) onRejected();
+  }, [rejected, onRejected]);
   return (
     <DriveScreen
       send={robot.send}
       status={robot.status}
       state={robot.state}
       refused={robot.refused}
-      maxV={robot.welcome?.max_v ?? 0.3}
-      maxW={robot.welcome?.max_w ?? 1.5}
+      maxV={robot.welcome?.max_v ?? null}
+      maxW={robot.welcome?.max_w ?? null}
     />
   );
 }

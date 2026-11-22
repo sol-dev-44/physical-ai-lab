@@ -1,15 +1,19 @@
 :root { color-scheme: light dark; --bg: #fafaf7; --fg: #1d1d1b; --muted: #6b6b66; --ok: #2f7d4f; --warn: #b26b00; --bad: #b3261e; }
 @media (prefers-color-scheme: dark) { :root { --bg: #151513; --fg: #ecece6; --muted: #a3a39b; } }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.4 system-ui, sans-serif; }
-.drive { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 16px; touch-action: none; }
+.drive { box-sizing: border-box; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 16px; }
 .pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .pill { border: 1px solid var(--muted); border-radius: 999px; padding: 2px 10px; font-size: 14px; }
 .pill.ok { border-color: var(--ok); color: var(--ok); }
 .pill.warn { border-color: var(--warn); color: var(--warn); }
 .pill.bad { border-color: var(--bad); color: var(--bad); }
 .pill.muted { opacity: 0.5; border-style: dashed; }
-.joystick { border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; touch-action: none; user-select: none; }
+.joystick { border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .knob { width: 30%; height: 30%; border-radius: 50%; background: var(--fg); opacity: 0.8; }
 .speed { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted); }
-.stop { width: min(320px, 90vw); padding: 18px; font-size: 22px; font-weight: 600; border: 0; border-radius: 14px; background: var(--bad); color: #fff; }
+.stop { width: min(320px, 90vw); padding: 18px; font-size: 22px; font-weight: 600; border: 0; border-radius: 14px; background: var(--bad); color: #fff; position: sticky; bottom: max(16px, env(safe-area-inset-bottom)); margin-top: auto; }
 .refused { color: var(--bad); text-align: center; }
+@media (orientation: landscape) and (max-height: 520px) {
+  .drive { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: center; }
+  .pills { flex-basis: 100%; }
+}

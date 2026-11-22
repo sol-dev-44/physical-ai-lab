@@ -14,3 +14,8 @@ export function takeToken(href: string, replace: (url: string) => void): string 
   }
   return localStorage.getItem(KEY);
 }
+
+/** Forget a token the robot rejected, so the next visit asks for a fresh pairing link. */
+export function forgetToken(): void {
+  localStorage.removeItem(KEY);
+}

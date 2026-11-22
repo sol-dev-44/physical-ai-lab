@@ -95,4 +95,36 @@ describe("Joystick", () => {
     expect(add).not.toHaveBeenCalled();
     add.mockRestore();
   });
+
+  it("pointercancel releases", () => {
+    const { el, onRelease } = setup();
+    press(el);
+    fireEvent.pointerCancel(el, { pointerId: 1 });
+    expect(onRelease).toHaveBeenCalledTimes(1);
+  });
+
+  it("becoming visible does not release", () => {
+    const { el, onRelease } = setup();
+    press(el);
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    fireEvent(document, new Event("visibilitychange"));
+    expect(onRelease).not.toHaveBeenCalled();
+  });
+
+  it("a move from the driving pointer with no buttons down releases", () => {
+    const { el, onRelease } = setup();
+    press(el);
+    fireEvent.pointerMove(el, { pointerId: 1, buttons: 0, clientX: 100, clientY: 0 });
+    expect(onRelease).toHaveBeenCalledTimes(1);
+  });
+
+  it("unmounting while held releases; unmounting idle does not", () => {
+    const held = setup();
+    press(held.el);
+    held.view.unmount();
+    expect(held.onRelease).toHaveBeenCalledTimes(1);
+    const idle = setup();
+    idle.view.unmount();
+    expect(idle.onRelease).not.toHaveBeenCalled();
+  });
 });

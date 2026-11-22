@@ -15,6 +15,15 @@ export function Joystick({ onMove, onRelease, size = 220 }: Props) {
   useEffect(() => {
     releaseRef.current = onRelease;
   }, [onRelease]);
+  // Unmounting (a reconnect, Stop) while a finger is down must stop the drive.
+  useEffect(() => {
+    return () => {
+      if (pointer.current !== null) {
+        pointer.current = null;
+        releaseRef.current();
+      }
+    };
+  }, []);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
 
   const move = (e: PointerEvent) => {
@@ -54,7 +63,6 @@ export function Joystick({ onMove, onRelease, size = 220 }: Props) {
       aria-label="Drive joystick: drag to drive, release to stop"
       aria-valuenow={0}
       aria-valuetext={knob.x || knob.y ? `forward ${knob.y.toFixed(2)}, turn ${knob.x.toFixed(2)}` : "released"}
-      tabIndex={0}
       className="joystick"
       style={{ width: size, height: size }}
       onPointerDown={(e) => {
@@ -64,7 +72,9 @@ export function Joystick({ onMove, onRelease, size = 220 }: Props) {
         move(e);
       }}
       onPointerMove={(e) => {
-        if (e.pointerId === pointer.current && e.buttons !== 0) move(e);
+        if (e.pointerId !== pointer.current) return;
+        if (e.buttons === 0) end();
+        else move(e);
       }}
       onPointerUp={endPointer}
       onPointerCancel={endPointer}

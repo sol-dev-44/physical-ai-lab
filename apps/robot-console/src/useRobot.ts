@@ -7,7 +7,7 @@ const RETRY_MS = 1000;
 
 const browserSocket = (url: string): WebSocket => new WebSocket(url);
 
-/** One WebSocket to the robot console: says hello, keeps the latest state, reconnects.
+/** One WebSocket to the robot console: says hello, goes "open" on the welcome, keeps the latest state, reconnects.
  * `send` is stable for the life of the hook, across reconnects. */
 export function useRobot(url: string, token: string, makeSocket: (url: string) => WebSocket = browserSocket) {
   const [status, setStatus] = useState<Status>("connecting");
@@ -25,11 +25,14 @@ export function useRobot(url: string, token: string, makeSocket: (url: string) =
       current = ws;
       socket.current = ws;
       setStatus("connecting");
+      // A discarded socket (an earlier effect run, or one replaced by a reconnect) may still
+      // fire late events; they must not touch the live state.
       ws.onopen = () => {
+        if (ws !== current) return;
         ws.send(JSON.stringify({ type: "hello", token }));
-        setStatus("open");
       };
       ws.onmessage = (e: MessageEvent<string> | { data: string }) => {
+        if (ws !== current) return;
         let data: unknown;
         try {
           data = JSON.parse(e.data);
@@ -38,11 +41,17 @@ export function useRobot(url: string, token: string, makeSocket: (url: string) =
         }
         const msg = ServerMessage.safeParse(data);
         if (!msg.success) return;
-        if (msg.data.type === "welcome") setWelcome(msg.data);
+        if (msg.data.type === "welcome") {
+          setWelcome(msg.data);
+          setStatus("open"); // connected and authorised: only now may the stick drive
+        }
         else if (msg.data.type === "state") setState(msg.data);
         else setRefused(msg.data);
       };
       ws.onclose = (e: CloseEvent | { code: number }) => {
+        if (ws !== current) return;
+        setWelcome(null);
+        setState(null);
         if (e.code === UNAUTHORISED) {
           setStatus("unauthorised");
           return;
@@ -55,7 +64,13 @@ export function useRobot(url: string, token: string, makeSocket: (url: string) =
     return () => {
       stopped = true;
       clearTimeout(retry);
-      current?.close();
+      if (current) {
+        current.onopen = null;
+        current.onmessage = null;
+        current.onclose = null;
+        current.close();
+      }
+      current = null;
     };
   }, [url, token, makeSocket]);
 
