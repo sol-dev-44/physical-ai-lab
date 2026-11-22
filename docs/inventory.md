@@ -27,7 +27,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
-| exp003 caster cup (final), PETG | 1 | Reserved | Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
+| exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
 | exp003 base plate, PETG | 1 | Reserved | Printed 2026-11-21 (4 h 56 min, 223 g); fit check next |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 

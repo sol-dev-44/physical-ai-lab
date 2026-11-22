@@ -683,6 +683,7 @@ CASTER_CUP_TEST = CasterCup(wall_mm=1.2, roof_mm=2.0, center_hole_mm=34.0, mount
 
 M4_MIN_ENGAGE_MM = 2.0  # three threads at 0.7 mm pitch
 M3_NUT_MM = 2.4
+M3_MIN_ENGAGE_MM = 1.5  # three threads at 0.5 mm pitch
 
 
 @dataclass(frozen=True)
@@ -691,7 +692,7 @@ class CasterCupDerived:
     outer_mm: tuple[float, float]
     sweep_radius_mm: float  # the round part of the cavity, for the fork
     outer_radius_mm: float
-    depth_mm: float  # roof's inner face to the open end: the plate's underside
+    depth_mm: float  # roof's inner face to the open end, which sits on the plate's top face
     height_mm: float
     holes: tuple[tuple[float, float], ...]
     screw: str
@@ -706,6 +707,12 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
     )
     outer = (inner[0] + 2 * c.wall_mm, inner[1] + 2 * c.wall_mm)
     sweep = caster.fork_radius_mm + c.fork_clearance_mm
+    # The cup sits on the plate's TOP face, so its cavity is the raised pocket less the plate's
+    # thickness; the plate's cutout supplies the rest. (v1 and v2 counted the plate twice and
+    # left the caster 4 mm high: the robot tipped nose up, found by the owner 2026-11-21.)
+    depth = heights.caster_mount_mm - PLATE_MM
+    if depth <= 0:
+        raise ValueError("the caster's plate sits below the base plate's top: no cup needed")
     hx, hy = caster.holes_long_mm / 2, caster.holes_short_mm / 2
     holes = tuple((sx * hx, sy * hy) for sx in (-1, 1) for sy in (-1, 1))
     if c.center_hole_mm / 2 + c.hole_mm / 2 + 2.0 > (hx**2 + hy**2) ** 0.5:
@@ -723,7 +730,7 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
         r = CLEARANCE_MM["M3"] / 2
         if k - r - inner[1] / 2 < 1.5 or c.boss_at_mm - r - sweep < 1.5:
             raise ValueError("the cup's mounting holes come within 1.5 mm of its cavity")
-        m_need = PLATE_MM + heights.caster_mount_mm + c.roof_mm + M3_NUT_MM
+        m_need = PLATE_MM + depth + c.roof_mm + M3_MIN_ENGAGE_MM
         m_len = next((n for n in (8, 12, 16, 20) if n >= m_need), None)
         if m_len is None:
             raise ValueError(f"the cup's mounting screws need {m_need:.1f} mm, longer than the kit")
@@ -733,8 +740,8 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
         outer_mm=outer,
         sweep_radius_mm=sweep,
         outer_radius_mm=sweep + c.wall_mm,
-        depth_mm=heights.caster_mount_mm,
-        height_mm=heights.caster_mount_mm + c.roof_mm,
+        depth_mm=depth,
+        height_mm=depth + c.roof_mm,
         holes=holes,
         screw=f"M4 x {length} button head and nut",
         mount_holes=mount,

@@ -406,8 +406,8 @@
   {
    "item": "exp003 caster cup (final), PETG",
    "qty": "1",
-   "status": "Reserved",
-   "notes": "Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min)"
+   "status": "Spare",
+   "notes": "4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min)"
   },
   {
    "item": "exp003 base plate, PETG",

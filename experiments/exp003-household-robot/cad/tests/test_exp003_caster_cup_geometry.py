@@ -25,7 +25,7 @@ def inside(part, x, y, z):
 def test_one_light_solid_of_the_right_size(part):
     assert len(part.solids().vals()) == 1
     bb = part.val().BoundingBox()
-    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((55.0, 55.0, 12.6))
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((55.0, 55.0, 8.6))
     assert part.val().Volume() < 12500  # mm3, with the four mounting bosses: about 15 g at most
 
 
@@ -49,7 +49,7 @@ def test_fork_sweeps_clear_all_the_way_round(part):
     r = Caster().fork_radius_mm + 0.5
     for i in range(36):
         a = math.radians(i * 10)
-        for z in (4.0, 8.0, 12.0):
+        for z in (4.0, 6.0, 8.0):  # roof's inner face at 3 mm, open end at 8.6 mm
             assert not inside(part, r * math.cos(a), r * math.sin(a), z), (i * 10, z)
 
 

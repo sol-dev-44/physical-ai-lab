@@ -101,7 +101,7 @@ reach it.
 | Servo cradle | `out/servo_cradle.step` | Holds a wheel servo by its bottom holes. Cheeks hug the case; the lower cheek is the foot, with an M3 ear at each end. |
 | Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
 | Base plate | `out/base_plate.step` | 300 x 261.6 x 4 mm. Carries the cradles, the caster cup, the battery (fences and strap slots) and hole patterns for the electronics deck, bumper and sensors. See `BASE_PLATE.md`. |
-| Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 12.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
+| Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 8.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`
 and the vendored STS3215 model in [vendor/](vendor/README.md).
@@ -177,8 +177,11 @@ Numbers are `CasterCup` and `derive_caster_cup` in `params.py`; heights come fro
   turn at least 3 full turns before it is snug; M4 x 12 (first fit) stood well proud of the nuts.
 - Check: (1) the caster's plate drops in without forcing; (2) spin the caster all the way round
   by hand: the fork must not touch the walls (the fork's sweep is not published, so this is the
-  test, and v1 failed it); (3) the open end of the cup is the plate's underside, 40.4 mm off the floor: stand the
-  cup on its caster and the open rim should be 40.4 mm up.
+  test, and v1 failed it); (3) the open end of the cup sits on the plate's top face, 44.4 mm off
+  the floor: stand the cup on its caster and the open rim should be 44.4 mm up. (v1, v2 and the
+  first full cup had the rim at 40.4 mm, as if the cup started at the plate's underside; on the
+  plate that left the caster 4 mm high and the robot tipped nose up. Fixed 2026-11-21: the cavity
+  is the raised pocket less the plate's 4 mm.)
 
 | Result | Change |
 |---|---|

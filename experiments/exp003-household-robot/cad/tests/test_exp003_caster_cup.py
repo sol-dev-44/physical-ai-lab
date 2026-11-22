@@ -34,10 +34,18 @@ def test_cavity_clears_the_measured_fork_sweep():
     assert d.inner_mm[1] / 2 < caster.fork_radius_mm < d.sweep_radius_mm
 
 
-def test_cup_depth_is_the_raised_pocket_so_its_open_end_is_the_plate_underside():
+def test_cup_depth_is_the_raised_pocket_less_the_plate_it_sits_on():
     d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
-    assert d.depth_mm == pytest.approx(HEIGHTS.caster_mount_mm)
-    assert d.height_mm == pytest.approx(9.6 + 3.0)
+    assert d.depth_mm == pytest.approx(HEIGHTS.caster_mount_mm - 4.0)
+    assert d.height_mm == pytest.approx(5.6 + 3.0)
+
+
+def test_cup_on_the_plate_puts_the_caster_at_its_measured_height():
+    """The stack the owner builds: plate top, cup cavity, then the caster's own height to the
+    floor must close exactly, or the robot tips."""
+    d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
+    caster_face = HEIGHTS.plate_top_mm + d.depth_mm
+    assert caster_face == pytest.approx(Caster().height_mm)
 
 
 def test_screws_match_the_caster_hole_centres_and_come_from_the_kit():
