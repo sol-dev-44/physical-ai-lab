@@ -176,10 +176,8 @@ def create_app(
 
 
 def pairing_url(port: int, token: str) -> str:
-    host = socket.gethostname()
-    if not host.endswith(".local"):
-        host += ".local"
-    return f"http://{host}:{port}/?token={token}"
+    host = socket.gethostname().split(".")[0]  # "Mac.lan" -> "Mac": mDNS answers Mac.local
+    return f"http://{host}.local:{port}/?token={token}"
 
 
 def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: Path) -> int:

@@ -122,3 +122,17 @@ def test_the_watchdog_stops_the_wheels_when_the_lease_lapses(drive_rig):
         # no more heartbeats: the lease lapses (0.3 s) and the watchdog halts
         recv(ws, "state", lambda m: not m["moving"])
         assert r.wheels.speeds == (0.0, 0.0)
+
+
+from lab_agent.console.server import find_lease, pairing_url  # noqa: E402
+from lab_agent.registry import Registry  # noqa: E402
+
+
+def test_console_refuses_a_tool_set_without_a_lease():
+    with pytest.raises(SystemExit, match="drive_lease"):
+        find_lease(Registry())
+
+
+def test_pairing_url_names_a_local_host_and_the_token():
+    url = pairing_url(8080, "abc")
+    assert url.startswith("http://") and ".local:8080/?token=abc" in url

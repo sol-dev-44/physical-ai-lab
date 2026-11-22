@@ -209,6 +209,14 @@ def cmd_agent(s: Settings, a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_console(s: Settings, a: argparse.Namespace) -> int:
+    from .console.server import serve
+
+    registry = load_tools(a.tools or s.tools)
+    runner = make_runner(s, a, registry, "console")
+    return serve(runner, a.experiment, host=a.host, port=a.port, static_dir=Path(a.static))
+
+
 def cmd_discover(_s: Settings, a: argparse.Namespace) -> int:
     from .devices.broadlink_ir import discover
 
@@ -287,6 +295,13 @@ def main(argv: list[str] | None = None) -> int:
     sp = sub.add_parser("agent", help="serve commands queued from the website")
     sp.add_argument("experiment")
     sp.set_defaults(fn=cmd_agent)
+
+    sp = sub.add_parser("console", help="serve the robot console on the home network")
+    sp.add_argument("experiment")
+    sp.add_argument("--host", default="0.0.0.0", help="bind address (LAN only; never forward it)")
+    sp.add_argument("--port", type=int, default=8080)
+    sp.add_argument("--static", default="apps/robot-console/dist", help="built app directory")
+    sp.set_defaults(fn=cmd_console)
 
     sp = sub.add_parser("discover", help="find BroadLink devices on the network")
     sp.add_argument("--timeout", type=float, default=5)
