@@ -1,0 +1,51 @@
+---
+title: "A robot that sits level"
+date: 2026-11-22
+summary: "The household robot's chassis is printed and assembled: wheels, servo cradles, a one-piece base plate and a rear caster. It leaned back until a 4 mm stacking error in the caster cup was found and fixed. Its phone control app drives simulated wheels with a dead-man that the code reviews hardened before any real wheel."
+tags: [robot, mobile-base, cad, 3d-printing, safety, exp003]
+draft: false
+---
+
+The [household robot](/builds/household-robot) went from parts on a desk to a rolling chassis
+this week. Everything structural was modelled in parametric CAD and printed on the lab's H2D.
+
+## The chassis
+
+- **Wheels.** PETG hubs bolt straight to the servos' horns, and TPU 95A tires grip the rims. The
+  tire bore was sized to a caliper reading of the printed rim, not the drawing, and both went on
+  snug the first time.
+- **Servo cradles.** Each wheel servo sits in a cradle that holds it by its bottom holes, because
+  the top holes sit too close under the spinning hub. A clash test loads the vendor's servo model
+  into the cradle; both cradles fitted solid.
+- **Base plate.** One 300 mm PETG plate (4 h 56 min, 223 g) carries the cradles, the battery
+  across between the wheels, the caster and hole patterns for everything still to come.
+
+## The lean
+
+On the floor the assembled robot leaned back about 1.5 degrees, toward the caster. The caster
+bolts up into a small printed cup that stands on the plate's top face, but the cup's cavity had
+been sized as if it started at the plate's underside. The plate's 4 mm was counted twice, so the
+caster sat 4 mm too high.
+
+The fix was a shorter cup (8.6 mm, 27 minutes, 10 g) and a test that adds the stacked heights up
+to the floor: plate top, cup, caster. The corrected cup went on today and the robot sits level.
+The cup's first version had already taught one lesson: it was printed before anyone measured how
+far the caster's fork swings, and the fork hit the walls. A test print checks a fit; it never
+stands in for a number nobody measured. Both rules are now in the checklist every printed part
+goes through.
+
+## The control app
+
+The robot will serve its own control app on the home network. Driving is a dead-man: the phone
+holds a 300 ms lease on the wheels and renews it every 100 ms while the stick is held, and a
+watchdog stops the wheels when the lease runs out. Stop is a tool the safety gate never refuses.
+
+The first version runs on simulated wheels. Each piece was reviewed, and the reviews found about a
+dozen ways the wheels could have been left turning (a refused, dropped or failed command, a
+reconnect, a second phone). All were fixed with tests before any real wheel.
+
+## Next
+
+Bench checks on the power parts, then the power wiring, the Raspberry Pi and real wheels. Before
+the wheels turn, one open risk gets settled: a wheel-mode bus servo may keep turning if the
+robot's software dies.

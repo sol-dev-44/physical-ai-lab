@@ -2508,7 +2508,7 @@ git commit -m "robot-console: drive screen, pairing and app shell"
 - Modify: `AGENTS.md`, `experiments/exp003-household-robot/CONTROL_APP.md`,
   `experiments/exp003-household-robot/README.md`
 
-- [ ] **Step 1: Run it**
+- [ ] **Step 1: Run it** (not run by hand yet as of 2026-11-22; the owner runs it with an agent)
 
 ```bash
 pnpm --filter robot-console build
@@ -2525,7 +2525,7 @@ Open the printed link on a phone on the same Wi-Fi (or on the Mac). Check, and n
    works (`rule: halt` in the log). Remove `STOP`.
 5. Ctrl-C, then `uv run lab validate events/exp003-household-robot/*.jsonl`: valid.
 
-- [ ] **Step 2: Docs.** In `AGENTS.md`, under the hardware rules, add:
+- [x] **Step 2: Docs.** In `AGENTS.md`, under the hardware rules, add:
 
 ```markdown
 - The exp003 robot console (`lab console`, `apps/robot-console`, ADR 0014) is LAN only: never

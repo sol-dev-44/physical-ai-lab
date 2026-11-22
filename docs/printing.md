@@ -38,6 +38,11 @@ something new is learned.
   click it on the canvas and press `forward_delete`.
 - **Copies:** Edit > Clone selected (its dialog's OK can be clicked by element index). The `a` key
   on the canvas arranges; the toolbar arrange button may not respond to a background click.
+- **Another job already on the plate** (for example the owner's toy): leave it, click the toolbar's
+  Add Plate (second icon), then `open -a BambuStudio file.stl` lands on the new plate.
+- **Background clicks on the 3D canvas go to the last hovered toolbar icon** (2026-11-22): after
+  clicking Add Plate, two more canvas clicks each added a plate. Remove strays with Edit > Undo
+  (app menu), one at a time, and screenshot between. Buttons in the top bar (Slice plate) are fine.
 - **Watch out:** opening a file adds to the current plate. Hidden leftovers get cloned too, so clear
   first.
 - **Slice:** the green "Slice plate" button at the top right (about 993, 50 in a 1200 x 800
