@@ -27,7 +27,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
-| exp003 caster cup v2, PETG | 1 | Reserved | Full strength, with mounting bosses; printing 2026-11-21 (33 min) |
+| exp003 caster cup (final), PETG | 1 | Reserved | Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
 | exp003 base plate, PETG | 1 | Reserved | Printed 2026-11-21 (4 h 56 min, 223 g); fit check next |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
@@ -172,7 +172,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-21 | Caster cup v1, test piece (24 min 47 s, left nozzle) | PETG 8.32 g (slicer); 4 x M4 x 12 button head and 4 M4 nuts to fit |
 | 2026-11-21 | Caster cup v2 light, test piece (22 min 30 s, left nozzle) | PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts |
 | 2026-11-21 | Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill) | PETG 223.19 g (slicer) |
-| 2026-11-21 | Caster cup v2, full strength (33 min 13 s, left nozzle, 4 walls, 30% infill) | PETG 11.98 g (slicer); to fit: 4 x M4 x 12 and nuts (caster), 4 x M3 x 20 and nuts (cup to plate) |
+| 2026-11-21 | Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill) | PETG 11.98 g (slicer); to fit: 4 x M4 x 12 and nuts (caster), 4 x M3 x 20 and nuts (cup to plate) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 

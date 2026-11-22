@@ -404,10 +404,10 @@
    "notes": "Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired"
   },
   {
-   "item": "exp003 caster cup v2, PETG",
+   "item": "exp003 caster cup (final), PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Full strength, with mounting bosses; printing 2026-11-21 (33 min)"
+   "notes": "Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min)"
   },
   {
    "item": "exp003 base plate, PETG",
@@ -578,7 +578,7 @@
    },
    {
     "date": "2026-11-21",
-    "what": "Caster cup v2, full strength (33 min 13 s, left nozzle, 4 walls, 30% infill)",
+    "what": "Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill)",
     "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 12 and nuts (caster), 4 x M3 x 20 and nuts (cup to plate)"
    },
    {
