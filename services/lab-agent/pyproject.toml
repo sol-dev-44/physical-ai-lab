@@ -11,7 +11,7 @@ dependencies = [
 [project.optional-dependencies]
 broadlink = ["broadlink>=0.19"]
 kasa = ["python-kasa>=0.10"]
-console = ["starlette>=0.41", "uvicorn>=0.32"]
+console = ["starlette>=0.41", "uvicorn[standard]>=0.32"]
 
 [project.scripts]
 lab = "lab_agent.cli:main"

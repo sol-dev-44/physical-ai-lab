@@ -15,10 +15,10 @@ import contextlib
 import secrets
 import socket
 import time
+import traceback
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from pydantic import ValidationError
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route, WebSocketRoute
@@ -46,11 +46,14 @@ class Driver:
         self.lease = lease
         self.holder: object | None = None
 
-    def claim(self, who: object) -> bool:
+    def claim(self, who: object) -> tuple[bool, bool]:
+        """Returns (granted, changed). changed means the drive passed to a different device
+        (or from nobody), so the caller must bring the robot to rest first."""
         if self.holder is None or self.holder is who or not self.lease.alive():
+            changed = self.holder is not who
             self.holder = who
-            return True
-        return False
+            return True, changed
+        return False, False
 
     def release(self, who: object) -> bool:
         if self.holder is who:
@@ -66,6 +69,20 @@ def find_lease(registry: Registry) -> DriveLease:
     raise SystemExit("this tool set has no drive_lease interlock; the console needs one")
 
 
+def drive_limits(registry: Registry) -> tuple[float, float]:
+    """The welcome's max_v and max_w, read from base.drive's argument schema."""
+    tool = registry.get("base.drive")
+    if tool is None:
+        raise SystemExit("this tool set has no base.drive tool; the console needs one")
+    props = tool.args_schema().get("properties", {})
+    try:
+        return float(props["v"]["maximum"]), float(props["w"]["maximum"])
+    except KeyError:
+        raise SystemExit(
+            "base.drive's arguments must declare a maximum for v and w (Field(le=...))"
+        ) from None
+
+
 def create_app(
     runner: Runner,
     session: DriveSession,
@@ -74,9 +91,13 @@ def create_app(
     *,
     static_dir: Path | None = None,
     state_period_s: float = 0.1,
-    max_v: float = 0.3,
-    max_w: float = 1.5,
+    hello_timeout_s: float = 5.0,
+    max_v: float | None = None,
+    max_w: float | None = None,
 ) -> Starlette:
+    if max_v is None or max_w is None:
+        max_v, max_w = drive_limits(runner.registry)
+
     def state() -> dict:
         return State(
             type="state",
@@ -95,11 +116,15 @@ def create_app(
     async def ws_endpoint(ws: WebSocket) -> None:
         await ws.accept()
         try:
-            first = client_message.validate_python(await ws.receive_json())
-        except (ValidationError, WebSocketDisconnect, ValueError):
+            first = client_message.validate_python(
+                await asyncio.wait_for(ws.receive_json(), hello_timeout_s)
+            )
+        except (ValueError, KeyError, TimeoutError, WebSocketDisconnect):
             await ws.close(UNAUTHORISED)
             return
-        if not isinstance(first, Hello) or not secrets.compare_digest(first.token, token):
+        if not isinstance(first, Hello) or not secrets.compare_digest(
+            first.token.encode(), token.encode()
+        ):
             await ws.close(UNAUTHORISED)
             return
         await ws.send_json(
@@ -117,13 +142,23 @@ def create_app(
                 while True:
                     await ws.send_json(state())
                     await asyncio.sleep(state_period_s)
-            except Exception:  # the browser went away; the receive loop sees the disconnect
-                return
+            except (WebSocketDisconnect, OSError, RuntimeError):
+                return  # the browser went away; the receive loop sees the disconnect
+            except Exception:
+                # A bug in state or telemetry: say so, and close so the endpoint's finally
+                # stops a driving socket instead of leaving it blind.
+                traceback.print_exc()
+                with contextlib.suppress(Exception):
+                    await ws.close(1011)
 
         async def refuse(rule: str, reason: str) -> None:
             await ws.send_json(
                 Refused(type="refused", rule=rule, reason=reason).model_dump(mode="json")
             )
+
+        def watchdog_dead() -> bool:
+            task = getattr(ws.app.state, "watchdog", None)
+            return task is not None and task.done()
 
         sender = asyncio.create_task(stream())
         me = object()
@@ -133,9 +168,16 @@ def create_app(
                     msg = client_message.validate_python(await ws.receive_json())
                 except (ValueError, KeyError):
                     continue  # malformed or binary input is ignored; the lease lapses on its own
-                if isinstance(msg, DriveMsg | Heartbeat) and not driver.claim(me):
-                    await refuse("driver", "another device is driving")
-                    continue
+                if isinstance(msg, DriveMsg | Heartbeat):
+                    if watchdog_dead():
+                        await refuse("watchdog", "the safety watchdog is not running")
+                        continue
+                    granted, changed = driver.claim(me)
+                    if not granted:
+                        await refuse("driver", "another device is driving")
+                        continue
+                    if changed and session.moving:
+                        session.stop(actor="system")  # the new driver starts from rest
                 if isinstance(msg, DriveMsg):
                     result = session.drive(msg.v, msg.w)
                     # Only a drive the gate denied is a refusal; a halt result (near-zero
@@ -151,6 +193,8 @@ def create_app(
             pass
         finally:
             sender.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await sender
             if driver.release(me):
                 session.stop(actor="system")  # a closed tab must never leave the wheels turning
 
@@ -158,10 +202,13 @@ def create_app(
     async def lifespan(_app: Starlette):
         async def watchdog() -> None:
             while True:
-                session.tick()
+                try:
+                    session.tick()
+                except Exception:
+                    traceback.print_exc()  # one bad tick must not end the watchdog
                 await asyncio.sleep(WATCHDOG_PERIOD_S)
 
-        task = asyncio.create_task(watchdog())
+        task = app.state.watchdog = asyncio.create_task(watchdog())
         try:
             yield
         finally:
@@ -172,12 +219,17 @@ def create_app(
     routes = [Route("/api/health", health), WebSocketRoute("/ws", ws_endpoint)]
     if static_dir is not None and static_dir.is_dir():
         routes.append(Mount("/", StaticFiles(directory=static_dir, html=True)))
-    return Starlette(routes=routes, lifespan=lifespan)
+    app = Starlette(routes=routes, lifespan=lifespan)
+    app.state.watchdog = None  # set by the lifespan; uvicorn always runs it
+    app.state.lease = session.lease
+    app.state.registry = runner.registry
+    return app
 
 
 def pairing_url(port: int, token: str) -> str:
     host = socket.gethostname().split(".")[0]  # "Mac.lan" -> "Mac": mDNS answers Mac.local
-    return f"http://{host}.local:{port}/?token={token}"
+    # In the fragment, so the token is never sent in a request line or logged by a server.
+    return f"http://{host}.local:{port}/#token={token}"
 
 
 def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: Path) -> int:
@@ -188,13 +240,28 @@ def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: 
     token = secrets.token_urlsafe(16)
     app = create_app(runner, session, FakeTelemetry(), token, static_dir=static_dir)
     runner.start(experiment)
-    print(f"robot console: run {runner.log.run_id}")
-    print(f"open on a phone or laptop on this Wi-Fi: {pairing_url(port, token)}")
+    print(f"robot console: run {runner.log.run_id}", flush=True)
+    print(f"open on a phone or laptop on this Wi-Fi: {pairing_url(port, token)}", flush=True)
     if not static_dir.is_dir():
-        print(f"(no app build at {static_dir}: run `pnpm --filter robot-console build`)")
+        print(
+            f"(no app build at {static_dir}: run `pnpm --filter robot-console build`)", flush=True
+        )
+    status = "completed"
     try:
         uvicorn.run(app, host=host, port=port, log_level="warning")
+    except KeyboardInterrupt:
+        pass
+    except SystemExit as e:
+        if e.code not in (None, 0):
+            status = "failed"
+        raise
+    except BaseException:
+        status = "failed"
+        raise
     finally:
-        session.stop(actor="system")
-        runner.end("completed")
+        try:
+            session.stop(actor="system")
+        except Exception:
+            traceback.print_exc()
+        runner.end(status)
     return 0

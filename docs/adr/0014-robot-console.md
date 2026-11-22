@@ -24,3 +24,6 @@ and forbids inbound ports for that path. Live driving cannot wait for a 2 s queu
 **Consequences.** The robot opens a port on the LAN; anyone on the home Wi-Fi with the token can
 drive it within the gate's limits. A crash of the agent stops its watchdog too, so until the
 servo's own behaviour on lost communication is known, drive only with someone at the e-stop.
+If the event log cannot be written, no stop can reach the wheels through the runner (every
+command is logged first), so the wheel driver needs its own hardware timeout before real wheels
+are connected (step 2).
