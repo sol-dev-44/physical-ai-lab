@@ -1,0 +1,16 @@
+[project]
+name = "exp003-household-robot"
+version = "0.1.0"
+description = "Experiment 3: the household robot's tool set."
+requires-python = ">=3.12"
+dependencies = ["lab-agent[console]"]
+
+[tool.uv.sources]
+lab-agent = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/exp003_robot"]

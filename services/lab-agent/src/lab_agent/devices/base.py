@@ -22,3 +22,11 @@ class Switch(Protocol):
     id: str
 
     def set(self, on: bool) -> None: ...
+
+
+class Wheels(Protocol):
+    """A differential drive: set each wheel's ground speed in m/s (+ is forward)."""
+
+    id: str
+
+    def set_speeds(self, left_m_s: float, right_m_s: float) -> None: ...
