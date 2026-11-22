@@ -112,7 +112,11 @@ card and queued commands. Each comes with the phase that makes it possible.
 
 1. **Console skeleton on fake devices** (runs on the Mac): server, pairing, WebSocket, state
    stream from fake sensors, Drive screen, `drive` tool, lease interlock and watchdog, logged
-   through the runner. Fits phase 0 on the bench.
+   through the runner. Fits phase 0 on the bench. **Built 2026-11-21**
+   ([plan](plans/2026-11-21-robot-console-step1.md)); every task reviewed twice, and the reviews
+   hardened the dead-man well beyond the plan (see the plan's "Done" notes). Run it with
+   `pnpm --filter robot-console build` then
+   `LAB_FAKE=1 uv run lab --tools exp003_robot.tools:build console exp003-household-robot`.
 2. **Real wheels:** STS3215 adapter behind the runner (via the servo driver board), the Xbox
    controller on the Pi, the watchdog risk above settled. Phase 0's "drives for 10 minutes with a
    dead-man" is done when it works from both the controller and the app.

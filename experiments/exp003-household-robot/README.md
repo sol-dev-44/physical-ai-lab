@@ -233,3 +233,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   sized to the strap, threaded free end first. The plate is ready to print.
 - 2026-11-21: base plate printed (4 h 56 min, 223 g PETG). Next: fit the cradles, the battery and
   the caster cup (still to print at full strength).
+- 2026-11-21: robot console step 1 built on fake wheels (CONTROL_APP.md, ADR 0014): the robot's
+  agent serves a phone app on the home network; hold-to-drive with a 300 ms lease, a watchdog stop,
+  one driver at a time, pairing by link, fake sensor readings marked "no sensor". Each task had a
+  spec and a code review; the reviews found and fixed a dozen ways the wheels could have been left
+  turning (refused, dropped or failed commands, reconnects, a second phone) before any real wheel.
