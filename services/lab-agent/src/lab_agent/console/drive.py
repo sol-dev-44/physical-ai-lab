@@ -3,7 +3,8 @@
 - drive(v, w) renews the lease and sends base.drive only on a meaningful change, at most
   every min_interval_s, so the log stays readable (CONTROL_APP.md, "What gets logged").
 - heartbeat() renews the lease without logging.
-- tick() is the watchdog: called often, it sends one base.stop when the lease has lapsed.
+- tick() is the watchdog: called often, it halts when the lease has lapsed or the STOP file
+  exists, retries a stop that is owed after a failure, and sends a pending dropped drive.
 - stop() cancels the lease and stops at once.
 
 The wheels never stay running on a lost command: a change dropped by the time dedupe is kept
@@ -41,10 +42,13 @@ class DriveSession:
     _pending: tuple[float, float] | None = field(default=None, init=False)
     _stopped_t: float = field(default=float("-inf"), init=False)
     _halt_t: float = field(default=float("-inf"), init=False)
+    _stop_owed: bool = field(default=False, init=False)
 
     def drive(self, v: float, w: float) -> CommandResult | None:
         self.lease.renew()
         now = self.clock()
+        if abs(v) < self.min_dv and abs(w) < self.min_dw:
+            v = w = 0.0  # a finger resting near the centre stops instead of creeping
         if v == 0.0 and w == 0.0:
             self._pending = None
             return self._halt("human") if self.moving else None
@@ -75,7 +79,8 @@ class DriveSession:
         if not self.moving:
             return None
         now = self.clock()
-        if not self.lease.alive() or self.runner.gate.stop_file.exists():
+        owed = self._stop_owed or not self.lease.alive()
+        if owed or self.runner.gate.stop_file.exists():
             if now - self._halt_t >= self.min_interval_s:
                 return self._halt("system")
             return None
@@ -101,6 +106,7 @@ class DriveSession:
         self._pending = None
         self._last = None
         self.moving = not result.ok
+        self._stop_owed = not result.ok
         if result.ok:
             self._stopped_t = self._halt_t
         return instead or result

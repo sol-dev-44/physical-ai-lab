@@ -105,7 +105,7 @@ def test_a_change_dropped_by_the_time_dedupe_is_sent_later_by_tick(rig5):
 
 def test_a_move_to_zero_is_never_deduped(rig5):
     s, r = rig5
-    s.drive(0.019, 0.0)
+    s.drive(0.03, 0.0)
     r.clock.t += 0.2
     assert s.drive(0.0, 0.0) is not None
     assert r.wheels.speeds == (0.0, 0.0) and not s.moving
@@ -185,3 +185,38 @@ def test_a_stop_after_a_drive_that_followed_a_stop_is_not_collapsed(rig5):
     r.clock.t += 0.01
     res = s.stop()
     assert res is not None and res.ok and r.wheels.speeds == (0.0, 0.0)
+
+
+def test_a_stop_that_failed_inside_drive_is_retried_while_heartbeats_continue(rig5):
+    s, r = rig5
+    s.drive(0.2, 0.0)
+    r.stop_fails[0] = 1
+    res = s.drive(0.0, 0.0)
+    assert res is not None and not res.ok and s.moving
+    r.clock.t += 0.11
+    s.heartbeat()
+    res = s.tick()
+    assert res is not None and res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_a_stop_that_failed_after_a_refused_drive_is_retried(rig5):
+    s, r = rig5
+    s.drive(0.2, 0.0)
+    r.stop_fails[0] = 1
+    r.clock.t += 0.2
+    res = s.drive(0.5, 0.0)  # over the cap, refused, and the stop that follows fails
+    assert res is not None and not res.ok and s.moving
+    r.clock.t += 0.11
+    s.heartbeat()
+    res = s.tick()
+    assert res is not None and res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_a_finger_resting_near_the_centre_stops_instead_of_creeping(rig5):
+    s, r = rig5
+    s.drive(0.03, 0.0)
+    r.clock.t += 0.2
+    s.drive(0.012, 0.0)
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
