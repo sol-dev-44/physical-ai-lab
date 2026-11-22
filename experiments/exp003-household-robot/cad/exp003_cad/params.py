@@ -681,7 +681,7 @@ class CasterCup:
 # Fit tests only check the caster's plate, holes and fork sweep, so they skimp on plastic.
 CASTER_CUP_TEST = CasterCup(wall_mm=1.2, roof_mm=2.0, center_hole_mm=34.0, mount_bosses=False)
 
-M4_NUT_MM = 3.2  # ISO 4032 thickness
+M4_MIN_ENGAGE_MM = 2.0  # three threads at 0.7 mm pitch
 M3_NUT_MM = 2.4
 
 
@@ -710,8 +710,10 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
     holes = tuple((sx * hx, sy * hy) for sx in (-1, 1) for sy in (-1, 1))
     if c.center_hole_mm / 2 + c.hole_mm / 2 + 2.0 > (hx**2 + hy**2) ** 0.5:
         raise ValueError("the centre hole runs into the caster's screw holes")
-    # Screw: caster plate (about 3 mm) + roof + nut, rounded up to a length in the Mywish kit.
-    need = 3.0 + c.roof_mm + M4_NUT_MM
+    # Screw: caster plate (about 3 mm) + roof + three threads into the nut, rounded up to a
+    # length in the Mywish kit. The tip need not pass the nut: 2026-11-21 the owner found M4 x 12
+    # stood well proud, and long tips would reach for the electronics deck above the cup.
+    need = 3.0 + c.roof_mm + M4_MIN_ENGAGE_MM
     length = next(n for n in (8, 12, 16, 20) if n >= need)
     mount: tuple[tuple[float, float], ...] = ()
     mount_screw = ""

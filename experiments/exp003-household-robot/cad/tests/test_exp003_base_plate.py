@@ -75,7 +75,7 @@ def test_screws_all_come_from_the_kit_with_nuts():
     d = plate()
     assert "M3 x 12" in d.screws["cradles"]
     assert "M3 x 20" in d.screws["cup"]
-    assert "M4 x 12" in d.screws["caster"]
+    assert "M4 x 8" in d.screws["caster"]
 
 
 def test_a_caster_too_far_back_is_refused():

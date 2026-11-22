@@ -170,8 +170,9 @@ Numbers are `CasterCup` and `derive_caster_cup` in `params.py`; heights come fro
 - Roof on the bed, open end up: no supports. Default 2 walls, 15% infill: about 25 minutes.
 - For a fit test print `out/caster_cup_test.step` (`CASTER_CUP_TEST`: 1.2 mm walls, 2 mm roof,
   34 mm centre hole): same cavity, holes and depth at half the plastic (5.4 g, 22 min).
-- Fit: put the caster's plate against the roof inside the cup, then 4 x M4 x 12 button head
-  from below through the caster and the roof, a nut on each on top (Mywish kit).
+- Fit: put the caster's plate against the roof inside the cup, then 4 x M4 x 8 button head
+  from below through the caster and the roof, a nut on each on top (Mywish kit). The nut should
+  turn at least 3 full turns before it is snug; M4 x 12 (first fit) stood well proud of the nuts.
 - Check: (1) the caster's plate drops in without forcing; (2) spin the caster all the way round
   by hand: the fork must not touch the walls (the fork's sweep is not published, so this is the
   test, and v1 failed it); (3) the open end of the cup is the plate's underside, 40.4 mm off the floor: stand the

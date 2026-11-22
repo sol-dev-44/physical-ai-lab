@@ -44,7 +44,7 @@ def test_screws_match_the_caster_hole_centres_and_come_from_the_kit():
     d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
     got = sorted((round(x, 3), round(y, 3)) for x, y in d.holes)
     assert got == sorted((x, y) for x in (-17.875, 17.875) for y in (-13.875, 13.875))
-    assert d.screw == "M4 x 12 button head and nut"
+    assert d.screw == "M4 x 8 button head and nut"
 
 
 def test_a_centre_hole_that_reaches_the_screw_holes_is_refused():
@@ -57,4 +57,4 @@ def test_light_fit_test_version_keeps_the_fit_and_the_screw():
     full = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
     assert d.inner_mm == full.inner_mm and d.sweep_radius_mm == full.sweep_radius_mm
     assert d.depth_mm == full.depth_mm  # same height test
-    assert d.screw == "M4 x 12 button head and nut"
+    assert d.screw == "M4 x 8 button head and nut"

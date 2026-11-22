@@ -446,9 +446,9 @@
    {
     "item": "PLA Basic Jade White (AMS A2)",
     "start": "1000 g",
-    "used": "35 g (toy truck coupon)",
-    "left": "about 965 g",
-    "planned": "about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.)",
+    "used": "about 450 g (toy truck: coupon 35 g; chassis, axles, bins 415 g)",
+    "left": "about 550 g",
+    "planned": "about 65 g est. (toy truck: cab window band)",
     "reorder": "One spool per colour is enough for now",
     "lead_time": "Bambu store about 1 week"
    },
@@ -579,7 +579,7 @@
    {
     "date": "2026-11-21",
     "what": "Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill)",
-    "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 12 and nuts (caster), 4 x M3 x 20 and nuts (cup to plate)"
+    "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 8 and nuts (caster; M4 x 12 stood too proud), 4 x M3 x 20 and nuts (cup to plate)"
    },
    {
     "date": "2026-11-19",
@@ -590,6 +590,11 @@
     "date": "2026-11-20",
     "what": "Toy truck wheels, 6 (blue tyres, yellow caps)",
     "used": "PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated)"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Toy truck chassis, 3 axles, 2 bins",
+    "used": "PLA Jade White 414.74 g (slicer)"
    }
   ]
  },
