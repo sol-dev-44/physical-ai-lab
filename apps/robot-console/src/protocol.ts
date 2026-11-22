@@ -14,7 +14,8 @@ export const ClientMessage = z.discriminatedUnion("type", [
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
-const nullableInt = z.number().int().nullable();
+const count = z.number().int().min(0).max(2 ** 31 - 1); // ids and millimetres
+const nullableInt = count.nullable();
 
 export const State = z.strictObject({
   type: z.literal("state"),
@@ -27,7 +28,7 @@ export const State = z.strictObject({
     runtime_min: z.number(),
   }),
   servos: z.array(
-    z.strictObject({ id: z.number().int(), temp_c: z.number(), load_pct: z.number(), volts: z.number() }),
+    z.strictObject({ id: count, temp_c: z.number(), load_pct: z.number(), volts: z.number() }),
   ),
   tof: z.strictObject({ left_mm: nullableInt, center_mm: nullableInt, right_mm: nullableInt }),
   cliff_mm: z.array(nullableInt),

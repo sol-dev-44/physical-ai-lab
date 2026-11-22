@@ -11,6 +11,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 Finite = Annotated[float, Field(allow_inf_nan=False)]
+Count = Annotated[int, Field(ge=0, le=2**31 - 1)]  # ids and millimetres
 Seq = Annotated[int, Field(ge=0, le=2**53 - 1)]  # exactly representable in JS numbers
 
 
@@ -53,16 +54,16 @@ class Battery(_Msg):
 
 
 class Servo(_Msg):
-    id: int
+    id: Count
     temp_c: Finite
     load_pct: Finite
     volts: Finite
 
 
 class Tof(_Msg):
-    left_mm: int | None
-    center_mm: int | None
-    right_mm: int | None
+    left_mm: Count | None
+    center_mm: Count | None
+    right_mm: Count | None
 
 
 class Controller(_Msg):
@@ -85,7 +86,7 @@ class State(_Msg):
     battery: Battery
     servos: list[Servo]
     tof: Tof
-    cliff_mm: list[int | None]
+    cliff_mm: list[Count | None]
     bumpers: list[bool]
     wifi_dbm: Finite | None
     pi_temp_c: Finite | None
