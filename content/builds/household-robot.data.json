@@ -404,6 +404,12 @@
    "notes": "Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired"
   },
   {
+   "item": "exp003 caster cup v2, PETG",
+   "qty": "1",
+   "status": "Reserved",
+   "notes": "Full strength, with mounting bosses; printing 2026-11-21 (33 min)"
+  },
+  {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
@@ -416,14 +422,14 @@
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 390.9,
+ "petg_used_g": 402.9,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "391 g",
-    "left": "about 609 g",
+    "used": "403 g",
+    "left": "about 597 g",
     "planned": "about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
@@ -569,6 +575,11 @@
     "date": "2026-11-21",
     "what": "Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill)",
     "used": "PETG 223.19 g (slicer)"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Caster cup v2, full strength (33 min 13 s, left nozzle, 4 walls, 30% infill)",
+    "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 12 and nuts (caster), 4 x M3 x 20 and nuts (cup to plate)"
    },
    {
     "date": "2026-11-19",
