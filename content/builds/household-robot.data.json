@@ -410,10 +410,16 @@
    "notes": "4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min)"
   },
   {
+   "item": "exp003 caster cup (corrected), PETG",
+   "qty": "1",
+   "status": "Reserved",
+   "notes": "On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level"
+  },
+  {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printed 2026-11-21 (4 h 56 min, 223 g); fit check next"
+   "notes": "exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -422,15 +428,15 @@
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 402.9,
+ "petg_used_g": 412.8,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "403 g",
-    "left": "about 597 g",
-    "planned": "about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts)",
+    "used": "413 g",
+    "left": "about 587 g",
+    "planned": "about 520 g est. (electronics deck, shells, bumper mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
@@ -455,9 +461,9 @@
    {
     "item": "PLA Basic Blue (AMS A3)",
     "start": "1000 g",
-    "used": "about 160 g (toy truck tyres)",
-    "left": "about 840 g",
-    "planned": "about 360 g (toy truck: body and tailgate 360 g slicer)",
+    "used": "about 520 g (toy truck: tyres 160 g; body and tailgate 360 g)",
+    "left": "about 480 g",
+    "planned": "None planned (toy truck body and tailgate printing 2026-11-22, the last blue parts)",
     "reorder": "",
     "lead_time": ""
    },
@@ -493,8 +499,17 @@
     "start": "Not counted: per-size counts are not published; similar kits hold 20 per length",
     "used": "8 (wheel hubs)",
     "left": "about 12 if 20",
-    "planned": "Cradle-to-plate screws (length set by the plate design)",
-    "reorder": "Count the compartment when the plate design picks lengths",
+    "planned": "None planned",
+    "reorder": "Count the compartment when a design picks this length",
+    "lead_time": "Amazon 1 to 2 days"
+   },
+   {
+    "item": "M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit)",
+    "start": "Not counted (similar kits hold 20 per length)",
+    "used": "4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts",
+    "left": "about 16 of each length if 20",
+    "planned": "Electronics deck on the plate's M3 grid, est. 4 to 8 M3",
+    "reorder": "Count the compartments when the deck picks lengths",
     "lead_time": "Amazon 1 to 2 days"
    },
    {
@@ -508,18 +523,18 @@
    },
    {
     "item": "Brass heat-set inserts M2 to M5",
-    "start": "On order, 520",
-    "used": "",
-    "left": "",
-    "planned": "Base plate and shells est. 20 to 40",
+    "start": "520 (arrived 2026-11-20)",
+    "used": "0",
+    "left": "520",
+    "planned": "Shells est. 20 to 40 (the plate and cup use nuts)",
     "reorder": "Plenty",
     "lead_time": ""
    },
    {
     "item": "M2.5 brass standoffs",
-    "start": "On order, 160",
-    "used": "",
-    "left": "",
+    "start": "160 (arrived 2026-11-20)",
+    "used": "0",
+    "left": "160",
     "planned": "Pi 5 and boards est. 12 to 16",
     "reorder": "Plenty",
     "lead_time": ""
@@ -587,6 +602,16 @@
     "used": "4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup)"
    },
    {
+    "date": "2026-11-22",
+    "what": "Caster cup (corrected), 8.6 mm (27 min 24 s, left nozzle, 4 walls, 30% infill)",
+    "used": "PETG 9.89 g (slicer)"
+   },
+   {
+    "date": "2026-11-22",
+    "what": "Caster cup swapped: caster into the corrected cup, cup to plate",
+    "used": "4 x M3 x 16 and 4 M3 nuts (cup to plate); the caster's 4 x M4 x 8 and nuts moved over. The old cup's 4 x M3 x 20 and nuts back to the kit"
+   },
+   {
     "date": "2026-11-19",
     "what": "Toy truck joint coupon (home project, files in ~/toys/garbage-truck)",
     "used": "PLA Jade White 35.3 g (slicer)"
@@ -600,6 +625,11 @@
     "date": "2026-11-21",
     "what": "Toy truck chassis, 3 axles, 2 bins",
     "used": "PLA Jade White 414.74 g (slicer)"
+   },
+   {
+    "date": "2026-11-22",
+    "what": "Toy truck body and tailgate (7 h 46 min, left nozzle, 4 walls, 15% infill, 5 mm brim)",
+    "used": "PLA Blue 359.90 g (slicer)"
    }
   ]
  },
@@ -1016,6 +1046,14 @@
   {
    "date": "2026-11-21",
    "text": "chassis assembled. Both cradles bolted to the plate (4 x M3 x 12 and nuts; the two servos point opposite ways, as identical cradles must), the caster bolted into the full cup (M4 x 12 stood well proud of the nuts, so M4 x 8) and the cup bolted to the plate. On the floor the robot leaned back toward the caster: the cup's cavity had been sized as if the cup started at the plate's underside, but it sits on the top face, so the plate's 4 mm was counted twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate) with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow. The printer is busy with a toy garbage truck."
+  },
+  {
+   "date": "2026-11-22",
+   "text": "corrected caster cup printed (27 min 24 s, 9.89 g PETG) and fitted: the caster into the cup with its 4 x M4 x 8, the cup to the plate with 4 x M3 x 16 and nuts. The robot now sits perfectly level on the floor. The chassis is done."
+  },
+  {
+   "date": "2026-11-22",
+   "text": "the Pi 5, XT60 leads and fuse assortment (arrived 2026-11-21) are logged; the limit switches are still to come. The build page and site log are brought up to date."
   }
  ],
  "design": {

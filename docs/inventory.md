@@ -28,7 +28,8 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
-| exp003 base plate, PETG | 1 | Reserved | Printed 2026-11-21 (4 h 56 min, 223 g); fit check next |
+| exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
+| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
@@ -93,11 +94,11 @@ not tracked yet; the AMS shows an estimate per spool.
 
 ## exp003 household robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
 
-All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse assortment and limit switches are due 2026-11-21. "Check on arrival" is what to verify before use; a part counts as on hand only once it passes.
+All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads and fuse assortment 2026-11-21. The limit switches were due 2026-11-21 and are not in yet. "Check on arrival" is what to verify before use; a part counts as on hand only once it passes.
 
 | # | Item | ASIN | Check on arrival | Arrived |
 |---|---|---|---|---|
-| 1 | Raspberry Pi 5 8GB | B0CK2FCG1K | Genuine board | Due 2026-11-21 |
+| 1 | Raspberry Pi 5 8GB | B0CK2FCG1K | Genuine board | 2026-11-21 |
 | 2 | Official Pi 5 Active Cooler | B0CLXZBR5P | | 2026-11-20 |
 | 3 | CanaKit 45W USB-C PD supply (27W at 5V 5A for Pi 5) | B07H125ZRL | Bench power only; not the official PSU | 2026-11-20 |
 | 4 | SanDisk Extreme 64GB A2 microSD | B09X7C7LL1 | | 2026-11-20 |
@@ -112,8 +113,8 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads, fuse ass
 | 13 | UCTRONICS 9-36V to 5V (5.2V) buck, up to 6A | B07XXWQ49N | Stand-in for Pololu D36V50F5. Check 5.1 to 5.25V out under load | 2026-11-20 |
 | 14 | DROK buck-boost, 9-36V in, 12V 5A out, potted | B0B6VK8BPN | Check 12.0V out before connecting servos | 2026-11-20 |
 | 15 | INA226 I2C current/voltage module, 0-36V 20A | B0DRNG1VKM | **Shunt must be R010 (or lower), not R100** | 2026-11-20 |
-| 16 | XT60 pairs with 14 AWG leads, 5 pairs | B085HF31K7 | | Due 2026-11-21 |
-| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail | Holders 2026-11-20; fuse assortment due 2026-11-21 |
+| 16 | XT60 pairs with 14 AWG leads, 5 pairs | B085HF31K7 | | 2026-11-21 |
+| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail | Holders 2026-11-20; fuse assortment 2026-11-21 |
 | 18 | DaierTek 12V 20A SPST rocker switch | B07S2QJKTX | Main power | 2026-11-20, as a 10-pack of mini rockers: check the rating printed on the switch carries 10 A at 12 V before using one as the main switch |
 | 19 | 5.5x2.1 mm panel-mount DC jacks, 5A, 6 sets | B0D9B7WR23 | Charge port; matches item 12 | 2026-11-20 |
 | 20 | 22 mm red mushroom e-stop, latching, 2NC 10A, 2-pack | B07R8PTTDX | 1 used, 1 spare | 2026-11-20 |
@@ -146,17 +147,18 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 403 g | about 597 g | about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 413 g | about 587 g | about 520 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 450 g (toy truck: coupon 35 g; chassis, axles, bins 415 g) | about 550 g | about 65 g est. (toy truck: cab window band) | One spool per colour is enough for now | Bambu store about 1 week |
-| PLA Basic Blue (AMS A3) | 1000 g | about 160 g (toy truck tyres) | about 840 g | about 360 g (toy truck: body and tailgate 360 g slicer) | | |
+| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | None planned (toy truck body and tailgate printing 2026-11-22, the last blue parts) | | |
 | PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 13 g (toy truck hub caps) | about 987 g | about 200 g est. (toy truck: cab, arm) | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
-| M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | Cradle-to-plate screws (length set by the plate design) | Count the compartment when the plate design picks lengths | Amazon 1 to 2 days |
+| M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
+| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | 4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts | about 16 of each length if 20 | Electronics deck on the plate's M3 grid, est. 4 to 8 M3 | Count the compartments when the deck picks lengths | Amazon 1 to 2 days |
 | M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
-| Brass heat-set inserts M2 to M5 | On order, 520 | | | Base plate and shells est. 20 to 40 | Plenty | |
-| M2.5 brass standoffs | On order, 160 | | | Pi 5 and boards est. 12 to 16 | Plenty | |
+| Brass heat-set inserts M2 to M5 | 520 (arrived 2026-11-20) | 0 | 520 | Shells est. 20 to 40 (the plate and cup use nuts) | Plenty | |
+| M2.5 brass standoffs | 160 (arrived 2026-11-20) | 0 | 160 | Pi 5 and boards est. 12 to 16 | Plenty | |
 
 ### Usage log
 
@@ -174,15 +176,18 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-21 | Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill) | PETG 223.19 g (slicer) |
 | 2026-11-21 | Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill) | PETG 11.98 g (slicer); to fit: 4 x M4 x 8 and nuts (caster; M4 x 12 stood too proud), 4 x M3 x 20 and nuts (cup to plate) |
 | 2026-11-21 | Chassis assembled: cradles to plate, caster to cup, cup to plate | 4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup) |
+| 2026-11-22 | Caster cup (corrected), 8.6 mm (27 min 24 s, left nozzle, 4 walls, 30% infill) | PETG 9.89 g (slicer) |
+| 2026-11-22 | Caster cup swapped: caster into the corrected cup, cup to plate | 4 x M3 x 16 and 4 M3 nuts (cup to plate); the caster's 4 x M4 x 8 and nuts moved over. The old cup's 4 x M3 x 20 and nuts back to the kit |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 | 2026-11-21 | Toy truck chassis, 3 axles, 2 bins | PLA Jade White 414.74 g (slicer) |
+| 2026-11-22 | Toy truck body and tailgate (7 h 46 min, left nozzle, 4 walls, 15% infill, 5 mm brim) | PLA Blue 359.90 g (slicer) |
 
 ### Orders to place
 
 - **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
-  day on the robot or toys). After the base plate (223 g) spool 1 is down to about 609 g; with the
-  sealed spool that is about 1.6 kg, against about 530 g still planned (caster cup, electronics
+  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 587 g; with the
+  sealed spool that is about 1.6 kg, against about 520 g still planned (electronics
   deck, shells, bumper mounts) plus daily printing. Bambu store, about 1 week. Spools with the RFID
   tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
   a second colour for the shells is the owner's call.
@@ -243,4 +248,7 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-19: PLA rows split per spool; toy truck joint coupon logged (35 g white) and the truck's planned PLA use forecast.
 - 2026-11-20: toy truck wheel plate logged (172.75 g: blue tyres, yellow caps).
 - 2026-11-21: toy truck white plate logged (414.74 g Jade White). AMS now feeds the left nozzle.
+- 2026-11-22: toy truck blue plate logged (359.90 g Blue); about 480 g left on the A3 spool, a spare Blue spool on hand.
 - 2026-11-20: most of the 2026-11-17 exp003 order arrived (Arrived column); Pi 5, XT60, fuse assortment and limit switches due 2026-11-21. TPU on hand.
+- 2026-11-22: corrected caster cup fitted; the chassis sits level.
+- 2026-11-22: Pi 5, XT60 leads and the fuse assortment marked arrived (2026-11-21); limit switches still out.

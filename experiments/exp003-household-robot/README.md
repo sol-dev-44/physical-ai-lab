@@ -9,12 +9,11 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-21):** the chassis is assembled: base plate, both wheel servos in their cradles,
-TPU-tired wheels and the rear caster. It leans back about 1.5 degrees because the first full
-caster cup is 4 mm too tall (a design error, now fixed in the model); the corrected cup prints
-2026-11-22. The robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is
-built and runs on simulated wheels. Next: reprint the cup, check the power parts, then the power
-harness and the Pi (see [docs/inventory.md](../../docs/inventory.md)).
+**Status (2026-11-22):** the chassis is assembled and sits level: base plate, both wheel servos
+in their cradles, TPU-tired wheels and the rear caster in its corrected cup. The robot console
+(phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated
+wheels. Next: check the power parts, then the power harness and the Pi (see
+[docs/inventory.md](../../docs/inventory.md)).
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
@@ -135,8 +134,9 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Tire x 2 | TPU 95A | Printed 2026-11-21 (8 h 8 min, 105 g), right hotend through the rear TPU inlet; fit snug, first try |
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Caster cup v1 (test piece) | PETG | Printed 2026-11-21 (24 min 47 s, 8.3 g), first print from the AMS on the left nozzle. Plate and holes fit; the fork hit the walls |
-| Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. Full-strength cup with mounting bosses printing 2026-11-21 (33 min, 12 g) |
-| Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; `cad/BASE_PLATE.md`, "The plate"); fit check next. Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
+| Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. Full-strength cup with mounting bosses printed 2026-11-21 (33 min, 12 g) but 4 mm too tall |
+| Caster cup (corrected, 8.6 mm) | PETG | Printed 2026-11-22 (27 min 24 s, 9.9 g, 4 walls, 30% infill) and fitted with M3 x 16 to the plate: the plate sits level |
+| Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; [cad/BASE_PLATE.md](cad/BASE_PLATE.md), "The plate"); cradles and caster cup fitted, level on the floor |
 
 ## Progress log
 
@@ -247,3 +247,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate)
   with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow.
   The printer is busy with a toy garbage truck.
+- 2026-11-22: corrected caster cup printed (27 min 24 s, 9.89 g PETG) and fitted: the caster
+  into the cup with its 4 x M4 x 8, the cup to the plate with 4 x M3 x 16 and nuts. The robot
+  now sits perfectly level on the floor. The chassis is done.
+- 2026-11-22: the Pi 5, XT60 leads and fuse assortment (arrived 2026-11-21) are logged; the
+  limit switches are still to come. The build page and site log are brought up to date.

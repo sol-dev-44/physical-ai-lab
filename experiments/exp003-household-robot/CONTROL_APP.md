@@ -1,7 +1,8 @@
 # Robot console: the control app (design)
 
 Decided with the owner on 2026-11-21. The robot gets a control app: drive it, watch its sensors,
-debug it, and see the lab's inventory. This is the design; the implementation plan comes next.
+debug it, and see the lab's inventory. This is the design; step 1's implementation plan is
+[plans/2026-11-21-robot-console-step1.md](plans/2026-11-21-robot-console-step1.md).
 
 ## Decisions
 
@@ -117,8 +118,12 @@ card and queued commands. Each comes with the phase that makes it possible.
    hardened the dead-man well beyond the plan (see the plan's "Done" notes). Run it with
    `pnpm --filter robot-console build` then
    `LAB_FAKE=1 uv run lab --tools exp003_robot.tools:build console exp003-household-robot`.
+   Still to do (2026-11-22): the plan's Task 14 hand checks on a phone (pills, hold-to-drive,
+   close-tab stop, `touch STOP` refusal, `lab validate` on the log), run with the owner.
 2. **Real wheels:** STS3215 adapter behind the runner (via the servo driver board), the Xbox
-   controller on the Pi, the watchdog risk above settled. Phase 0's "drives for 10 minutes with a
+   controller on the Pi, the watchdog risk above settled. Owner decisions first: cap each wheel
+   at 0.3 m/s as well as the body's linear cap? After a Wi-Fi blip stops a held stick, resume, or
+   stay stopped until the stick is released and pressed again? Phase 0's "drives for 10 minutes with a
    dead-man" is done when it works from both the controller and the app.
 3. **Sensors, Log and Inventory screens** as the sensors are wired (phase 1 and 2).
 4. **Camera screen** when the camera is on the robot, after ADR 0014.
@@ -136,7 +141,7 @@ card and queued commands. Each comes with the phase that makes it possible.
 - On the robot: phase 0 and 1's "done when" rows, plus pulling the Wi-Fi and closing the tab
   mid-drive (both must stop the wheels).
 
-## ADR 0014 (to write before step 1)
+## ADR 0014 (written 2026-11-21: [docs/adr/0014-robot-console.md](../../docs/adr/0014-robot-console.md))
 
 The robot console on the home network: an inbound port on the robot, home network only, behind
 a pairing token, never exposed to the internet; it is a client of the runner like the CLI and the

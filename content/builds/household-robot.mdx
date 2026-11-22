@@ -2,7 +2,7 @@
 title: Household robot
 date: 2026-11-17
 status: building
-summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The wheels and servo cradles are printed and fitted; the base plate waits on one measurement.
+summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The chassis is printed, assembled and sits level, and a phone control app drives it on simulated wheels. The power wiring and the Pi come next.
 tags: [robot, mobile-base, cad, 3d-printing, exp003]
 parts:
   - 2 × Feetech STS3215 12V servos, wheel mode
@@ -26,9 +26,10 @@ about where it may go and when, and take remote driving. This is lab experiment 
   it is told. It ends with a vision-language-action policy trained on its own driving.
 - **v2** adds an arm to pick up light toys and put them away.
 
-Where it stands: the design is settled and the parts are on order. Both wheel hubs and both servo
-cradles are printed and fitted, and the tire is modelled. The base plate's layout is decided.
-Nothing runs against hardware yet.
+Where it stands: the chassis is done. The base plate, both wheels with their TPU tires, both
+servo cradles and the rear caster are printed and bolted together, and the robot sits level on
+the floor. A control app for a phone is built and drives simulated wheels. Next come the power
+wiring, the Raspberry Pi and real wheels. Nothing runs against hardware yet.
 
 <Callout>
   Every dimension, mass and count on this page is exported from the CAD parameters and the lab's
@@ -92,7 +93,8 @@ The tire is a TPU 95A ring with a <Val k="tire.bore_mm" /> bore. It grips the ri
 <Val k="tire.grip_stretch" pct /> stretch, and a lip over each flange stops it walking off
 sideways. Fitting it means stretching it <Val k="tire.mount_stretch" pct /> over one flange. The
 bore is sized to the printed rim rather than the drawing: a caliper reading puts the seat at
-<Val k="tire.rim_seat_od_mm" />. It prints flat with no supports once the TPU arrives.
+<Val k="tire.rim_seat_od_mm" />. Both tires printed flat with no supports and went on snug the
+first time.
 
 ## Servo mount
 
@@ -150,9 +152,18 @@ That is stable under braking and keeps most of the weight on the wheels for grip
 <Val k="base.com_x_with_arm_mm" abs digits="0" /> behind the axle, so the robot should still not
 tip forward. A tip test with a dummy weight decides before v2 starts.
 
-Still open: the plate's height. The caster's mounting height is not published anywhere, so it gets
-measured when the caster arrives. It decides whether the cradles sit on top of the plate or hang
-under it.
+### Height and the caster
+
+The caster's mounting height is not published anywhere, so it was measured when it arrived: 50 mm
+from the floor to the top of its plate. That settled the base. The cradles sit on top of the
+plate, whose top face is 44.4 mm off the floor, and the caster bolts up into a small printed cup
+that stands on the plate's top face. The cup is a separate part so the plate prints flat. Its
+cavity is a box for the caster's plate joined to a circle for the fork, which reaches 24 mm from
+the swivel axis as it turns. The fork swings through a matching hole in the plate.
+
+A test adds the heights up to the floor (plate top, cup, caster) so a part that sits on another
+cannot be sized from the wrong face again. The corrected cup is 8.6 mm tall, and with it fitted
+the robot sits level.
 
 ## Printed parts
 
@@ -161,12 +172,12 @@ infill, no supports), the tires in TPU 95A.
 
 <PrintedParts />
 
-Still to print: the full-strength caster cup, then the electronics deck, the bumper and the
-shells.
+Still to print: the electronics deck, the bumper and the shells.
 
 ## Parts list
 
-The robot's own parts were ordered on 17 November and most arrived on 20 November (the Pi 5, XT60 leads, fuses and limit switches were due on the 21st). Each row
+The robot's own parts were ordered on 17 November and most arrived on 20 November, with the Pi 5, XT60 leads and fuses on the 21st. The limit
+switches are still to come. Each row
 says what to check when it lands. Two boards are stand-ins for the parts the design names, so they
 are tested before use.
 
@@ -178,8 +189,8 @@ existing stock, so they are not on this order.
 ## Materials
 
 Filament and fasteners from the lab's inventory. The PETG meter adds up the usage log, so it moves
-only when a print is logged. TPU feeds the left nozzle from the external spool holder, never
-through the AMS.
+only when a print is logged. TPU feeds the right nozzle through the printer's rear TPU inlet, never
+through the AMS; the AMS feeds PETG and PLA to the left nozzle.
 
 <Materials />
 
@@ -188,6 +199,25 @@ through the AMS.
 From the experiment's progress log, in the order things happened.
 
 <BuildLog />
+
+## Control app
+
+The robot serves its own control app on the home network: open a link on a phone and drive with a
+thumb stick, or later with an Xbox controller paired to the Pi. It is never reachable from the
+internet; remote driving comes in phase 4 over a private VPN.
+
+Driving is a dead-man. The phone holds a lease on the wheels that lasts 300 ms and renews it with
+a heartbeat every 100 ms while the stick is held. A watchdog checks every 50 ms and stops the
+wheels when the lease runs out, so letting go, closing the tab or losing Wi-Fi all stop the robot.
+Stop is a tool the safety gate never refuses. One phone drives at a time, and a phone pairs with a
+link that carries a one-time token.
+
+The first version runs on simulated wheels. Each piece had a written spec and a code review, and
+the reviews found about a dozen ways the wheels could have been left turning (a refused, dropped
+or failed command, a reconnect, a second phone) before any real wheel was attached. Next it gets
+real wheels. The open question there is what a wheel-mode bus servo does if the robot's software
+dies: it may keep turning, so the servos' own comms-loss behaviour, or a separate watchdog or
+power cut, gets settled first.
 
 ## Roadmap
 
@@ -215,8 +245,8 @@ Each phase ends with a test it has to pass before the next one starts. The build
 
 ## Lessons
 
-Measure twice, cut once. The first three days produced three misses. None cost more than a small
-test print, and each one changed how the next part gets designed.
+Measure twice, cut once. The first week produced five misses. None cost more than a small print,
+and each one changed how the next part gets designed.
 
 ### The coupon that nearly touched
 
@@ -241,6 +271,21 @@ cannot reach across a <Val k="wheel.rim_od_mm" digits="0" /> seat with the flang
 fix was a reading that can actually be taken: across the top flange's flat land, minus the two
 flanges. The tire's bore is sized to that.
 
+### The fork nobody measured
+
+The first caster cup was printed knowing that the fork's sweep was not published anywhere, on
+the idea that the print would be the test. The caster's plate dropped in and the holes lined up,
+but the fork hit the walls as it swivelled. One caliper reading (24 mm from the swivel axis) would
+have caught it. The second cup has a round cavity and the fork swings clear all the way round. A
+test print checks a fit; it never stands in for a number nobody measured.
+
+### The plate counted twice
+
+With the chassis assembled, the robot leaned back about 1.5 degrees. The cup's cavity had been
+sized as if the cup started at the plate's underside, but it stands on the top face, so the
+plate's 4 mm was counted twice and the caster sat 4 mm high. A test now adds the stacked heights
+up to the floor, and the corrected cup sits level.
+
 ### The checklist
 
 Since then, a "before designing a part" checklist gates every printed part:
@@ -251,7 +296,11 @@ Since then, a "before designing a part" checklist gates every printed part:
    heads, and anything that moves.
 3. List every way to mount it, with what each needs and blocks, and pick one with reasons.
 4. For each fastener, check the thread, the hole depth, the screws on hand and room for the driver.
+   Size a bolt for about three threads through its nut, not a tip standing proud.
 5. Never ask for a measurement the sources already give. When one is needed, say why and check it
    can be taken with the tool on hand.
-6. Ask whatever is still open in one go, before modelling.
-7. Record what was measured and what was read from a model, so the next part starts from facts.
+6. For a part that sits on another, write down which face it sits on and test that the stacked
+   heights add up to the floor.
+7. Ask whatever is still open in one go, before modelling. A test print checks a fit; it never
+   stands in for a number nobody measured.
+8. Record what was measured and what was read from a model, so the next part starts from facts.
