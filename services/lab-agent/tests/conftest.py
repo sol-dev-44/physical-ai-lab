@@ -71,7 +71,12 @@ def drive_rig(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         def drive(a: DriveArgs) -> None:
             wheels.set_speeds(a.v - a.w * 0.15, a.v + a.w * 0.15)
 
+        stop_fails = [0]  # the next N base.stop calls raise, to test a failed stop
+
         def stop(_a: BaseModel) -> None:
+            if stop_fails[0] > 0:
+                stop_fails[0] -= 1
+                raise OSError("bus error")
             wheels.set_speeds(0.0, 0.0)
 
         reg.add(Tool("base.drive", "drive", drive, args_model=DriveArgs, device=wheels.id))
@@ -81,6 +86,8 @@ def drive_rig(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         log = EventLog(tmp_path / "events" / "console.jsonl", "exp003-t-console")
         runner = Runner(reg, log)
         runner.start("exp003-household-robot")
-        return SimpleNamespace(runner=runner, lease=lease, wheels=wheels, clock=clock)
+        return SimpleNamespace(
+            runner=runner, lease=lease, wheels=wheels, clock=clock, stop_fails=stop_fails
+        )
 
     return make

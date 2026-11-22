@@ -9,6 +9,12 @@ def rig(drive_rig):
     return DriveSession(r.runner, r.lease, clock=r.clock), r.wheels, r.clock, r.runner
 
 
+@pytest.fixture
+def rig5(drive_rig):
+    r = drive_rig()
+    return DriveSession(r.runner, r.lease, clock=r.clock), r
+
+
 def sent(runner, tool):
     return [e for e in read_log(runner.log.path) if e.type == "command.sent" and e.tool == tool]
 
@@ -50,8 +56,13 @@ def test_watchdog_stops_the_wheels_when_the_lease_lapses(rig):
     assert r is not None and r.ok
     assert wheels.speeds == (0.0, 0.0) and not s.moving
     assert s.tick() is None  # only once
-    stop = sent(runner, "base.stop")
-    assert len(stop) == 1 and stop[0].actor == "system"
+    assert len(sent(runner, "base.stop")) == 1
+    requested = [
+        e
+        for e in read_log(runner.log.path)
+        if e.type == "command.requested" and e.tool == "base.stop"
+    ]
+    assert len(requested) == 1 and requested[0].actor == "system"
 
 
 def test_stop_cancels_the_lease_and_stops(rig):
@@ -77,3 +88,100 @@ def test_a_refused_drive_is_returned_not_raised(rig, tmp_path):
     r = s.drive(0.1, 0.0)
     assert r is not None and not r.allowed and r.checked.payload.rule == "stop_file"
     assert wheels.history == [] and not s.moving
+
+
+def test_a_change_dropped_by_the_time_dedupe_is_sent_later_by_tick(rig5):
+    s, r = rig5
+    s.drive(0.3, 0.0)
+    r.clock.t += 0.05
+    assert s.drive(0.1, 0.0) is None
+    assert s.tick() is None  # still within 100 ms
+    r.clock.t += 0.08
+    res = s.tick()
+    assert res is not None and res.ok
+    assert r.wheels.speeds[0] == pytest.approx(0.1)
+    assert s.tick() is None  # sent once
+
+
+def test_a_move_to_zero_is_never_deduped(rig5):
+    s, r = rig5
+    s.drive(0.019, 0.0)
+    r.clock.t += 0.2
+    assert s.drive(0.0, 0.0) is not None
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+    s.drive(0.3, 0.0)
+    r.clock.t += 0.01
+    assert s.drive(0.0, 0.0) is not None
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_a_zero_drive_while_stopped_does_nothing(rig5):
+    s, r = rig5
+    assert s.drive(0.0, 0.0) is None
+    assert r.wheels.history == []
+
+
+def test_a_refused_drive_while_moving_stops_the_wheels(rig5, tmp_path):
+    s, r = rig5
+    s.drive(0.3, 0.0)
+    r.clock.t += 0.2
+    (tmp_path / "STOP").touch()
+    res = s.drive(0.1, 0.0)
+    assert res is not None and not res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_an_invalid_drive_while_moving_stops_the_wheels(rig5):
+    s, r = rig5
+    s.drive(0.2, 0.0)
+    r.clock.t += 0.2
+    res = s.drive(0.5, 0.0)  # over the cap
+    assert res is not None and not res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_the_stop_file_stops_the_wheels_on_tick(rig5, tmp_path):
+    s, r = rig5
+    s.drive(0.3, 0.0)
+    (tmp_path / "STOP").touch()
+    r.clock.t += 0.1
+    s.heartbeat()
+    res = s.tick()
+    assert res is not None and res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_a_failed_stop_is_retried_by_tick(rig5):
+    s, r = rig5
+    s.drive(0.2, 0.0)
+    r.stop_fails[0] = 1
+    r.clock.t += 0.31
+    res = s.tick()
+    assert res is not None and not res.ok and s.moving
+    assert r.wheels.speeds[0] == pytest.approx(0.2)
+    assert s.tick() is None  # not more than once per min_interval_s
+    r.clock.t += 0.11
+    res = s.tick()
+    assert res is not None and res.ok
+    assert r.wheels.speeds == (0.0, 0.0) and not s.moving
+
+
+def test_a_stop_right_after_a_failed_stop_is_not_collapsed(rig5):
+    s, r = rig5
+    s.drive(0.2, 0.0)
+    r.stop_fails[0] = 1
+    res = s.stop()
+    assert res is not None and not res.ok and s.moving
+    res = s.stop()
+    assert res is not None and res.ok and r.wheels.speeds == (0.0, 0.0)
+
+
+def test_a_stop_after_a_drive_that_followed_a_stop_is_not_collapsed(rig5):
+    s, r = rig5
+    s.drive(0.1, 0.0)
+    assert s.stop() is not None
+    r.clock.t += 0.05
+    assert s.drive(0.2, 0.0) is not None
+    r.clock.t += 0.01
+    res = s.stop()
+    assert res is not None and res.ok and r.wheels.speeds == (0.0, 0.0)
