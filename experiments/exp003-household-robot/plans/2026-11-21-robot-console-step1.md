@@ -788,6 +788,10 @@ ServerMessage = Annotated[Welcome | State | Refused, Field(discriminator="type")
 server_message: TypeAdapter[ServerMessage] = TypeAdapter(ServerMessage)
 ```
 
+> **Done 2026-11-21, then hardened after review (e254aa5):** the models are strict (no coercion)
+> and every float is finite; `seq` is capped at 2^53 - 1 and the token at 256 characters; more
+> invalid fixtures. The code in the repo, not this listing, is the reference for Task 10.
+
 - [ ] **Step 5: Run the tests**
 
 Run: `uv run pytest services/lab-agent/tests/test_console_protocol.py -v`
@@ -1041,7 +1045,17 @@ def test_stop_cancels_the_lease_and_stops(rig):
     s, wheels, _, _ = rig
     s.drive(0.1, 0.0)
     r = s.stop()
-    assert r.ok and wheels.speeds == (0.0, 0.0) and not s.lease.alive()
+    assert r is not None and r.ok and wheels.speeds == (0.0, 0.0) and not s.lease.alive()
+
+
+def test_a_flood_of_stops_is_collapsed(rig):
+    s, _, clock, runner = rig
+    s.drive(0.1, 0.0)
+    assert s.stop() is not None
+    assert s.stop() is None  # already stopped, within 100 ms
+    clock.t += 0.2
+    assert s.stop() is not None  # later stops still go through
+    assert len(sent(runner, "base.stop")) == 2
 
 
 def test_a_refused_drive_is_returned_not_raised(rig, tmp_path):
@@ -1091,6 +1105,7 @@ class DriveSession:
     moving: bool = field(default=False, init=False)
     _last: tuple[float, float] | None = field(default=None, init=False)
     _last_t: float = field(default=float("-inf"), init=False)
+    _stopped_t: float = field(default=float("-inf"), init=False)
 
     def drive(self, v: float, w: float) -> CommandResult | None:
         self.lease.renew()
@@ -1115,21 +1130,28 @@ class DriveSession:
             return self._halt("system")
         return None
 
-    def stop(self, actor: Actor = "human") -> CommandResult:
+    def stop(self, actor: Actor = "human") -> CommandResult | None:
+        """Cancel the lease and stop. A stop while already stopped within the last
+        min_interval_s is collapsed (returns None), so a flood of stops cannot flood the
+        log or the servo bus; a stop is never refused by the gate."""
         self.lease.cancel()
+        now = self.clock()
+        if not self.moving and now - self._stopped_t < self.min_interval_s:
+            return None
         return self._halt(actor)
 
     def _halt(self, actor: Actor) -> CommandResult:
         result = self.runner.request("base.stop", actor=actor)
         self.moving = False
         self._last = None
+        self._stopped_t = self.clock()
         return result
 ```
 
 - [ ] **Step 5: Run the tests**
 
 Run: `uv run pytest services/lab-agent/tests/test_console_drive.py -v`
-Expected: 6 passed.
+Expected: 7 passed.
 
 - [ ] **Step 6: Commit**
 
@@ -1237,6 +1259,20 @@ def test_refusals_reach_the_browser(rig):
         assert refused["rule"] == "stop_file"
 
 
+def test_only_one_device_drives_at_a_time(rig):
+    client, _ = rig
+    with client.websocket_connect("/ws") as a, client.websocket_connect("/ws") as b:
+        for ws in (a, b):
+            ws.send_json({"type": "hello", "token": TOKEN})
+            recv(ws, "welcome")
+        a.send_json({"type": "drive", "v": 0.1, "w": 0.0, "seq": 1})
+        recv(a, "state", lambda m: m["moving"])
+        b.send_json({"type": "drive", "v": -0.1, "w": 0.0, "seq": 1})
+        assert recv(b, "refused")["rule"] == "driver"
+        b.send_json({"type": "stop"})  # but anyone may stop it
+        recv(b, "state", lambda m: not m["moving"])
+
+
 def test_closing_the_tab_stops_the_wheels(rig):
     client, wheels = rig
     with client.websocket_connect("/ws") as ws:
@@ -1290,6 +1326,28 @@ UNAUTHORISED = 4401
 WATCHDOG_PERIOD_S = 0.05
 
 
+class Driver:
+    """One device drives at a time. The first to send drive or heartbeat holds the drive
+    until it disconnects or the lease lapses; others are refused with rule "driver". Any
+    device may stop the robot."""
+
+    def __init__(self, lease: DriveLease) -> None:
+        self.lease = lease
+        self.holder: object | None = None
+
+    def claim(self, who: object) -> bool:
+        if self.holder is None or self.holder is who or not self.lease.alive():
+            self.holder = who
+            return True
+        return False
+
+    def release(self, who: object) -> bool:
+        if self.holder is who:
+            self.holder = None
+            return True
+        return False
+
+
 def find_lease(registry: Registry) -> DriveLease:
     for interlock in registry.interlocks:
         if isinstance(interlock, LeaseRequired):
@@ -1317,6 +1375,8 @@ def create_app(
             stop_file=runner.gate.stop_file.exists(),
             **telemetry.read(),
         ).model_dump(mode="json")
+
+    driver = Driver(session.lease)
 
     async def health(_request) -> JSONResponse:
         return JSONResponse({"ok": True})
@@ -1347,6 +1407,7 @@ def create_app(
                 await asyncio.sleep(state_period_s)
 
         sender = asyncio.create_task(stream())
+        me = object()
         try:
             while True:
                 try:
@@ -1354,12 +1415,19 @@ def create_app(
                 except ValidationError:
                     continue  # ignore malformed input; the lease still lapses on its own
                 result = None
+                if isinstance(msg, DriveMsg | Heartbeat) and not driver.claim(me):
+                    await ws.send_json(
+                        Refused(
+                            type="refused", rule="driver", reason="another device is driving"
+                        ).model_dump(mode="json")
+                    )
+                    continue
                 if isinstance(msg, DriveMsg):
                     result = session.drive(msg.v, msg.w)
                 elif isinstance(msg, Heartbeat):
                     session.heartbeat()
                 elif isinstance(msg, StopMsg):
-                    result = session.stop()
+                    result = session.stop()  # any device may stop the robot
                 if result is not None and not result.allowed:
                     p = result.checked.payload
                     await ws.send_json(
@@ -1371,7 +1439,8 @@ def create_app(
             pass
         finally:
             sender.cancel()
-            session.stop(actor="system")  # a closed tab must never leave the wheels turning
+            if driver.release(me):
+                session.stop(actor="system")  # a closed tab must never leave the wheels turning
 
     @asynccontextmanager
     async def lifespan(_app: Starlette):
@@ -1424,7 +1493,7 @@ def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: 
 - [ ] **Step 4: Run the tests**
 
 Run: `uv run pytest services/lab-agent/tests/test_console_server.py -v`
-Expected: 7 passed.
+Expected: 8 passed.
 
 - [ ] **Step 5: Commit**
 
@@ -1669,10 +1738,12 @@ Expected: FAIL, cannot resolve `./protocol`.
 // both test against packages/schema/fixtures/console.
 import { z } from "zod";
 
-const seq = z.number().int().min(0);
+// z.number() already rejects NaN and Infinity and never coerces strings, matching the strict,
+// finite Python models.
+const seq = z.number().int().min(0).max(2 ** 53 - 1);
 
 export const ClientMessage = z.discriminatedUnion("type", [
-  z.strictObject({ type: z.literal("hello"), token: z.string().min(1) }),
+  z.strictObject({ type: z.literal("hello"), token: z.string().min(1).max(256) }),
   z.strictObject({ type: z.literal("drive"), v: z.number(), w: z.number(), seq }),
   z.strictObject({ type: z.literal("heartbeat"), seq }),
   z.strictObject({ type: z.literal("stop") }),
@@ -2167,6 +2238,12 @@ describe("DriveScreen", () => {
     expect(send).toHaveBeenCalledWith({ type: "stop" });
   });
 
+  it("never shows a fake e-stop reading as real", () => {
+    render(<DriveScreen send={vi.fn()} status="open" state={state} refused={null} maxV={0.3} maxW={1.5} />);
+    expect(screen.getByText(/e-stop: no sensor/i)).toBeInTheDocument();
+    expect(screen.queryByText(/e-stop clear/i)).not.toBeInTheDocument();
+  });
+
   it("shows when the robot is fake and when the connection is down", () => {
     render(<DriveScreen send={vi.fn()} status="closed" state={state} refused={null} maxV={0.3} maxW={1.5} />);
     expect(screen.getByText(/fake devices/i)).toBeInTheDocument();
@@ -2245,6 +2322,11 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
         {state && <span className={`pill ${state.lease_alive ? "ok" : ""}`}>{state.lease_alive ? "Driving" : "Idle"}</span>}
         {state && <span className="pill">{state.battery.volts.toFixed(1)} V</span>}
         {state?.stop_file && <span className="pill bad">STOP file</span>}
+        {state && (
+          <span className={`pill ${state.fake ? "muted" : state.estop ? "bad" : "ok"}`}>
+            {state.fake ? "E-stop: no sensor" : state.estop ? "E-stop pressed" : "E-stop clear"}
+          </span>
+        )}
       </header>
 
       <Joystick onMove={(x, y) => controller.hold(x, y, performance.now())} onRelease={() => controller.release()} />
@@ -2317,6 +2399,7 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.4 system
 .pill.ok { border-color: var(--ok); color: var(--ok); }
 .pill.warn { border-color: var(--warn); color: var(--warn); }
 .pill.bad { border-color: var(--bad); color: var(--bad); }
+.pill.muted { opacity: 0.5; border-style: dashed; }
 .joystick { border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; touch-action: none; user-select: none; }
 .knob { width: 30%; height: 30%; border-radius: 50%; background: var(--fg); opacity: 0.8; }
 .speed { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted); }
