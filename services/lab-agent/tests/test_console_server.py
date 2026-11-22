@@ -218,6 +218,28 @@ def test_a_dead_watchdog_refuses_drive_and_heartbeat(drive_rig):
     assert r.wheels.speeds == (0.0, 0.0)
 
 
+def test_a_dead_watchdog_stops_a_moving_robot_on_the_next_message(drive_rig):
+    r, session, app = lifespan_app(drive_rig)
+    real_tick, dying = session.tick, [False]
+
+    def tick():
+        if dying[0]:
+            raise asyncio.CancelledError
+        return real_tick()
+
+    session.tick = tick
+    with TestClient(app) as client, client.websocket_connect("/ws") as ws:
+        hello(ws)
+        ws.send_json({"type": "drive", "v": 0.1, "w": 0.0, "seq": 1})
+        recv(ws, "state", lambda m: m["moving"])
+        dying[0] = True
+        time.sleep(0.2)  # the watchdog ends while the wheels are turning
+        assert r.wheels.speeds != (0.0, 0.0)
+        ws.send_json({"type": "heartbeat", "seq": 2})
+        assert recv(ws, "refused")["rule"] == "watchdog"
+        assert r.wheels.speeds == (0.0, 0.0)
+
+
 def test_a_new_driver_starts_from_rest(rig):
     client, wheels = rig
     with client.websocket_connect("/ws") as a, client.websocket_connect("/ws") as b:
@@ -350,8 +372,9 @@ def test_a_failing_run_is_ended_failed(drive_rig, monkeypatch):
 
 
 def test_real_uvicorn_serves_the_websocket(drive_rig):
-    uvicorn = pytest.importorskip("uvicorn")
-    ws_sync = pytest.importorskip("websockets.sync.client")
+    import uvicorn
+    import websockets.sync.client as ws_sync  # no importorskip: losing [standard] must fail
+
     r = drive_rig(time.monotonic)
     session = DriveSession(r.runner, r.lease)
     app = create_app(r.runner, session, FakeTelemetry(), TOKEN, state_period_s=0.05)

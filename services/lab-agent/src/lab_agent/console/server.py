@@ -170,6 +170,8 @@ def create_app(
                     continue  # malformed or binary input is ignored; the lease lapses on its own
                 if isinstance(msg, DriveMsg | Heartbeat):
                     if watchdog_dead():
+                        if session.moving:
+                            session.stop(actor="system")  # nothing else will stop it now
                         await refuse("watchdog", "the safety watchdog is not running")
                         continue
                     granted, changed = driver.claim(me)
@@ -248,7 +250,7 @@ def serve(runner: Runner, experiment: str, *, host: str, port: int, static_dir: 
         )
     status = "completed"
     try:
-        uvicorn.run(app, host=host, port=port, log_level="warning")
+        uvicorn.run(app, host=host, port=port, log_level="warning", lifespan="on")
     except KeyboardInterrupt:
         pass
     except SystemExit as e:

@@ -124,7 +124,7 @@ card and queued commands. Each comes with the phase that makes it possible.
 
 - Gate: the lease interlock and speed caps get tests like every other rule, including tests that
   show they can fail (a drive with an expired lease is refused; a 0.5 m/s request is refused).
-- Watchdog: a test that stops heartbeats and checks a logged stop within 300 ms, on fake devices.
+- Watchdog: a test that stops heartbeats and checks a logged stop within the lease plus the watchdog period (about 350 ms), on fake devices.
 - Console: protocol tests against the server (token required, drive goes through the runner,
   refusals reach the browser).
 - App: component tests for each screen against recorded state messages, and a browser smoke
