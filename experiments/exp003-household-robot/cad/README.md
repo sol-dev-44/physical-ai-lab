@@ -32,7 +32,9 @@ reach it.
 3. **List every way to mount it**, with what each needs and what it blocks, and pick one with
    reasons. Say the choice and the alternatives when proposing the part.
 4. **For each fastener:** thread size, hole depth, screws on hand (`[screws]`), and room for the
-   driver to reach the head.
+   driver to reach the head. Size bolt-and-nut joints for about three threads in the nut, not the
+   tip through it: on 2026-11-21 M4 x 12 stood well proud on the caster cup, and proud tips foul
+   whatever sits above.
 5. **Never ask the owner to measure what the sources already give.** Extract it from the docs
    here, a vendor CAD model, a related part's CAD (the SO-101 holders gave the screw depth), a
    datasheet or a quick search first. Once a model has matched the caliper checks, trust it for
