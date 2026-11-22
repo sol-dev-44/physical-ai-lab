@@ -43,8 +43,13 @@ def _wheels() -> Wheels:
 
 
 def build(lease: DriveLease | None = None, wheels: Wheels | None = None) -> Registry:
-    lease = lease or DriveLease(ttl_s=LEASE_S)
-    wheels = wheels or _wheels()
+    """Register the wheel tools.
+
+    A lease created inside build() is never renewed, so base.drive is always refused with it.
+    Callers that drive (the console) must pass their own lease.
+    """
+    lease = lease if lease is not None else DriveLease(ttl_s=LEASE_S)
+    wheels = wheels if wheels is not None else _wheels()
     reg = Registry()
 
     def drive(args: BaseModel) -> None:
