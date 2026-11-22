@@ -1,3 +1,4 @@
+import pytest
 from lab_agent.interlocks import LeaseRequired
 from lab_agent.lease import DriveLease
 from lab_agent.registry import Tool
@@ -27,6 +28,7 @@ def test_lease_lives_for_its_ttl_after_each_renewal():
 def test_cancel_ends_the_lease_at_once():
     lease = DriveLease(ttl_s=0.3, clock=Clock())
     lease.renew()
+    assert lease.alive()
     lease.cancel()
     assert not lease.alive()
 
@@ -43,3 +45,18 @@ def test_interlock_refuses_guarded_tools_without_a_live_lease():
     assert rule.check(drive, None) is None
     c.t += 1.0
     assert rule.check(drive, None) is not None
+
+
+def test_lease_is_dead_at_exactly_its_ttl():
+    c = Clock()
+    lease = DriveLease(ttl_s=0.25, clock=c)
+    start = c.t
+    lease.renew()
+    c.t = start + 0.25
+    assert not lease.alive()
+
+
+@pytest.mark.parametrize("ttl", [float("inf"), float("nan"), 0, -1.0, 5.0])
+def test_lease_rejects_bad_ttl(ttl):
+    with pytest.raises(ValueError):
+        DriveLease(ttl_s=ttl)

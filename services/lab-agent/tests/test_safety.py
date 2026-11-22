@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from lab_agent.registry import HALT, Registry, Tool
 from lab_agent.safety import Request, SafetyGate
 from pydantic import BaseModel, ConfigDict
@@ -92,3 +93,46 @@ def test_halt_tools_still_validate_their_args(tmp_path):
     g = _halt_gate(tmp_path)
     d = g.check(Request("base.stop", {"speed": 1}, "system"))
     assert not d.allow and d.rule == "args"
+
+
+def test_halt_tools_pass_for_remote_automated_requests(tmp_path):
+    g = _halt_gate(tmp_path)
+    assert g.check(Request("base.stop", {}, "web", remote=True, automated=True)).allow
+
+
+def test_halt_branch_sits_before_the_rate_limit(tmp_path):
+    reg = Registry()
+    reg.add(Tool("base.stop", "stop", lambda _a: None, tags=frozenset({HALT})))
+    reg.add(Tool("base.drive", "drive", lambda _a: None, min_interval_s=5.0))
+    g = SafetyGate(reg, stop_file=tmp_path / "STOP", clock=lambda: 0.0)
+    g.record_sent("base.drive")
+    g.record_sent("base.stop")
+    assert g.check(Request("base.drive", {}, "human")).rule == "rate_limit"
+    assert g.check(Request("base.stop", {}, "system")).allow
+
+
+def test_halt_reason_notes_the_stop_file(tmp_path):
+    g = _halt_gate(tmp_path)
+    assert g.check(Request("base.stop", {}, "system")).reason == "stop commands always pass"
+    (tmp_path / "STOP").touch()
+    d = g.check(Request("base.stop", {}, "system"))
+    assert d.reason == "stop commands always pass (STOP file present)"
+
+
+def test_registry_rejects_non_frozenset_tags():
+    with pytest.raises(TypeError):
+        Registry().add(Tool("x.go", "go", lambda _a: None, tags="asphalt"))  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    "opts",
+    [
+        {"requires_confirmation": True},
+        {"manual_only": True},
+        {"min_interval_s": 1.0},
+        {"duration_arg": "seconds", "max_duration_s": 1.0},
+    ],
+)
+def test_registry_rejects_halt_tools_with_other_gate_rules(opts):
+    with pytest.raises(ValueError, match="halt tool cannot be"):
+        Registry().add(Tool("base.stop", "stop", lambda _a: None, tags=frozenset({HALT}), **opts))

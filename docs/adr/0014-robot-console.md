@@ -16,8 +16,8 @@ and forbids inbound ports for that path. Live driving cannot wait for a 2 s queu
 - Driving is a lease: a drive command is good for 300 ms and heartbeats renew it. A
   `drive_lease` interlock refuses drive commands without a live lease, and a watchdog stops the
   wheels when it lapses.
-- Tools tagged `halt` (stopping the wheels) pass the STOP file, interlocks and rate limits, so a
-  stop is never refused. Their arguments are still validated and the call is still logged.
+- Tools tagged `halt` (stopping the wheels) skip every gate rule except argument validation, so a
+  valid stop is never refused. Their arguments are still validated and the call is still logged.
 - The live camera view is allowed on the home network for debugging. Frames stay in memory and
   are never written, synced or posted (ADR 0007).
 

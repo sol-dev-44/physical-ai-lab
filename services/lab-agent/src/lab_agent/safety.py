@@ -57,7 +57,8 @@ class SafetyGate:
                 args = tool.args_model.model_validate(req.raw_args)
             except ValidationError as e:
                 return Decision(False, "args", e.errors(include_url=False)[0]["msg"])
-            return Decision(True, "halt", "stop commands always pass", args=args)
+            note = " (STOP file present)" if self.stop_file.exists() else ""
+            return Decision(True, "halt", "stop commands always pass" + note, args=args)
         if self.stop_file.exists():
             return Decision(False, "stop_file", f"{self.stop_file} exists")
         if tool is None:
