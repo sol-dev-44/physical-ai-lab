@@ -16,7 +16,15 @@ from typing import Any, Protocol
 
 class Telemetry(Protocol):
     def read(self) -> dict[str, Any]:
-        """Every State field except type, t, lease_alive, moving and stop_file."""
+        """Every State field except type, t, lease_alive, moving and stop_file.
+
+        Contract for every implementation:
+        - Every number is finite; None only on fields the protocol makes nullable.
+        - Called on the event loop about 10 times a second, so it must not block.
+        - Must not raise: report a missing sensor as None, not an exception.
+        - Must not return type, t, lease_alive, moving or stop_file (the server owns those).
+        - Only real sensor sources may set fake to False.
+        """
         ...
 
 

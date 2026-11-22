@@ -10,27 +10,30 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
+Finite = Annotated[float, Field(allow_inf_nan=False)]
+Seq = Annotated[int, Field(ge=0, le=2**53 - 1)]  # exactly representable in JS numbers
+
 
 class _Msg(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", strict=True)
 
 
 # Browser to robot
 class Hello(_Msg):
     type: Literal["hello"]
-    token: Annotated[str, Field(min_length=1)]
+    token: Annotated[str, Field(min_length=1, max_length=256)]
 
 
 class DriveMsg(_Msg):
     type: Literal["drive"]
-    v: float
-    w: float
-    seq: Annotated[int, Field(ge=0)]
+    v: Finite
+    w: Finite
+    seq: Seq
 
 
 class Heartbeat(_Msg):
     type: Literal["heartbeat"]
-    seq: Annotated[int, Field(ge=0)]
+    seq: Seq
 
 
 class StopMsg(_Msg):
@@ -43,17 +46,17 @@ client_message: TypeAdapter[ClientMessage] = TypeAdapter(ClientMessage)
 
 # Robot to browser
 class Battery(_Msg):
-    volts: float
-    amps: float
-    soc_pct: float
-    runtime_min: float
+    volts: Finite
+    amps: Finite
+    soc_pct: Finite
+    runtime_min: Finite
 
 
 class Servo(_Msg):
     id: int
-    temp_c: float
-    load_pct: float
-    volts: float
+    temp_c: Finite
+    load_pct: Finite
+    volts: Finite
 
 
 class Tof(_Msg):
@@ -64,28 +67,28 @@ class Tof(_Msg):
 
 class Controller(_Msg):
     connected: bool
-    battery_pct: float | None = None
+    battery_pct: Finite | None = None
 
 
 class Welcome(_Msg):
     type: Literal["welcome"]
     run_id: str
-    max_v: float
-    max_w: float
-    lease_s: float
+    max_v: Finite
+    max_w: Finite
+    lease_s: Finite
 
 
 class State(_Msg):
     type: Literal["state"]
-    t: float
+    t: Finite
     fake: bool
     battery: Battery
     servos: list[Servo]
     tof: Tof
     cliff_mm: list[int | None]
     bumpers: list[bool]
-    wifi_dbm: float | None
-    pi_temp_c: float | None
+    wifi_dbm: Finite | None
+    pi_temp_c: Finite | None
     lease_alive: bool
     moving: bool
     estop: bool
