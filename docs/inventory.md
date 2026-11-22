@@ -173,6 +173,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-21 | Caster cup v2 light, test piece (22 min 30 s, left nozzle) | PETG 5.43 g (slicer); reuses the 4 M4 screws and nuts |
 | 2026-11-21 | Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill) | PETG 223.19 g (slicer) |
 | 2026-11-21 | Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill) | PETG 11.98 g (slicer); to fit: 4 x M4 x 8 and nuts (caster; M4 x 12 stood too proud), 4 x M3 x 20 and nuts (cup to plate) |
+| 2026-11-21 | Chassis assembled: cradles to plate, caster to cup, cup to plate | 4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 | 2026-11-21 | Toy truck chassis, 3 axles, 2 bins | PLA Jade White 414.74 g (slicer) |

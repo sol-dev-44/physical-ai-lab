@@ -42,12 +42,16 @@ reach it.
    a thread's feel), say why the source cannot settle it, and check it can be taken with the tool
    on hand (caliper jaws reach about 40 mm; flanges and bosses block jaws), with a drawing of where
    the jaws or depth rod go.
-6. **Ask whatever is still open in one go**, before modelling. Do not model around a guess. A
+6. **Check the assembled stack.** For a part that sits on another, write down which face it sits
+   on and add the heights up to the floor in a test (plate top + cup + caster = caster height). On
+   2026-11-21 the caster cup was sized from the plate's underside while it sits on the top face,
+   and the robot leaned back 1.5 degrees.
+7. **Ask whatever is still open in one go**, before modelling. Do not model around a guess. A
    test print checks a fit; it never stands in for a number nobody measured. If no source gives
    a dimension and the owner can measure it in a minute, ask. The miss behind this rule
    (2026-11-21): the caster cup was printed knowing the fork's sweep was unpublished, "so the
    print is the test", and the fork hit the walls. One caliper reading would have caught it.
-7. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
+8. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
    `servo.toml` and the docs, so the next part starts from facts.
 
 ## Gotchas and hints (for agents)

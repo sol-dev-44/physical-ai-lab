@@ -582,6 +582,11 @@
     "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 8 and nuts (caster; M4 x 12 stood too proud), 4 x M3 x 20 and nuts (cup to plate)"
    },
    {
+    "date": "2026-11-21",
+    "what": "Chassis assembled: cradles to plate, caster to cup, cup to plate",
+    "used": "4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup)"
+   },
+   {
     "date": "2026-11-19",
     "what": "Toy truck joint coupon (home project, files in ~/toys/garbage-truck)",
     "used": "PLA Jade White 35.3 g (slicer)"
@@ -1007,6 +1012,10 @@
   {
    "date": "2026-11-21",
    "text": "robot console step 1 built on fake wheels (CONTROL_APP.md, ADR 0014): the robot's agent serves a phone app on the home network; hold-to-drive with a 300 ms lease, a watchdog stop, one driver at a time, pairing by link, fake sensor readings marked \"no sensor\". Each task had a spec and a code review; the reviews found and fixed a dozen ways the wheels could have been left turning (refused, dropped or failed commands, reconnects, a second phone) before any real wheel."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "chassis assembled. Both cradles bolted to the plate (4 x M3 x 12 and nuts; the two servos point opposite ways, as identical cradles must), the caster bolted into the full cup (M4 x 12 stood well proud of the nuts, so M4 x 8) and the cup bolted to the plate. On the floor the robot leaned back toward the caster: the cup's cavity had been sized as if the cup started at the plate's underside, but it sits on the top face, so the plate's 4 mm was counted twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate) with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow. The printer is busy with a toy garbage truck."
   }
  ],
  "design": {

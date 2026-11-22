@@ -9,11 +9,12 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-21):** design settled; most parts arrived 2026-11-20, the rest due 2026-11-21
-(see [docs/inventory.md](../../docs/inventory.md)). Both wheels are complete: hubs, servo cradles
-and TPU tires are printed and fitted. The base plate's plan layout is decided (widest stance).
-The caster is measured, which fixes the plate's height. Next: model the base plate; check the
-power parts on arrival.
+**Status (2026-11-21):** the chassis is assembled: base plate, both wheel servos in their cradles,
+TPU-tired wheels and the rear caster. It leans back about 1.5 degrees because the first full
+caster cup is 4 mm too tall (a design error, now fixed in the model); the corrected cup prints
+2026-11-22. The robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is
+built and runs on simulated wheels. Next: reprint the cup, check the power parts, then the power
+harness and the Pi (see [docs/inventory.md](../../docs/inventory.md)).
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
@@ -238,3 +239,11 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   one driver at a time, pairing by link, fake sensor readings marked "no sensor". Each task had a
   spec and a code review; the reviews found and fixed a dozen ways the wheels could have been left
   turning (refused, dropped or failed commands, reconnects, a second phone) before any real wheel.
+- 2026-11-21: chassis assembled. Both cradles bolted to the plate (4 x M3 x 12 and nuts; the
+  two servos point opposite ways, as identical cradles must), the caster bolted into the full
+  cup (M4 x 12 stood well proud of the nuts, so M4 x 8) and the cup bolted to the plate. On the
+  floor the robot leaned back toward the caster: the cup's cavity had been sized as if the cup
+  started at the plate's underside, but it sits on the top face, so the plate's 4 mm was counted
+  twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate)
+  with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow.
+  The printer is busy with a toy garbage truck.
