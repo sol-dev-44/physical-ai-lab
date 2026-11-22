@@ -86,4 +86,25 @@ describe("DriveScreen", () => {
     fireEvent.pointerMove(screen.getByRole("slider", { name: /joystick/i }), { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
     expect(send).not.toHaveBeenCalled();
   });
+
+  it("the stop button releases a held stick, and the finger must lift and press again", () => {
+    vi.useFakeTimers();
+    try {
+      const send = vi.fn();
+      render(<DriveScreen send={send} status="open" state={state} {...props} />);
+      const pad = () => screen.getByRole("slider", { name: /joystick/i });
+      fireEvent.pointerDown(pad(), { pointerId: 1, button: 0, buttons: 1, clientX: 100, clientY: 0 });
+      send.mockClear();
+
+      fireEvent.click(screen.getByRole("button", { name: /stop/i }));
+      expect(send.mock.calls).toEqual([[{ type: "stop" }]]); // one stop, not two
+
+      send.mockClear();
+      fireEvent.pointerMove(pad(), { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
+      vi.advanceTimersByTime(500);
+      expect(send).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

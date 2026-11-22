@@ -66,12 +66,14 @@ export class DriveController {
     }
   }
 
-  release(): void {
+  /** Ends the drag. Returns true if it sent a stop (nothing was sent if nothing was held). */
+  release(): boolean {
     this.pending = null;
-    if (!this.held) return;
+    if (!this.held) return false;
     this.held = false;
     this.last = null;
     this.send({ type: "stop" });
+    return true;
   }
 
   /** Replace both limits (the welcome message's). When held, the next tick sends the new target. */

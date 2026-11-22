@@ -39,6 +39,7 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
   }, [controller, status]);
 
   // The joystick is re-created for every new connection, so a reconnect needs a fresh press.
+  // The Stop button bumps it too, so a finger still on the stick cannot resume driving.
   const [connection, setConnection] = useState(0);
   const [seen, setSeen] = useState(status);
   if (status !== seen) {
@@ -95,7 +96,9 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
         type="button"
         className="stop"
         onClick={() => {
-          send({ type: "stop" });
+          // Stop must always reach the robot: release() sends it if a stick was held.
+          if (!controller.release()) send({ type: "stop" });
+          setConnection((n) => n + 1);
         }}
       >
         Stop

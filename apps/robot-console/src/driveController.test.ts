@@ -168,4 +168,12 @@ describe("DriveController", () => {
     c.tick(100); // so a heartbeat, not a drive
     expect(types()).toEqual(["drive", "heartbeat"]);
   });
+
+  it("release reports whether it sent a stop", () => {
+    const { c } = rig();
+    expect(c.release()).toBe(false);
+    c.hold(0, 1, 0);
+    expect(c.release()).toBe(true);
+    expect(c.release()).toBe(false);
+  });
 });
