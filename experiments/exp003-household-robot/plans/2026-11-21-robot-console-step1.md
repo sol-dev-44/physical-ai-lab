@@ -1148,6 +1148,11 @@ class DriveSession:
         return result
 ```
 
+> **Done 2026-11-21, then hardened over two reviews (647a71a and the commit after it):** a drive
+> dropped by the time dedupe is kept and sent by `tick()`; (0, 0) and near-zero halt at once; a
+> drive refused or failed while moving halts; `tick()` halts on the STOP file; a failed stop stays
+> owed and is retried. The code and tests in the repo, not this listing, are the reference.
+
 - [ ] **Step 5: Run the tests**
 
 Run: `uv run pytest services/lab-agent/tests/test_console_drive.py -v`
