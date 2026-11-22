@@ -135,7 +135,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Caster cup v1 (test piece) | PETG | Printed 2026-11-21 (24 min 47 s, 8.3 g), first print from the AMS on the left nozzle. Plate and holes fit; the fork hit the walls |
 | Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. The full-strength cup prints with the base plate |
-| Base plate | PETG | Printing 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; `cad/BASE_PLATE.md`, "The plate"). Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
+| Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; `cad/BASE_PLATE.md`, "The plate"); fit check next. Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
 
@@ -231,3 +231,5 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   the axle to keep the cup on the plate.
 - 2026-11-21: battery straps measured (21.5 mm wide, 27.5 mm at the buckle); the strap slots are
   sized to the strap, threaded free end first. The plate is ready to print.
+- 2026-11-21: base plate printed (4 h 56 min, 223 g PETG). Next: fit the cradles, the battery and
+  the caster cup (still to print at full strength).

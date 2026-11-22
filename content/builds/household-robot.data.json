@@ -407,7 +407,7 @@
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printing 2026-11-21 (4 h 56 min)"
+   "notes": "Printed 2026-11-21 (4 h 56 min, 223 g); fit check next"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -567,7 +567,7 @@
    },
    {
     "date": "2026-11-21",
-    "what": "Base plate (4 h 56 min, left nozzle, 4 walls, 30% infill)",
+    "what": "Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill)",
     "used": "PETG 223.19 g (slicer)"
    },
    {
@@ -983,6 +983,10 @@
   {
    "date": "2026-11-21",
    "text": "battery straps measured (21.5 mm wide, 27.5 mm at the buckle); the strap slots are sized to the strap, threaded free end first. The plate is ready to print."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "base plate printed (4 h 56 min, 223 g PETG). Next: fit the cradles, the battery and the caster cup (still to print at full strength)."
   }
  ],
  "design": {
