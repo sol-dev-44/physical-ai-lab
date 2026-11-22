@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from lab_agent.registry import Registry, Tool
+from lab_agent.registry import HALT, Registry, Tool
 from lab_agent.safety import Request, SafetyGate
 from pydantic import BaseModel, ConfigDict
 
@@ -55,3 +55,40 @@ def test_confirmation_and_manual_only(tmp_path):
     assert g.check(Request("x.go", {}, "human")).rule == "requires_confirmation"
     assert g.check(Request("x.go", {}, "human", confirmed=True, remote=True)).rule == "manual_only"
     assert g.check(Request("x.go", {}, "human", confirmed=True)).allow
+
+
+class _DenyAll:
+    name = "deny_all"
+
+    def check(self, _tool, _args):
+        return "always"
+
+
+def _halt_gate(tmp_path):
+    reg = Registry()
+    reg.add(Tool("base.stop", "stop", lambda _a: None, tags=frozenset({HALT})))
+    reg.add(Tool("base.drive", "drive", lambda _a: None))
+    reg.add_interlock(_DenyAll())
+    return SafetyGate(reg, stop_file=tmp_path / "STOP")
+
+
+def test_halt_tools_pass_the_stop_file_and_interlocks(tmp_path):
+    g = _halt_gate(tmp_path)
+    (tmp_path / "STOP").touch()
+    d = g.check(Request("base.stop", {}, "system"))
+    assert d.allow and d.rule == "halt"
+    other = g.check(Request("base.drive", {}, "human"))
+    assert not other.allow and other.rule == "stop_file"
+
+
+def test_halt_tools_pass_interlocks_without_a_stop_file(tmp_path):
+    g = _halt_gate(tmp_path)
+    assert g.check(Request("base.stop", {}, "system")).allow
+    d = g.check(Request("base.drive", {}, "human"))
+    assert not d.allow and d.rule == "interlock"
+
+
+def test_halt_tools_still_validate_their_args(tmp_path):
+    g = _halt_gate(tmp_path)
+    d = g.check(Request("base.stop", {"speed": 1}, "system"))
+    assert not d.allow and d.rule == "args"

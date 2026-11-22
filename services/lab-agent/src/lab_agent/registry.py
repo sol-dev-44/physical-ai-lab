@@ -13,6 +13,9 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
+#: Tag for tools that stop motion. The gate never refuses them (see safety.py).
+HALT = "halt"
+
 
 class NoArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
