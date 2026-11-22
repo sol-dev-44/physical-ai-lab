@@ -74,6 +74,10 @@ reach it.
 - **Quick line drawings without matplotlib:** export an SVG
   (`cq.exporters.export(part, "x.svg", opt={"projectionDir": (0, 0, 1), ...})`) and turn it into a
   PNG with `qlmanage -t -s 1100 -o . x.svg`.
+- **The build page joins printed parts to usage-log lines by name** (the printed item without
+  "exp003 " and ", PETG", as a substring of the log line). A name that is contained in another
+  part's log line ("caster cup v2" inside "caster cup v2 light") double counts its grams and fails
+  the web test; give each print a name no other line contains.
 - **A new row in the inventory's exp003 order table** needs its number added to `BOM_GROUPS` in
   `export_site.py`, or the export stops and names the row.
 - **Probe the vendored model first:** list every cylinder and planar face (axis, diameter, extent)
