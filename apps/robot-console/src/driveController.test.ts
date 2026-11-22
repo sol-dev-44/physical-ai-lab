@@ -140,4 +140,32 @@ describe("DriveController", () => {
     c.tick(200);
     expect(types()).toEqual(["drive", "stop"]);
   });
+
+  it("treats a non-finite position mid-drive as the centre, so it stops", () => {
+    const { c, sent } = rig();
+    c.hold(0, 1, 0);
+    c.hold(NaN, 1, 200);
+    expect(sent[1]).toMatchObject({ type: "drive", v: 0, w: 0 });
+    c.hold(0, 1, 400);
+    c.hold(0, Infinity, 600);
+    expect(sent[3]).toMatchObject({ type: "drive", v: 0, w: 0 });
+  });
+
+  it("setLimits ignores non-finite or negative values", () => {
+    const { c, sent } = rig();
+    c.setLimits({ maxW: NaN, speedLimit: -1 });
+    c.hold(1, 1, 0); // clamps to (0.707, 0.707) of the original 0.2 and 1.5
+    expect(sent[0]).toMatchObject({ v: 0.141, w: -1.061 });
+    c.setLimits({ maxW: Infinity, speedLimit: 0.1 });
+    c.hold(0, 1, 200);
+    expect(sent[1]).toMatchObject({ v: 0.1, w: 0 });
+  });
+
+  it("does not re-send an unchanged position inside the 100 ms window", () => {
+    const { c, types } = rig();
+    c.hold(0, 1, 0);
+    c.hold(0, 1, 40); // same as sent, though too soon
+    c.tick(100); // so a heartbeat, not a drive
+    expect(types()).toEqual(["drive", "heartbeat"]);
+  });
 });
