@@ -32,7 +32,9 @@ reach it.
 3. **List every way to mount it**, with what each needs and what it blocks, and pick one with
    reasons. Say the choice and the alternatives when proposing the part.
 4. **For each fastener:** thread size, hole depth, screws on hand (`[screws]`), and room for the
-   driver to reach the head.
+   driver to reach the head. Size bolt-and-nut joints for about three threads in the nut, not the
+   tip through it: on 2026-11-21 M4 x 12 stood well proud on the caster cup, and proud tips foul
+   whatever sits above.
 5. **Never ask the owner to measure what the sources already give.** Extract it from the docs
    here, a vendor CAD model, a related part's CAD (the SO-101 holders gave the screw depth), a
    datasheet or a quick search first. Once a model has matched the caliper checks, trust it for
@@ -40,12 +42,16 @@ reach it.
    a thread's feel), say why the source cannot settle it, and check it can be taken with the tool
    on hand (caliper jaws reach about 40 mm; flanges and bosses block jaws), with a drawing of where
    the jaws or depth rod go.
-6. **Ask whatever is still open in one go**, before modelling. Do not model around a guess. A
+6. **Check the assembled stack.** For a part that sits on another, write down which face it sits
+   on and add the heights up to the floor in a test (plate top + cup + caster = caster height). On
+   2026-11-21 the caster cup was sized from the plate's underside while it sits on the top face,
+   and the robot leaned back 1.5 degrees.
+7. **Ask whatever is still open in one go**, before modelling. Do not model around a guess. A
    test print checks a fit; it never stands in for a number nobody measured. If no source gives
    a dimension and the owner can measure it in a minute, ask. The miss behind this rule
    (2026-11-21): the caster cup was printed knowing the fork's sweep was unpublished, "so the
    print is the test", and the fork hit the walls. One caliper reading would have caught it.
-7. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
+8. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
    `servo.toml` and the docs, so the next part starts from facts.
 
 ## Gotchas and hints (for agents)
@@ -74,6 +80,10 @@ reach it.
 - **Quick line drawings without matplotlib:** export an SVG
   (`cq.exporters.export(part, "x.svg", opt={"projectionDir": (0, 0, 1), ...})`) and turn it into a
   PNG with `qlmanage -t -s 1100 -o . x.svg`.
+- **The build page joins printed parts to usage-log lines by name** (the printed item without
+  "exp003 " and ", PETG", as a substring of the log line). A name that is contained in another
+  part's log line ("caster cup v2" inside "caster cup v2 light") double counts its grams and fails
+  the web test; give each print a name no other line contains.
 - **A new row in the inventory's exp003 order table** needs its number added to `BOM_GROUPS` in
   `export_site.py`, or the export stops and names the row.
 - **Probe the vendored model first:** list every cylinder and planar face (axis, diameter, extent)
@@ -95,7 +105,7 @@ reach it.
 | Servo cradle | `out/servo_cradle.step` | Holds a wheel servo by its bottom holes. Cheeks hug the case; the lower cheek is the foot, with an M3 ear at each end. |
 | Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
 | Base plate | `out/base_plate.step` | 300 x 261.6 x 4 mm. Carries the cradles, the caster cup, the battery (fences and strap slots) and hole patterns for the electronics deck, bumper and sensors. See `BASE_PLATE.md`. |
-| Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 12.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
+| Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 8.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`
 and the vendored STS3215 model in [vendor/](vendor/README.md).
@@ -166,12 +176,16 @@ Numbers are `CasterCup` and `derive_caster_cup` in `params.py`; heights come fro
 - Roof on the bed, open end up: no supports. Default 2 walls, 15% infill: about 25 minutes.
 - For a fit test print `out/caster_cup_test.step` (`CASTER_CUP_TEST`: 1.2 mm walls, 2 mm roof,
   34 mm centre hole): same cavity, holes and depth at half the plastic (5.4 g, 22 min).
-- Fit: put the caster's plate against the roof inside the cup, then 4 x M4 x 12 button head
-  from below through the caster and the roof, a nut on each on top (Mywish kit).
+- Fit: put the caster's plate against the roof inside the cup, then 4 x M4 x 8 button head
+  from below through the caster and the roof, a nut on each on top (Mywish kit). The nut should
+  turn at least 3 full turns before it is snug; M4 x 12 (first fit) stood well proud of the nuts.
 - Check: (1) the caster's plate drops in without forcing; (2) spin the caster all the way round
   by hand: the fork must not touch the walls (the fork's sweep is not published, so this is the
-  test, and v1 failed it); (3) the open end of the cup is the plate's underside, 40.4 mm off the floor: stand the
-  cup on its caster and the open rim should be 40.4 mm up.
+  test, and v1 failed it); (3) the open end of the cup sits on the plate's top face, 44.4 mm off
+  the floor: stand the cup on its caster and the open rim should be 44.4 mm up. (v1, v2 and the
+  first full cup had the rim at 40.4 mm, as if the cup started at the plate's underside; on the
+  plate that left the caster 4 mm high and the robot tipped nose up. Fixed 2026-11-21: the cavity
+  is the raised pocket less the plate's 4 mm.)
 
 | Result | Change |
 |---|---|

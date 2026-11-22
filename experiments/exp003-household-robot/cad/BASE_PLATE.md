@@ -58,7 +58,7 @@ line up with the plate's, and the caster's fork swings clear through the plate).
 |---|---|---|
 | Plate | 300 x 261.6 x 4 mm PETG, 10 mm corners, printed underside down | |
 | Servo cradles | Ear holes at (15.2, 107.25), (-40.2, 107.25), (-15.2, -107.25), (40.2, -107.25) | 4 x M3 x 12 button head down through ear and plate, nut under |
-| Caster cup | Cutout the shape of the cup's cavity at 158 mm behind the axle; 4 holes at 45 degrees, 33 mm out | 4 x M3 x 20 up from under the plate through the cup's bosses, nut on the cup's roof |
+| Caster cup | Cutout the shape of the cup's cavity at 158 mm behind the axle; 4 holes at 45 degrees, 33 mm out | 4 x M3 x 16 up from under the plate through the cup's bosses, nut on the cup's roof |
 | Battery | 3 mm corner fences round 154 x 68 mm (1 mm clearance), centred 40 mm behind the axle | Two hook-and-loop straps through four slots, front and back of the battery |
 | Electronics deck | Grid of M3 holes on 20 mm centres, 95 to 175 mm behind the axle, clear of the caster | The deck (not designed yet) copies the grid |
 | Bumper | Row of M3 holes 100 mm ahead of the axle, 30 mm apart | The bumper copies the row |

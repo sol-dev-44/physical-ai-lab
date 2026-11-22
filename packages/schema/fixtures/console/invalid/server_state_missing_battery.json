@@ -1,0 +1,43 @@
+{
+  "type": "state",
+  "t": 1795290000.5,
+  "fake": true,
+  "servos": [
+    {
+      "id": 1,
+      "temp_c": 31.0,
+      "load_pct": 4.0,
+      "volts": 12.1
+    },
+    {
+      "id": 2,
+      "temp_c": 30.5,
+      "load_pct": 3.5,
+      "volts": 12.1
+    }
+  ],
+  "tof": {
+    "left_mm": 820,
+    "center_mm": 1200,
+    "right_mm": null
+  },
+  "cliff_mm": [
+    42,
+    41,
+    43
+  ],
+  "bumpers": [
+    false,
+    false
+  ],
+  "wifi_dbm": -54.0,
+  "pi_temp_c": 48.2,
+  "lease_alive": false,
+  "moving": false,
+  "estop": false,
+  "stop_file": false,
+  "controller": {
+    "connected": false,
+    "battery_pct": null
+  }
+}

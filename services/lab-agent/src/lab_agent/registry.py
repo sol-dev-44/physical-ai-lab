@@ -13,6 +13,10 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
+#: Tag for tools that only stop motion: idempotent, never start anything. The gate skips every
+#: rule but argument validation for them (see safety.py).
+HALT = "halt"
+
 
 class NoArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -63,6 +67,19 @@ class Registry:
             raise ValueError(f"tool {tool.name} already registered")
         if tool.duration_arg and tool.max_duration_s is None:
             raise ValueError(f"{tool.name}: duration_arg needs max_duration_s")
+        if not isinstance(tool.tags, frozenset):
+            raise TypeError(
+                f"{tool.name}: tags must be a frozenset, not {type(tool.tags).__name__}"
+            )
+        if HALT in tool.tags and (
+            tool.requires_confirmation
+            or tool.manual_only
+            or tool.min_interval_s
+            or tool.duration_arg
+        ):
+            raise ValueError(
+                f"{tool.name}: a halt tool cannot be confirmed, manual-only, rate-limited or timed"
+            )
         self._tools[tool.name] = tool
         return tool
 

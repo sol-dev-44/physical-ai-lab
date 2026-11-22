@@ -34,17 +34,25 @@ def test_cavity_clears_the_measured_fork_sweep():
     assert d.inner_mm[1] / 2 < caster.fork_radius_mm < d.sweep_radius_mm
 
 
-def test_cup_depth_is_the_raised_pocket_so_its_open_end_is_the_plate_underside():
+def test_cup_depth_is_the_raised_pocket_less_the_plate_it_sits_on():
     d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
-    assert d.depth_mm == pytest.approx(HEIGHTS.caster_mount_mm)
-    assert d.height_mm == pytest.approx(9.6 + 3.0)
+    assert d.depth_mm == pytest.approx(HEIGHTS.caster_mount_mm - 4.0)
+    assert d.height_mm == pytest.approx(5.6 + 3.0)
+
+
+def test_cup_on_the_plate_puts_the_caster_at_its_measured_height():
+    """The stack the owner builds: plate top, cup cavity, then the caster's own height to the
+    floor must close exactly, or the robot tips."""
+    d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
+    caster_face = HEIGHTS.plate_top_mm + d.depth_mm
+    assert caster_face == pytest.approx(Caster().height_mm)
 
 
 def test_screws_match_the_caster_hole_centres_and_come_from_the_kit():
     d = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
     got = sorted((round(x, 3), round(y, 3)) for x, y in d.holes)
     assert got == sorted((x, y) for x in (-17.875, 17.875) for y in (-13.875, 13.875))
-    assert d.screw == "M4 x 12 button head and nut"
+    assert d.screw == "M4 x 8 button head and nut"
 
 
 def test_a_centre_hole_that_reaches_the_screw_holes_is_refused():
@@ -57,4 +65,4 @@ def test_light_fit_test_version_keeps_the_fit_and_the_screw():
     full = derive_caster_cup(Caster(), HEIGHTS, CasterCup())
     assert d.inner_mm == full.inner_mm and d.sweep_radius_mm == full.sweep_radius_mm
     assert d.depth_mm == full.depth_mm  # same height test
-    assert d.screw == "M4 x 12 button head and nut"
+    assert d.screw == "M4 x 8 button head and nut"

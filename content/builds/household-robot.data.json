@@ -404,10 +404,16 @@
    "notes": "Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired"
   },
   {
+   "item": "exp003 caster cup (final), PETG",
+   "qty": "1",
+   "status": "Spare",
+   "notes": "4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min)"
+  },
+  {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printing 2026-11-21 (4 h 56 min)"
+   "notes": "Printed 2026-11-21 (4 h 56 min, 223 g); fit check next"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -416,14 +422,14 @@
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 390.9,
+ "petg_used_g": 402.9,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "391 g",
-    "left": "about 609 g",
+    "used": "403 g",
+    "left": "about 597 g",
     "planned": "about 750 g est. (base plate 223 g sliced, cup, deck, shells, mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
@@ -440,9 +446,9 @@
    {
     "item": "PLA Basic Jade White (AMS A2)",
     "start": "1000 g",
-    "used": "35 g (toy truck coupon)",
-    "left": "about 965 g",
-    "planned": "about 480 g (toy truck: chassis, axles, bins 414 g slicer; cab window band about 65 g est.)",
+    "used": "about 450 g (toy truck: coupon 35 g; chassis, axles, bins 415 g)",
+    "left": "about 550 g",
+    "planned": "about 65 g est. (toy truck: cab window band)",
     "reorder": "One spool per colour is enough for now",
     "lead_time": "Bambu store about 1 week"
    },
@@ -567,8 +573,18 @@
    },
    {
     "date": "2026-11-21",
-    "what": "Base plate (4 h 56 min, left nozzle, 4 walls, 30% infill)",
+    "what": "Base plate (printed, 4 h 56 min, left nozzle, 4 walls, 30% infill)",
     "used": "PETG 223.19 g (slicer)"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Caster cup (final), full strength (33 min 13 s, left nozzle, 4 walls, 30% infill)",
+    "used": "PETG 11.98 g (slicer); to fit: 4 x M4 x 8 and nuts (caster; M4 x 12 stood too proud), 4 x M3 x 20 and nuts (cup to plate)"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Chassis assembled: cradles to plate, caster to cup, cup to plate",
+    "used": "4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup)"
    },
    {
     "date": "2026-11-19",
@@ -579,6 +595,11 @@
     "date": "2026-11-20",
     "what": "Toy truck wheels, 6 (blue tyres, yellow caps)",
     "used": "PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated)"
+   },
+   {
+    "date": "2026-11-21",
+    "what": "Toy truck chassis, 3 axles, 2 bins",
+    "used": "PLA Jade White 414.74 g (slicer)"
    }
   ]
  },
@@ -805,8 +826,8 @@
   {
    "track": "v1",
    "n": 0,
-   "phase": "Bench: Xbox controller drives two servos in wheel mode with a dead-man button; voice loop on the Mac",
-   "done_when": "Both work for 10 minutes"
+   "phase": "Bench: Xbox controller and the control app's Drive screen drive two servos in wheel mode with a dead-man (drive lease); voice loop on the Mac",
+   "done_when": "Both work for 10 minutes; releasing the button, closing the tab or dropping Wi-Fi stops the wheels"
   },
   {
    "track": "v1",
@@ -983,6 +1004,18 @@
   {
    "date": "2026-11-21",
    "text": "battery straps measured (21.5 mm wide, 27.5 mm at the buckle); the strap slots are sized to the strap, threaded free end first. The plate is ready to print."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "base plate printed (4 h 56 min, 223 g PETG). Next: fit the cradles, the battery and the caster cup (still to print at full strength)."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "robot console step 1 built on fake wheels (CONTROL_APP.md, ADR 0014): the robot's agent serves a phone app on the home network; hold-to-drive with a 300 ms lease, a watchdog stop, one driver at a time, pairing by link, fake sensor readings marked \"no sensor\". Each task had a spec and a code review; the reviews found and fixed a dozen ways the wheels could have been left turning (refused, dropped or failed commands, reconnects, a second phone) before any real wheel."
+  },
+  {
+   "date": "2026-11-21",
+   "text": "chassis assembled. Both cradles bolted to the plate (4 x M3 x 12 and nuts; the two servos point opposite ways, as identical cradles must), the caster bolted into the full cup (M4 x 12 stood well proud of the nuts, so M4 x 8) and the cup bolted to the plate. On the floor the robot leaned back toward the caster: the cup's cavity had been sized as if the cup started at the plate's underside, but it sits on the top face, so the plate's 4 mm was counted twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate) with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow. The printer is busy with a toy garbage truck."
   }
  ],
  "design": {

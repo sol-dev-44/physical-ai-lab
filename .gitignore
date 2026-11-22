@@ -3,6 +3,7 @@ node_modules/
 .next/
 out/
 dist/
+apps/robot-console/dist/
 target/
 .turbo/
 *.tsbuildinfo

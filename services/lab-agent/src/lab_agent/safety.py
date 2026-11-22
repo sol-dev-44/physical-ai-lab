@@ -4,6 +4,7 @@ Rules run in order; the first deny wins. Interlocks (world-state rules a tool se
 attaches, see interlocks.py) run after the request rules and before the rate limit.
 Each decision is logged as a safety.checked event, including the rule that decided
 it, so the gate itself can be evaluated from the logs.
+Tools tagged halt (stops) skip every rule but argument validation.
 
 This lives with the hardware, never on the website. It is a candidate for a
 Rust port once it guards the arms (see docs/adr/0004-rust-policy.md).
@@ -19,7 +20,7 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
-from .registry import Registry, Tool
+from .registry import HALT, Registry, Tool
 
 
 @dataclass(frozen=True)
@@ -49,9 +50,17 @@ class SafetyGate:
     _last_sent: dict[str, float] = field(default_factory=dict)
 
     def check(self, req: Request) -> Decision:
+        tool = self.registry.get(req.tool_name)
+        if tool is not None and HALT in tool.tags:
+            # A stop must never be refused: not by the STOP file, an interlock or a rate limit.
+            try:
+                args = tool.args_model.model_validate(req.raw_args)
+            except ValidationError as e:
+                return Decision(False, "args", e.errors(include_url=False)[0]["msg"])
+            note = " (STOP file present)" if self.stop_file.exists() else ""
+            return Decision(True, "halt", "stop commands always pass" + note, args=args)
         if self.stop_file.exists():
             return Decision(False, "stop_file", f"{self.stop_file} exists")
-        tool = self.registry.get(req.tool_name)
         if tool is None:
             return Decision(False, "allowlist", f"unknown tool {req.tool_name}")
         try:

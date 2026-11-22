@@ -8,6 +8,11 @@ Read `docs/architecture.md` first. Rules that matter most:
   If the change affects counts, also `summary.ts`, `summary.py`, `summary.rs`, then `pnpm --filter @lab/schema gen:summaries`.
   Any change under `crates/lab-events` also needs `pnpm --filter @lab/events-wasm wasm` (the committed browser build).
 - Hardware is only ever reached through `Runner.request` in lab-agent. Never add a device call anywhere else, and never put safety logic in a device adapter.
+- The exp003 robot console (`lab console`, `apps/robot-console`, ADR 0014) is LAN only: never
+  forward its port. Drive is a 300 ms lease renewed by heartbeats; `base.stop` is a halt tool the
+  gate never refuses. Any change to drive logic (server `console/drive.py` or the app's
+  `driveController.ts`) keeps the rule that no lost, dropped, refused or failed command leaves the
+  wheels turning, with a test that fails first.
 - The website never talks to devices. Admin actions insert rows; the agent decides.
   The web inserts only `(tool, args, confirmed)` into `commands`; the database fills `requested_by`.
 - Timed device actions (holds) are played by the device from one frame with a repeat count,

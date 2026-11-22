@@ -34,3 +34,18 @@ class FakeSwitch:
     def set(self, on: bool) -> None:
         self.state = on
         self.history.append(on)
+
+
+@dataclass
+class FakeWheels:
+    id: str = "fake-wheels"
+    speeds: tuple[float, float] = (0.0, 0.0)
+    history: list[tuple[float, float]] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        if not self.id.startswith("fake-"):
+            raise ValueError(f"a fake device id must start with 'fake-', got {self.id!r}")
+
+    def set_speeds(self, left_m_s: float, right_m_s: float) -> None:
+        self.speeds = (left_m_s, right_m_s)
+        self.history.append(self.speeds)

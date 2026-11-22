@@ -19,3 +19,4 @@ old one `Superseded by 00NN`.
 | [0011](0011-curated-arm-clips.md) | Curated arm clips may be published on the site | Accepted, amended by 0013 |
 | [0012](0012-household-identity-and-memory.md) | Household identity and memory stay in the house | Superseded by 0013 |
 | [0013](0013-owner-governs-personal-data.md) | The owner governs photos and personal data | Accepted |
+| [0014](0014-robot-console.md) | The robot console on the home network | Accepted |

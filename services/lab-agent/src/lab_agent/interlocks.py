@@ -19,6 +19,7 @@ from typing import Protocol
 
 from pydantic import BaseModel
 
+from .lease import DriveLease
 from .registry import Tool
 
 
@@ -144,3 +145,17 @@ class ArenaFence:
             f"predicted end ({x:.0f}, {y:.0f}) cm is within {self.margin_cm:.0f} cm of the"
             f" arena edge (arena {self.width_cm:.0f} x {self.height_cm:.0f} cm)"
         )
+
+
+@dataclass
+class LeaseRequired:
+    """Deny guarded tools unless a drive lease is live: no held button, no motion."""
+
+    lease: DriveLease
+    guarded: frozenset[str]
+    name: str = "drive_lease"
+
+    def check(self, tool: Tool, _args: BaseModel | None) -> str | None:
+        if tool.name in self.guarded and not self.lease.alive():
+            return "no live drive lease: hold the drive button"
+        return None

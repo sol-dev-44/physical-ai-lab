@@ -9,11 +9,12 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-21):** design settled; most parts arrived 2026-11-20, the rest due 2026-11-21
-(see [docs/inventory.md](../../docs/inventory.md)). Both wheels are complete: hubs, servo cradles
-and TPU tires are printed and fitted. The base plate's plan layout is decided (widest stance).
-The caster is measured, which fixes the plate's height. Next: model the base plate; check the
-power parts on arrival.
+**Status (2026-11-21):** the chassis is assembled: base plate, both wheel servos in their cradles,
+TPU-tired wheels and the rear caster. It leans back about 1.5 degrees because the first full
+caster cup is 4 mm too tall (a design error, now fixed in the model); the corrected cup prints
+2026-11-22. The robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is
+built and runs on simulated wheels. Next: reprint the cup, check the power parts, then the power
+harness and the Pi (see [docs/inventory.md](../../docs/inventory.md)).
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
@@ -25,7 +26,7 @@ owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 - **Compute:** Raspberry Pi 5 on the robot for motors, sensors and the safety gate. The Mac does
   speech-to-text, recognition, vision and policy inference over Wi-Fi. Conversation goes through the
   Claude API.
-- **Power:** 12.8V 10Ah LiFePO4 pack (about 128 Wh, ExpertPower, 1.07 kg) with a BMS. Main
+- **Power:** 12.8V 10Ah LiFePO4 pack (about 128 Wh, ExpertPower EP1210, 1.22 kg) with a BMS. Main
   switch and 10A fuse, then an INA226 fuel gauge. Motor rail: e-stop, 12V buck-boost, 5A fuse.
   Compute rail: 5V 5A buck to the Pi. The e-stop cuts motor power only, so the Pi stays up and logs
   what happened. Estimated run time: about 6 h of active play, 8.5 h of chatting, 20 h listening.
@@ -34,6 +35,12 @@ owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
   downward ToF cliff sensors (infrared reflectance sensors mistake dark carpet for a drop), a
   front camera (Logitech C920x), and later a 2D LiDAR.
 - **Audio:** reSpeaker XVF3800 mic array on top of the head, small speaker.
+- **Connectivity:** the Pi 5's on-board dual-band Wi-Fi is the main link (to the Mac and for the
+  control app; use 5 GHz, since Wi-Fi and Bluetooth share one radio). The Xbox controller pairs
+  over the Pi's Bluetooth 5.0. Losing either link stops the wheels.
+- **Control app:** the robot serves a web app on the home network: drive (joystick or Xbox
+  controller), live sensors, a live camera view for debugging (never saved), the event log and the
+  lab's inventory. Design: [CONTROL_APP.md](CONTROL_APP.md).
 - **Privacy mode:** a mic mute and a printed camera shutter that the gate can see, and a light that
   shows when the robot is listening.
 
@@ -95,7 +102,7 @@ its leader records teleop demos). v1 leaves room for it:
 
 | # | Phase | Done when |
 |---|---|---|
-| 0 | Bench: Xbox controller drives two servos in wheel mode with a dead-man button; voice loop on the Mac | Both work for 10 minutes |
+| 0 | Bench: Xbox controller and the control app's Drive screen drive two servos in wheel mode with a dead-man (drive lease); voice loop on the Mac | Both work for 10 minutes; releasing the button, closing the tab or dropping Wi-Fi stops the wheels |
 | 1 | Chassis printed and assembled, teleop over Wi-Fi | 10 minutes of driving; dead-man and e-stop both stop it |
 | 2 | Safety interlocks: bumpers, forward ToF, cliff, speed cap about 0.3 m/s, battery | Stops before a box 20/20; stops at a test edge 10/10 |
 | 3 | Voice on the robot: one guest-level personality, parent controls, privacy mode | 15-minute conversation; no audio leaves the house; mute stops listening 10/10 |
@@ -128,8 +135,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Tire x 2 | TPU 95A | Printed 2026-11-21 (8 h 8 min, 105 g), right hotend through the rear TPU inlet; fit snug, first try |
 | Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
 | Caster cup v1 (test piece) | PETG | Printed 2026-11-21 (24 min 47 s, 8.3 g), first print from the AMS on the left nozzle. Plate and holes fit; the fork hit the walls |
-| Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. The full-strength cup prints with the base plate |
-| Base plate | PETG | Printing 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; `cad/BASE_PLATE.md`, "The plate"). Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
+| Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. Full-strength cup with mounting bosses printing 2026-11-21 (33 min, 12 g) |
+| Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; `cad/BASE_PLATE.md`, "The plate"); fit check next. Plan layout decided ([cad/BASE_PLATE.md](cad/BASE_PLATE.md)); height waits for the caster |
 
 ## Progress log
 
@@ -225,3 +232,18 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   the axle to keep the cup on the plate.
 - 2026-11-21: battery straps measured (21.5 mm wide, 27.5 mm at the buckle); the strap slots are
   sized to the strap, threaded free end first. The plate is ready to print.
+- 2026-11-21: base plate printed (4 h 56 min, 223 g PETG). Next: fit the cradles, the battery and
+  the caster cup (still to print at full strength).
+- 2026-11-21: robot console step 1 built on fake wheels (CONTROL_APP.md, ADR 0014): the robot's
+  agent serves a phone app on the home network; hold-to-drive with a 300 ms lease, a watchdog stop,
+  one driver at a time, pairing by link, fake sensor readings marked "no sensor". Each task had a
+  spec and a code review; the reviews found and fixed a dozen ways the wheels could have been left
+  turning (refused, dropped or failed commands, reconnects, a second phone) before any real wheel.
+- 2026-11-21: chassis assembled. Both cradles bolted to the plate (4 x M3 x 12 and nuts; the
+  two servos point opposite ways, as identical cradles must), the caster bolted into the full
+  cup (M4 x 12 stood well proud of the nuts, so M4 x 8) and the cup bolted to the plate. On the
+  floor the robot leaned back toward the caster: the cup's cavity had been sized as if the cup
+  started at the plate's underside, but it sits on the top face, so the plate's 4 mm was counted
+  twice and the caster sat 4 mm high. The model is fixed (cup 8.6 mm tall, M3 x 16 to the plate)
+  with a test that the plate, cup and caster heights add up; the corrected cup prints tomorrow.
+  The printer is busy with a toy garbage truck.
