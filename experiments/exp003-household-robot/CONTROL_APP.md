@@ -62,6 +62,9 @@ flowchart LR
   Phase 2 adds the bumper, forward ToF, cliff and battery interlocks; the app shows each refusal
   with its rule.
 - **The physical e-stop always wins.** It cuts motor power and the Pi stays up to log it.
+- **A stop is never refused.** `base.stop` is tagged `halt`: it passes the STOP file, interlocks
+  and rate limits (its arguments are still validated and it is still logged). Otherwise a
+  `touch STOP` would leave the wheels turning.
 - **Open risk:** a bus servo in wheel mode keeps turning at its last speed until told otherwise.
   If the agent itself dies, the watchdog dies with it. The plan must check Feetech's STS3215
   documentation for a communication-loss stop or torque limit, and otherwise add an independent
@@ -69,8 +72,9 @@ flowchart LR
   that is settled, drive only with someone at the e-stop.
 - **Access:** the console listens on the home network only: no port forwarding, no tunnel.
   Remote driving is phase 4 (Tailscale), with its own decision. On start the console prints a
-  pairing link with a random token; the browser keeps it in a cookie and every request and
-  WebSocket must carry it. Plain HTTP on the LAN is acceptable for v1 because the browser does
+  pairing link with a random token; the app stores it in the browser's local storage and sends
+  it in its first WebSocket message (`hello`). The page itself holds no data, so serving it
+  without the token is fine. Plain HTTP on the LAN is acceptable for v1 because the browser does
   not need the Gamepad API (the controller is read on the Pi).
 
 ## What gets logged
