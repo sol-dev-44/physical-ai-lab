@@ -172,4 +172,11 @@ describe("DriveScreen", () => {
     });
     expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: "drive", v: 0.05 }));
   });
+
+  it("shows the applied top speed, not a higher stored one", () => {
+    const send = vi.fn();
+    const view = render(<DriveScreen send={send} status="open" state={state} {...props} />);
+    view.rerender(<DriveScreen send={send} status="open" state={state} refused={null} maxV={0.1} maxW={1.5} />);
+    expect(screen.getByText(/top speed 0\.10 m\/s/i)).toBeInTheDocument();
+  });
 });

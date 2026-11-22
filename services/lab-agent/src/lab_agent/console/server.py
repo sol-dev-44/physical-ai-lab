@@ -33,7 +33,8 @@ from .drive import DriveSession
 from .protocol import DriveMsg, Heartbeat, Hello, Refused, State, StopMsg, Welcome, client_message
 from .telemetry import FakeTelemetry, Telemetry
 
-UNAUTHORISED = 4401
+UNAUTHORISED = 4401  # a bad or missing hello: the page must be re-paired
+HELLO_TIMEOUT = 4408  # no hello in time: a normal reconnect, the token is not at fault
 WATCHDOG_PERIOD_S = 0.05
 
 
@@ -119,7 +120,10 @@ def create_app(
             first = client_message.validate_python(
                 await asyncio.wait_for(ws.receive_json(), hello_timeout_s)
             )
-        except (ValueError, KeyError, TimeoutError, WebSocketDisconnect):
+        except TimeoutError:
+            await ws.close(HELLO_TIMEOUT)
+            return
+        except (ValueError, KeyError, WebSocketDisconnect):
             await ws.close(UNAUTHORISED)
             return
         if not isinstance(first, Hello) or not secrets.compare_digest(

@@ -6,11 +6,22 @@ import { useRobot } from "./useRobot";
 const wsUrl = `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
 
 export function App() {
-  const [token, setToken] = useState(() =>
+  const pair = () =>
     takeToken(window.location.href, (u) => {
       window.history.replaceState(null, "", u);
-    }),
-  );
+    });
+  const [token, setToken] = useState(pair);
+  // A new pairing link opened in this same tab changes only the #fragment, so no page load.
+  useEffect(() => {
+    const onHash = () => {
+      const fresh = pair();
+      if (fresh) setToken(fresh);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+    };
+  }, []);
   if (!token) {
     return (
       <main className="drive">

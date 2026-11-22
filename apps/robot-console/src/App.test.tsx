@@ -22,6 +22,7 @@ class FakeSocket {
 beforeEach(() => {
   FakeSocket.all = [];
   localStorage.clear();
+  window.history.replaceState(null, "", "/");
   vi.stubGlobal("WebSocket", FakeSocket);
 });
 afterEach(() => {
@@ -44,5 +45,37 @@ describe("App", () => {
     });
     expect(localStorage.getItem("robot-token")).toBeNull();
     expect(screen.getByText(/new link/i)).toBeInTheDocument();
+  });
+
+  it("keeps the token and reconnects after a hello timeout (4408)", () => {
+    vi.useFakeTimers();
+    try {
+      localStorage.setItem("robot-token", "good");
+      render(<App />);
+      act(() => {
+        FakeSocket.all[0]?.onclose?.({ code: 4408 });
+        vi.advanceTimersByTime(1000);
+      });
+      expect(localStorage.getItem("robot-token")).toBe("good");
+      expect(FakeSocket.all).toHaveLength(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("pairs from a new link opened in the same tab (only the fragment changes)", () => {
+    localStorage.setItem("robot-token", "old");
+    render(<App />);
+    act(() => {
+      FakeSocket.all[0]?.onclose?.({ code: 4401 });
+    });
+    expect(screen.getByText(/new link/i)).toBeInTheDocument();
+    act(() => {
+      window.location.hash = "#token=fresh";
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+    expect(localStorage.getItem("robot-token")).toBe("fresh");
+    expect(screen.queryByText(/new link/i)).not.toBeInTheDocument();
+    expect(FakeSocket.all.length).toBeGreaterThan(1);
   });
 });

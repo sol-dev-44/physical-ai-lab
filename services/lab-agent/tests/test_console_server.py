@@ -302,7 +302,7 @@ def test_silence_before_hello_times_out(drive_rig):
     _r, _s, app = lifespan_app(drive_rig, hello_timeout_s=0.1)
     with TestClient(app).websocket_connect("/ws") as ws, pytest.raises(WebSocketDisconnect) as e:
         ws.receive_json()
-    assert e.value.code == 4401
+    assert e.value.code == 4408  # not 4401: a slow hello must not make the page forget its token
 
 
 def test_malformed_and_binary_frames_after_hello_are_ignored(rig):

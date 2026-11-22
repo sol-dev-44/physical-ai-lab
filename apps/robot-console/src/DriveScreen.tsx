@@ -83,14 +83,14 @@ export function DriveScreen({ send, status, state, refused, maxV, maxW }: Props)
       />
 
       <label className="speed">
-        Top speed {speed.toFixed(2)} m/s
+        Top speed {speedLimit.toFixed(2)} m/s
         <input
           type="range"
           min={0.05}
           max={maxV ?? 0.3}
           disabled={maxV === null}
           step={0.01}
-          value={speed}
+          value={speedLimit}
           onChange={(e) => {
             setSpeed(Number(e.target.value));
           }}
