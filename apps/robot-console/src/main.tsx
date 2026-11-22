@@ -1,5 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { App } from "./App";
+import "./styles.css";
 
 const root = document.getElementById("root");
-if (root) createRoot(root).render(<StrictMode><p>Robot console</p></StrictMode>);
+if (root)
+  createRoot(root).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
