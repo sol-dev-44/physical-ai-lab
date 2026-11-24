@@ -2,8 +2,8 @@
 
 Written 2026-11-23, the evening the owner found the wheels "bending" while dry-fitting the
 electronics deck. Numbers come from `params.py` (`derive_base`, `derive_cradle`) unless a source
-is named. Nothing here is modelled yet; this is the input for the next CAD session, gathered
-under "Before designing a part" ([README.md](README.md)).
+is named. Stage 1 is modelled (2026-11-24): see "Stage 1 as modelled" below, which supersedes the
+plan's details where they differ.
 
 ## What happened
 
@@ -111,6 +111,60 @@ These are in the "Before designing a part" checklist ([README.md](README.md)) fr
      measure.
    - Each wheel still spins true by hand.
 
+### Stage 1 as modelled (2026-11-24)
+
+`exp003_cad/wheel_module.py`, numbers and checks in `params.WheelModule` and
+`derive_wheel_module`, tests in `tests/test_exp003_wheel_module*.py`. The owner asked for it
+"hella sturdy", so every check uses **5 x** the static load, not the plan's 3 x.
+
+**What changed from the plan, and why:**
+- **One piece.** The two servo boxes and the beam are one part, a U across the front of the
+  battery. The beam no longer bolts to the boxes, so there is no joint to work loose, and the
+  wheels' rolling moments meet in one solid. It prints standing on the beam's front face: 262 x
+  33 mm on the bed, 83 mm tall, with every rolling-moment bending plane in the layers.
+- **The wall under the case stays 3 mm**, not 4. A thicker wall there lifts the axle by 1 mm and
+  tilts the robot back about 0.4 degrees, because the caster cup levels it. The 5 mm foot runs
+  everywhere outside the case's footprint instead.
+- **Beam solid**, 15.6 mm (x) by 33.2 mm (z), not a hollow box: infill does the job, and the
+  bolts go through it in counterbores.
+
+**The part (+y side; the -y side mirrors it):**
+
+| Feature | Size |
+|---|---|
+| Servo box | Case 45.4 x 24.8 mm, 0.2 mm clearance; walls 5 mm on top and both ends, 3 mm under, back wall 5 mm |
+| Back wall | 4 counterbores, 4.4 mm across and 3 mm deep, so the M2 x 6 bites 3.5 mm as before; pads, idler disc opening, connector window as the cradle |
+| Gussets | Both end walls carried inboard to the foot's edge (y 81); a 6 x 12 mm notch in the rear one for the servo cables |
+| Foot | 5 mm thick, x -52 to 15.4, y 81 to 130.8; grooves 6 mm wide down to 2 mm so a screwdriver reaches the lower M2 screws |
+| Beam | x 15.4 to 31, across the robot, full box height |
+| Bolts to the plate | 8 x M3 x 12 through the feet (y 85, 105, 124), 7 x M3 x 16 through the beam (y 0, +-42, +-85, +-124), heads in counterbores, nuts under the plate |
+| Servo position | Unchanged: step face at y 98.5, axle 15.6 mm above the plate; the -y servo turned half a turn about its shaft so both far ends point back |
+
+**Load checks** (the design load is 5 x the static load with the v2 arm reaching forward):
+
+| Check | Value | Limit |
+|---|---|---|
+| Static load per wheel | 15 N | |
+| Design load per wheel | 73 N | |
+| Load lever to bolt lever, about the foot's inboard edge | 1.58 to 1 | under 2 (the cradles: 4.7) |
+| Tension in each outboard bolt | 57 N | a third of about 900 N pull-through |
+| Bending stress at the back wall section | 0.47 MPa | 5 MPa (PETG along its layers, allowing for creep) |
+
+The vendor servo model sits in both boxes with no overlap (`test_exp003_wheel_module_geometry`).
+
+**Printing:** PETG, 6 walls, 40% infill, front face of the beam down, no supports (the holes
+across the print are teardrops). About 190 g; the build's estimate at 4 walls and 30% is 152 g.
+The coupon (`wheel_module_coupon`, 14 g) is a 28 mm slice at the back wall: push a servo in,
+drive the four M2 screws, and bolt it down with M3 x 12 to check the case fit, the screw bite and
+the holes before the 190 g print.
+
+**Assembly:**
+1. Battery out. Push each servo into its box from outboard, cables first through the window.
+2. Drive the four M2 x 6 from inboard (the lower two along the driver grooves).
+3. Route the cables back through the rear gusset's notch.
+4. Bolt the module to plate v2: feet first, then the beam, heads on top, nuts under the plate.
+5. Fit the hubs and wheels as before.
+
 ### Stage 2: a bearing that carries the wheel
 
 Do this before the v2 arm, or sooner if Stage 1's check shows tilt inside the servo itself (the
@@ -141,10 +195,9 @@ wheel leaning while the box stays put).
 
 ### PETG
 
-The new parts use about 375 g (estimate):
-- servo boxes: about 2 x 45 g
-- beam: about 50 g
-- coupon: about 10 g
+The new parts use about 430 g (model, 2026-11-24):
+- wheel module (boxes and beam in one): about 190 g
+- coupon: about 14 g
 - plate v2: about 225 g
 
 Spool 1 has about 526 g, and spool 2 is sealed. That covers it, but it takes the buffer well

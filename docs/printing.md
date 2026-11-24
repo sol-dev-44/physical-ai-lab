@@ -89,6 +89,16 @@ something new is learned.
   prefer the printer's own Unload and Load, which heat for you. The extruder arrows next to it are drawn, not real buttons: background clicks
   on them gave no confirmation and did not seem to run the motor (2026-11-20), so load filament
   from the printer's touchscreen instead.
+- **Two colours on one nozzle is two jobs** (2026-11-24): parts of different colours that share
+  layer heights make the AMS swap twice per layer (about 260 swaps for a 26 mm plate: hours and
+  more purge than the parts). Put each colour on its own plate and send them one after the
+  other, or put the second colour on the right nozzle's external spool.
+- **Background filament keys can land late** (2026-11-24): a number key sent to the canvas in
+  the background did nothing at first, then applied to every selected object on the next
+  action. Object-list row clicks fail in the background too. To colour objects on separate
+  plates: load one colour's parts, Select all, press its number, then Add Plate and load the
+  next; a newly loaded object is already selected. Edit > Delete all and `a` (arrange) act on
+  every plate; arranging merged two plates into one.
 - **Progress:** the Device tab's "Printing Progress" shows layer, percent and finish time. Its
   camera image may be stale ("Non-live image, captured at ..."), so don't trust it for "plate is
   clear".

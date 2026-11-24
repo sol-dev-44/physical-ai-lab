@@ -60,7 +60,7 @@ def base_plate(d: BasePlateDerived, p: BasePlate | None = None) -> cq.Workplane:
         plate = plate.union(cq.Workplane("XY").add(fence))
 
     r3 = CLEARANCE_MM["M3"] / 2
-    m3 = [*d.cradle_holes, *d.cup_holes, *d.grid_holes, *d.front_holes]
+    m3 = [*d.wheel_holes, *d.cup_holes, *d.grid_holes, *d.front_holes]
     holes = cq.Workplane("XY").pushPoints(m3).circle(r3).extrude(t + 2).translate((0, 0, -1))
     cliffs = (
         cq.Workplane("XY")

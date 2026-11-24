@@ -1,4 +1,4 @@
-"""The base plate against the real cradle and caster cup solids. Skipped without CadQuery."""
+"""The base plate against the wheel module and caster cup solids. Skipped without CadQuery."""
 
 import math
 from pathlib import Path
@@ -8,7 +8,6 @@ import pytest
 cq = pytest.importorskip("cadquery")
 
 from exp003_cad.base_plate import base_plate  # noqa: E402
-from exp003_cad.cradle import cradle  # noqa: E402
 from exp003_cad.params import (  # noqa: E402
     PLATE_MM,
     BaseLayout,
@@ -16,11 +15,11 @@ from exp003_cad.params import (  # noqa: E402
     Caster,
     CasterCup,
     Cradle,
-    cradle_to_plate,
     derive_base_plate,
     load,
     load_case,
 )
+from exp003_cad.wheel_module import wheel_module  # noqa: E402
 
 SERVO = Path(__file__).resolve().parents[1] / "servo.toml"
 CASE = load_case(SERVO)
@@ -34,19 +33,13 @@ def part():
 
 
 @pytest.fixture(scope="module")
-def cradle_part():
-    return cradle(CASE, HORN)
+def wheel_part():
+    """The wheel module standing on the plate's top face."""
+    return wheel_module(CASE, HORN).translate((0, 0, PLATE_MM))
 
 
 def inside(shape, x, y, z):
     return shape.val().isInside(cq.Vector(x, y, z))
-
-
-def to_cradle(side, x, y, z):
-    """Plate point to the cradle's frame on that side (inverse of cradle_to_plate)."""
-    cols, (tx, ty, tz) = cradle_to_plate(CASE, HORN, Cradle(), BaseLayout(), side)
-    p = (x - tx, y - ty, z - tz)
-    return tuple(sum(cols[i][j] * p[j] for j in range(3)) for i in range(3))
 
 
 def test_plate_is_one_solid_4_mm_thick_with_fences(part):
@@ -56,23 +49,22 @@ def test_plate_is_one_solid_4_mm_thick_with_fences(part):
     assert bb.zlen == pytest.approx(PLATE_MM + BasePlate().fence_height_mm)
 
 
-def test_plate_holes_line_up_with_the_cradle_ear_holes(part, cradle_part):
-    for x, y in D.cradle_holes:
-        side = 1 if y > 0 else -1
+def test_plate_holes_line_up_with_the_wheel_module_holes(part, wheel_part):
+    for x, y in D.wheel_holes:
         assert not inside(part, x, y, PLATE_MM / 2)  # hole through the plate
-        z = PLATE_MM + 2.0  # inside the ear's 4 mm thickness
-        assert not inside(cradle_part, *to_cradle(side, x, y, z))  # and through the ear
-        assert inside(cradle_part, *to_cradle(side, x + 2.6, y, z))  # with the ear round it
+        z = PLATE_MM + 2.0  # inside the module's foot or beam
+        assert not inside(wheel_part, x, y, z)  # and through the module
+        assert inside(wheel_part, x + 2.6, y, z)  # with plastic round it
 
 
-def test_check_above_can_fail(cradle_part):
-    """Self-test: a hole 3 mm off would land in solid ear."""
-    x, y = D.cradle_holes[0]
-    assert inside(cradle_part, *to_cradle(1, x + 3.0, y, PLATE_MM + 2.0))
+def test_check_above_can_fail(wheel_part):
+    """Self-test: a hole 3 mm off would land in solid foot."""
+    x, y = D.wheel_holes[0]
+    assert inside(wheel_part, x + 3.0, y, PLATE_MM + 2.0)
 
 
-def test_cradle_feet_sit_on_the_plate_not_in_a_hole(part):
-    for x0, x1, y0, y1 in D.cradle_feet:
+def test_wheel_module_sits_on_the_plate_not_in_a_hole(part):
+    for x0, x1, y0, y1 in D.wheel_footprint:
         for x in (x0 + 1, (x0 + x1) / 2, x1 - 1):
             for y in (y0 + 1, y1 - 1):
                 assert inside(part, x, y, PLATE_MM - 0.5)

@@ -35,17 +35,16 @@ def test_outline_is_the_planned_plate_and_fits_the_left_nozzle():
     assert d.x_front_mm - d.x_back_mm <= 320 and 2 * d.half_width_mm <= 325
 
 
-def test_cradle_ear_holes_mirror_through_the_centre():
+def test_wheel_module_holes_mirror_across_the_robot():
     d = plate()
-    # Ears 5 mm past each end of the case (a = -15.2 and 40.2), 107.25 mm out: the back face at
-    # 96 mm, plus 11.25 mm to the middle of the 22.5 mm cheek.
-    assert sorted(d.cradle_holes) == sorted(
-        [(15.2, 107.25), (-40.2, 107.25), (-15.2, -107.25), (40.2, -107.25)]
-    )
-    for x, y in d.cradle_holes:
-        assert (-x, -y) in [(round(a, 6), round(b, 6)) for a, b in d.cradle_holes] or any(
-            math.isclose(-x, a) and math.isclose(-y, b) for a, b in d.cradle_holes
-        )
+    # Plate v2 (2026-11-24): 4 foot bolts per side plus 7 through the beam; the cradle holes
+    # are gone.
+    assert len(d.wheel_holes) == 15
+    for x, y in d.wheel_holes:
+        assert any(math.isclose(x, a) and math.isclose(-y, b) for a, b in d.wheel_holes)
+    # Bolts on two lines across each wheel's load, the outer one near the plate edge.
+    ys = sorted({abs(y) for _, y in d.wheel_holes})
+    assert ys[-1] == pytest.approx(124.0) and 85.0 in ys
 
 
 def test_caster_cup_and_its_screws_stay_on_the_plate():
@@ -73,7 +72,8 @@ def test_strap_slots_take_the_measured_strap_not_the_buckle():
 
 def test_screws_all_come_from_the_kit_with_nuts():
     d = plate()
-    assert "M3 x 12" in d.screws["cradles"]
+    assert "8 x M3 x 12" in d.screws["wheel module"]
+    assert "7 x M3 x 16" in d.screws["wheel module"]
     assert "M3 x 16" in d.screws["cup"]
     assert "M4 x 8" in d.screws["caster"]
 

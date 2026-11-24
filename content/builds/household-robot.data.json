@@ -302,9 +302,9 @@
   "width_over_tires_mm": 329.6,
   "plate_half_width_mm": 130.8,
   "plate_length_mm": 300.0,
-  "com_x_mm": -44.53,
+  "com_x_mm": -42.74,
   "com_x_with_arm_mm": -18.05,
-  "caster_share": 0.28,
+  "caster_share": 0.27,
   "masses": [
    {
     "name": "battery",
@@ -313,16 +313,22 @@
     "source": "EP1210 sheet (model on the label)"
    },
    {
-    "name": "servo and cradle, +y",
-    "kg": 0.07,
+    "name": "servo, +y",
+    "kg": 0.055,
     "x_mm": -12.5,
-    "source": "estimate"
+    "source": "STS3215 about 55 g"
    },
    {
-    "name": "servo and cradle, -y",
-    "kg": 0.07,
-    "x_mm": 12.5,
-    "source": "estimate"
+    "name": "servo, -y",
+    "kg": 0.055,
+    "x_mm": -12.5,
+    "source": "STS3215 about 55 g"
+   },
+   {
+    "name": "wheel module v2",
+    "kg": 0.19,
+    "x_mm": -8.0,
+    "source": "model volume, 6 walls"
    },
    {
     "name": "wheels",
@@ -389,7 +395,7 @@
    "item": "exp003 servo cradle, PETG",
    "qty": "2",
    "status": "Reserved",
-   "notes": "Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (experiments/exp003-household-robot/cad/WHEEL_MOUNT.md). Keep the weight off the wheels until then"
+   "notes": "Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (modelled 2026-11-24, one piece) (experiments/exp003-household-robot/cad/WHEEL_MOUNT.md). Keep the weight off the wheels until then"
   },
   {
    "item": "exp003 hub coupon v1, PETG",
@@ -454,7 +460,7 @@
     "start": "1000 g",
     "used": "474 g",
     "left": "about 526 g",
-    "planned": "about 375 g est. for wheel module v2 (servo boxes, axle beam, coupon, base plate v2; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
+    "planned": "about 430 g est. for wheel module v2 (module 190 g in one piece, coupon 14 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
@@ -479,18 +485,18 @@
    {
     "item": "PLA Basic Blue (AMS A3)",
     "start": "1000 g",
-    "used": "about 520 g (toy truck: tyres 160 g; body and tailgate 360 g)",
-    "left": "about 480 g",
-    "planned": "Tessera keys, a few grams each, once the test keys pick a fit",
+    "used": "about 559 g (toy truck: tyres 160 g; body and tailgate 360 g; Tessera keys 38.71 g)",
+    "left": "about 441 g",
+    "planned": "Tessera keys (R1), about 4 to 7 g each",
     "reorder": "",
     "lead_time": ""
    },
    {
     "item": "PLA Basic Sunflower Yellow (AMS A4)",
     "start": "1000 g",
-    "used": "about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g)",
-    "left": "about 649 g",
-    "planned": "Tessera bench layout: about 493 g est. for 6 modules (bench/tessera/README.md); 1 spool to order",
+    "used": "about 384 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g)",
+    "left": "about 616 g",
+    "planned": "Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool to order",
     "reorder": "",
     "lead_time": ""
    },
@@ -698,6 +704,11 @@
     "date": "2026-11-24",
     "what": "Tessera test plate 2: keys 05 (plain), R1 and R2 (crush ribs), 52 mm (48 min, left nozzle, 4 walls, 30% infill)",
     "used": "PLA Sunflower Yellow 19.51 g (slicer)"
+   },
+   {
+    "date": "2026-11-24",
+    "what": "Tessera plate 3, two jobs: 8 blue R1 keys, 4 x 52 mm and 4 x 26 mm (1 h 33 min), and the PARTS tray, 2 x 1, 26 mm, No. 003 (1 h 13 min); left nozzle, 4 walls, 30% infill",
+    "used": "PLA Blue 38.71 g, PLA Sunflower Yellow 33.31 g (slicer)"
    }
   ]
  },
@@ -1137,6 +1148,10 @@
   {
    "date": "2026-11-23",
    "text": "in the evening all three deck parts were dry-fitted on the plate. A CAD overlay on the owner's top-view photo matched the layout; the servo board and the INA226 each turn half a turn, and the assembly order is written up in cad/DECK.md. Then the wheels were found \"bending\". The +y cradle had rolled about the inboard edge of its foot, the servo's outer end lifted and the wheel leaned in. - Cause: each cradle's two bolts sit on one line 11 mm from that edge while the tire pushes 53 mm out (a 4.7 to 1 lever), and the cheeks take the bending across their print layers. - Plan: wheel module v2, with a boxed servo mount on a wide six-bolt foot (printed on its end), an axle beam tying the two sides together, and a base plate v2. Later, a 6806 bearing so the servo only drives. - A ninth checklist rule: trace the load path (cad/WHEEL_MOUNT.md). - The deck waits for plate v2."
+  },
+  {
+   "date": "2026-11-24",
+   "text": "wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it \"hella sturdy\", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. A 14 g coupon checks the servo fit first."
   }
  ],
  "design": {

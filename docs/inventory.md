@@ -24,7 +24,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels, tires fitted 2026-11-21 |
 | exp003 tire, TPU 95A | 2 | Reserved | On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
-| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (`experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). Keep the weight off the wheels until then |
+| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (modelled 2026-11-24, one piece) (`experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). Keep the weight off the wheels until then |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
@@ -164,11 +164,11 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 375 g est. for wheel module v2 (servo boxes, axle beam, coupon, base plate v2; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 430 g est. for wheel module v2 (module 190 g in one piece, coupon 14 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
-| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | Tessera keys, a few grams each, once the test keys pick a fit | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g) | about 649 g | Tessera bench layout: about 493 g est. for 6 modules (bench/tessera/README.md); 1 spool to order | | |
+| PLA Basic Blue (AMS A3) | 1000 g | about 559 g (toy truck: tyres 160 g; body and tailgate 360 g; Tessera keys 38.71 g) | about 441 g | Tessera keys (R1), about 4 to 7 g each | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 384 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g) | about 616 g | Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool to order | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
@@ -209,6 +209,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-23 | Tessera bench storage, first piece: cups TIPS and SPARE (No. 001, 002) and test keys 10, 15, 20, 52 mm grid (3 h 30 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 90.66 g (slicer) |
 | 2026-11-23 | Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle) | PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers |
 | 2026-11-24 | Tessera test plate 2: keys 05 (plain), R1 and R2 (crush ribs), 52 mm (48 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 19.51 g (slicer) |
+| 2026-11-24 | Tessera plate 3, two jobs: 8 blue R1 keys, 4 x 52 mm and 4 x 26 mm (1 h 33 min), and the PARTS tray, 2 x 1, 26 mm, No. 003 (1 h 13 min); left nozzle, 4 walls, 30% infill | PLA Blue 38.71 g, PLA Sunflower Yellow 33.31 g (slicer) |
 
 ### Orders to place
 
@@ -219,7 +220,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
   tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
   a second colour for the shells is the owner's call.
 
-- **PETG is now urgent:** wheel module v2 (about 375 g est., `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`) leaves about 1.15 kg of the two spools, and about 750 g after the shells and bumper mounts too, well under the 2 kg rule. Order the 3 spools above first.
+- **PETG is now urgent:** wheel module v2 (about 430 g est. as modelled, `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`) leaves about 1.1 kg of the two spools, and about 700 g after the shells and bumper mounts too, well under the 2 kg rule. Order the 3 spools above first.
 - **6806-2RS deep-groove ball bearings, 30 x 42 x 7 mm, 4 pcs** (two for the wheels plus spares;
   2026-11-23). Stage 2 of the wheel mount: each wheel turns on its own bearing so the STS3215 only
   drives. Any rubber-sealed (2RS) 6806 / 61806 from a bearing brand or a 4- or 10-pack on Amazon;
@@ -233,7 +234,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 The battery's spade terminals were ordered 2026-11-21 (row 31).
 The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
 
-PETG covers the planned parts with about 750 g to spare, below the 2 kg rule (order above). The TPU on hand covers the bumper.
+PETG covers the planned parts with about 700 g to spare, below the 2 kg rule (order above). The TPU on hand covers the bumper.
 
 ## Wishlist (Amazon list "Robot - later")
 
@@ -301,3 +302,5 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-23: the exp003 servo cradles roll over under load; wheel module v2 planned (about 375 g PETG est.); 6806-2RS bearings added to Orders to place and the PETG order marked urgent. Compute tray printed; all three deck parts dry-fitted.
 - 2026-11-24: Tessera test plate 2 logged (19.51 g Yellow): all three plate 1 keys had play, so the new keys carry crush ribs; about 649 g Yellow left.
 - 2026-11-24: key R1 chosen; Tessera bench layout drawn (about 493 g Yellow, 149 g PETG est.); one Yellow spool added to Orders to place.
+- 2026-11-24: Tessera plate 3 logged (38.71 g Blue keys, 33.31 g Yellow PARTS tray); about 441 g Blue and 616 g Yellow left.
+- 2026-11-24: exp003 wheel module v2 modelled as one piece (about 190 g, coupon 14 g, plate v2 225 g: about 430 g PETG est.).

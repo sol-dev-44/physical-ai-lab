@@ -506,7 +506,9 @@ class BaseLayout:
         Mass("caster", 0.04, -158.0, "estimate"),
     )
     battery_kg: float = 1.22  # EP1210 sheet; the model is confirmed from its label (2026-11-21)
-    servo_kg: float = 0.07  # each, with its cradle (estimate)
+    servo_kg: float = 0.055  # each (STS3215 listings: about 55 g)
+    wheel_module_kg: float = 0.19  # wheel module v2, from its model's volume (2026-11-24)
+    wheel_module_x_mm: float = -8.0  # its centre of mass, boxes and beam (model, rounded)
     wheel_kg: float = 0.146  # each: printed hub 59 g (118.5 g for two) + TPU tire about 87 g
 
 
@@ -547,9 +549,10 @@ def derive_base(case: Case, horn: Horn, cradle: Cradle, b: BaseLayout) -> BaseDe
 
     masses = (
         Mass("battery", b.battery_kg, b.battery_x_mm, "EP1210 sheet (model on the label)"),
-        # Identical cradles: one servo's far end points back, the other's forward.
-        Mass("servo and cradle, +y", b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "estimate"),
-        Mass("servo and cradle, -y", b.servo_kg, (d.a_min_mm + d.a_max_mm) / 2, "estimate"),
+        # Wheel module v2: both servos' far ends point back.
+        Mass("servo, +y", b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "STS3215 about 55 g"),
+        Mass("servo, -y", b.servo_kg, -(d.a_min_mm + d.a_max_mm) / 2, "STS3215 about 55 g"),
+        Mass("wheel module v2", b.wheel_module_kg, b.wheel_module_x_mm, "model volume, 6 walls"),
         Mass("wheels", 2 * b.wheel_kg, 0.0, "printed hubs weighed by the slicer; tire estimate"),
         *b.other,
     )
@@ -750,6 +753,226 @@ def derive_caster_cup(caster: Caster, heights: Heights, c: CasterCup) -> CasterC
     )
 
 
+WHEEL_LOAD_FACTOR = 5.0  # owner, 2026-11-24: "hella sturdy"; the plan's rule was 3 x static
+MAX_LEVER_RATIO = 2.0  # load lever to bolt lever about the pivot edge (cad/README.md, rule 9)
+M3_PULL_THROUGH_N = 900.0  # a button head pulling through 5 mm of PETG, low estimate (shear of a
+#  5.7 mm ring 5 mm deep at about 10 MPa, a third of the bulk figure, for layers and creep)
+SAFE_PETG_MPA = 5.0  # bending stress allowed in a wall along its layers, after creep (about 1/6)
+G = 9.81
+
+
+@dataclass(frozen=True)
+class WheelModule:
+    """Wheel module v2: both servo boxes and the axle beam in one PETG piece (2026-11-24).
+
+    Replaces the two cradles, which rolled over under the robot's weight (WHEEL_MOUNT.md). Each
+    servo sits in a closed box: walls on its two long sides and both ends, and a back wall it
+    screws into. A solid beam ahead of the boxes ties the two together, so the two wheels'
+    rolling moments meet in the part, not in the plate. Both servos point their far ends back
+    (the -y servo is turned half a turn about its shaft, which its symmetric holes allow).
+
+    Frame: the base's (x forward, y left, axle at x = 0), z up from the base plate's top face.
+    Prints standing on the beam's front face, so the rolling moment lies in the layers.
+    """
+
+    back_wall_mm: float = 5.0  # the servo screws into this; counterbored for the M2 x 6
+    top_wall_mm: float = 5.0  # over the case's upper long side
+    end_wall_mm: float = 5.0  # at both ends of the case, carried inboard as gussets
+    foot_mm: float = 5.0  # slab on the plate, outside the case's footprint
+    # Under the case the wall stays the cradle's 3 mm (Cradle.cheek_mm), so the axle keeps its
+    # height and the caster cup still levels the robot.
+    side_clearance_mm: float = 0.2  # per side round the case, as the cradle
+    fence_gap_mm: float = 2.0  # foot's inboard edge to the battery fence
+    foot_back_mm: float = -52.0  # foot's rear edge (x); the deck starts at x = -80.8
+    beam_x_mm: tuple[float, float] = (15.4, 31.0)  # solid beam, ahead of the front end walls
+    gusset_notch_mm: tuple[float, float] = (6.0, 12.0)  # cable notch: from the foot edge, height
+    driver_groove_mm: tuple[float, float] = (6.0, 2.0)  # width, floor height: screwdriver path
+    counterbore_mm: float = 4.4  # for the M2 screw heads (SCREW_HEAD_MM plus 0.4)
+    screw_bite_mm: float = 3.5  # how far the M2 x 6 goes into the case
+    foot_bolts: tuple[tuple[float, float], ...] = (  # +y side; the -y side mirrors in y
+        (5.0, 85.0),
+        (-46.0, 85.0),
+        (-46.0, 105.0),
+        (-46.0, 124.0),
+    )
+    beam_bolts_y_mm: tuple[float, ...] = (124.0, 85.0, 42.0, 0.0)  # and their mirrors
+    beam_counterbore_mm: float = 6.4  # button head 5.7 plus room
+    beam_bolt_floor_mm: float = 10.0  # beam left under each beam bolt's head
+
+
+@dataclass(frozen=True)
+class WheelModuleDerived:
+    axis_z_mm: float  # wheel axis above the plate's top
+    step_y_mm: float  # the servo's step face (bottom), +y side
+    cavity: tuple[float, float, float, float, float]  # x0, x1, z0, z1, y0 (+y side)
+    back_wall_y_mm: tuple[float, float]
+    outer_y_mm: float  # boxes and beam end here, 2 mm short of the hub
+    top_z_mm: float
+    end_walls_x: tuple[tuple[float, float], tuple[float, float]]  # far (rear), near (front)
+    foot: tuple[float, float, float, float]  # x0, x1, y0, y1, +y side
+    m2_holes: tuple[tuple[float, float], ...]  # (x, z) on the back wall
+    counterbore_y_mm: tuple[float, float]  # from the back face to the counterbore floor
+    disc_opening: tuple[float, float, float]  # x, z, radius
+    window: tuple[float, float, float, float]  # x0, x1, z0, z1
+    throat: tuple[float, float, float, float]
+    driver_grooves_x: tuple[float, ...]
+    plate_holes: tuple[tuple[float, float], ...]  # every M3 to the plate, both sides
+    beam_holes: tuple[tuple[float, float], ...]  # the subset through the beam (counterbored)
+    footprint: tuple[Rect, ...]  # boxes and beam in plan, for the plate's checks
+    screws: dict[str, str]
+    lever_ratio: float
+    wheel_load_n: float  # per wheel, static, with the v2 arm at full reach
+    design_load_n: float  # times WHEEL_LOAD_FACTOR
+    bolt_tension_n: float  # outboard bolts at the design load
+    wall_stress_mpa: float  # bending at the back-wall section at the design load
+
+
+def derive_wheel_module(
+    case: Case, horn: Horn, cradle: Cradle, layout: BaseLayout, m: WheelModule | None = None
+) -> WheelModuleDerived:
+    """Size the wheel module and check it, or raise ValueError naming what does not work."""
+    m = m or WheelModule()
+    cd = derive_cradle(case, horn, cradle)
+    base = derive_base(case, horn, cradle, layout)
+    axis = cd.axle_above_foot_mm
+    step = base.cradle_back_y_mm + cradle.wall_mm + cradle.pad_mm
+    pad = cradle.pad_mm
+    sc = m.side_clearance_mm
+    x0, x1 = -cd.a_max_mm - sc, -cd.a_min_mm + sc  # far end back
+    half = case.width_mm / 2 + sc
+    z0, z1 = axis - half, axis + half
+    if abs(z0 - cradle.cheek_mm) > 1e-9:
+        raise ValueError("the wall under the case must stay the cradle's, or the axle moves")
+    back = (step - pad - m.back_wall_mm, step - pad)
+    outer = step + cd.hub_face_c_mm - MIN_HUB_GAP_MM
+    top = z1 + m.top_wall_mm
+    ends = ((x0 - m.end_wall_mm, x0), (x1, x1 + m.end_wall_mm))
+    if abs(ends[1][1] - m.beam_x_mm[0]) > 1e-9:
+        raise ValueError("the beam must start at the front end walls' faces")
+    fence = layout.battery_mm[0] / 2 + 1.0 + 2.0  # BasePlate clearance and fence
+    foot = (m.foot_back_mm, ends[1][1], fence + m.fence_gap_mm, outer)
+
+    under_head = case.mount_screw_length_mm - m.screw_bite_mm
+    if not MIN_SELF_TAP_MM <= m.screw_bite_mm <= case.max_screw_depth_mm:
+        raise ValueError("the M2 screws' bite is outside what the case holes take")
+    cb = (back[0], step - under_head)
+    if cb[1] <= cb[0]:
+        raise ValueError("no counterbore needed: the wall is thin enough as is")
+    holes = tuple((-a, axis + b) for a, b in cd.holes)
+
+    w0, w1, wh = cd.window
+    window = (-w1, -w0, axis - wh, axis + wh)
+    throat = (-w0, 0.0, axis - cd.throat_half_width_mm, axis + cd.throat_half_width_mm)
+    grooves = tuple(sorted({-a for a, _ in cd.holes}))
+    # The lower screws sit just above the foot: a groove lets a driver reach them.
+    for x, z in holes:
+        if z < m.foot_mm + 2.0 and x not in grooves:
+            raise ValueError("a lower M2 screw has no driver groove")
+    low = min(z for _, z in holes)
+    if low - 2.0 < m.driver_groove_mm[1]:
+        raise ValueError("the driver groove is not deep enough for a 4 mm driver")
+
+    # Bolts: on the plate, clear of the walls, window and grooves, two lines across the load.
+    r_head = HEADS["button"]["M3"][0] / 2
+    for x, y in m.foot_bolts:
+        if not (foot[0] + r_head <= x <= foot[1] and foot[2] + r_head <= y <= foot[3] - r_head):
+            raise ValueError(f"foot bolt ({x}, {y}) is off the foot")
+        in_x = x0 - m.end_wall_mm - r_head < x < x1 + m.end_wall_mm + r_head
+        if in_x and y > back[0] - r_head:
+            raise ValueError(f"foot bolt ({x}, {y}) is under the servo box")
+        for gx in grooves:
+            if abs(x - gx) < m.driver_groove_mm[0] / 2 + r_head and y < back[0]:
+                raise ValueError(f"foot bolt ({x}, {y}) is in a driver groove")
+        for ex0, ex1 in ends:
+            if ex0 - r_head < x < ex1 + r_head and y < back[0]:
+                raise ValueError(f"foot bolt ({x}, {y}) is under a gusset")
+    beam_x = sum(m.beam_x_mm) / 2
+    if m.beam_x_mm[1] - m.beam_x_mm[0] < m.beam_counterbore_mm + 4.0:
+        raise ValueError("the beam is too thin for its bolt counterbores")
+    beam_holes = tuple((beam_x, s * y) for y in m.beam_bolts_y_mm for s in (1, -1) if s > 0 or y)
+    plate_holes = (
+        *((x, s * y) for x, y in m.foot_bolts for s in (1, -1)),
+        *beam_holes,
+    )
+    ys_out = [y for _, y in m.foot_bolts]
+    if max(ys_out) - min(ys_out) < 20.0:
+        raise ValueError("the foot bolts must stand on two lines across the load")
+
+    # The load path (WHEEL_MOUNT.md): per wheel, the robot's weight with the arm reaching forward.
+    total = sum(mm.kg for mm in base.masses) + layout.arm_kg
+    com = base.com_x_with_arm_mm
+    wheel_n = total * G * (1 - (-com) / (-layout.caster_x_mm)) / 2
+    design = WHEEL_LOAD_FACTOR * wheel_n
+    tire_y = base.wheel_inner_y_mm + Wheel().width_mm / 2
+    pivot = foot[2]
+    lever = tire_y - pivot
+    out_y = max(ys_out)
+    ratio = lever / (out_y - pivot)
+    if ratio > MAX_LEVER_RATIO:
+        raise ValueError(f"load lever {ratio:.2f} x the bolt lever; move bolts outboard")
+    outboard = sum(1 for _, y in m.foot_bolts if y == out_y) + sum(
+        1 for y in m.beam_bolts_y_mm if y == out_y
+    )
+    tension = design * lever / ((out_y - pivot) * outboard)
+    if tension > M3_PULL_THROUGH_N / 3:
+        raise ValueError(f"outboard bolts carry {tension:.0f} N each; add bolts")
+    # Bending at the back-wall section (y = back face): an I of the top wall, the wall under the
+    # case plus foot, and the two end walls, about the section's centroid.
+    length_x = ends[1][1] - ends[0][0]
+    parts = (
+        (length_x * m.top_wall_mm, (z1 + top) / 2, m.top_wall_mm),
+        (length_x * m.foot_mm, m.foot_mm / 2, m.foot_mm),
+    )
+    walls = 2 * m.end_wall_mm
+    area = sum(a for a, _, _ in parts) + walls * top
+    zc = (sum(a * z for a, z, _ in parts) + walls * top * top / 2) / area
+    inertia = sum(a * (z - zc) ** 2 + a * t**2 / 12 for a, z, t in parts)
+    inertia += walls * top**3 / 12 + walls * top * (top / 2 - zc) ** 2
+    moment = design * (tire_y - back[0])
+    stress = moment * max(zc, top - zc) / inertia
+    if stress > SAFE_PETG_MPA:
+        raise ValueError(f"the box walls see {stress:.1f} MPa at the back wall; thicken them")
+
+    foot_screw = kit_screw(m.foot_mm + PLATE_MM, "wheel module foot")
+    beam_screw = kit_screw(m.beam_bolt_floor_mm + PLATE_MM, "wheel module beam")
+    footprint = (
+        (foot[0], foot[1], foot[2], outer),
+        (foot[0], foot[1], -outer, -foot[2]),
+        (m.beam_x_mm[0], m.beam_x_mm[1], -outer, outer),
+    )
+    n_foot = 2 * len(m.foot_bolts)
+    return WheelModuleDerived(
+        axis_z_mm=axis,
+        step_y_mm=step,
+        cavity=(x0, x1, z0, z1, step - pad),
+        back_wall_y_mm=back,
+        outer_y_mm=outer,
+        top_z_mm=top,
+        end_walls_x=ends,
+        foot=foot,
+        m2_holes=holes,
+        counterbore_y_mm=cb,
+        disc_opening=(0.0, axis, cd.disc_opening_radius_mm),
+        window=window,
+        throat=throat,
+        driver_grooves_x=grooves,
+        plate_holes=tuple(plate_holes),
+        beam_holes=beam_holes,
+        footprint=footprint,
+        screws={
+            "foot": f"{n_foot} x M3 x {foot_screw} button head and nut (foot 5 mm + plate 4 mm)",
+            "beam": f"{len(beam_holes)} x M3 x {beam_screw} button head and nut, heads down "
+            "the beam's counterbores",
+            "servos": "8 x the M2 x 6 self-tapping screws supplied with the servos",
+        },
+        lever_ratio=ratio,
+        wheel_load_n=wheel_n,
+        design_load_n=design,
+        bolt_tension_n=tension,
+        wall_stress_mpa=stress,
+    )
+
+
 @dataclass(frozen=True)
 class BasePlate:
     """The base plate: one flat 4 mm PETG piece, printed underside down. Design choices.
@@ -795,8 +1018,8 @@ class BasePlateDerived:
     half_width_mm: float
     thickness_mm: float
     measured: bool  # False while the strap width is a placeholder
-    cradle_holes: tuple[tuple[float, float], ...]
-    cradle_feet: tuple[tuple[float, float, float, float], ...]  # x0, x1, y0, y1 on the top
+    wheel_holes: tuple[tuple[float, float], ...]  # wheel module v2: foot and beam bolts
+    wheel_footprint: tuple[tuple[float, float, float, float], ...]  # x0, x1, y0, y1 on the top
     caster_xy: tuple[float, float]
     cup: CasterCupDerived
     cup_holes: tuple[tuple[float, float], ...]
@@ -816,28 +1039,19 @@ def derive_base_plate(
     layout: BaseLayout,
     p: BasePlate,
     cup: CasterCup,
+    wheel: WheelModule | None = None,
 ) -> BasePlateDerived:
     """Every hole and feature on the base plate, or ValueError naming what collides."""
     base = derive_base(case, horn, cradle, layout)
-    cd = derive_cradle(case, horn, cradle)
     heights = derive_heights(case, horn, cradle, caster)
     t = PLATE_MM
     x0, x1, half = layout.back_mm, layout.front_mm, base.plate_half_width_mm
 
-    # Cradles: foot down, back face at +-cradle_back. The two cradles are identical, so the one at
-    # +y has its servo's far end pointing back (x = -a) and the one at -y is the same turned half a
-    # turn about z, its far end pointing forward (x = +a). See `cradle_to_plate`.
-    back_wall = cradle.wall_mm + cradle.pad_mm
-    ear_c = (cradle.cheek_height_mm + back_wall) / 2  # ear hole centre, out from the back face
-    ear_y = base.cradle_back_y_mm + ear_c
-    ear_a = (cd.a_min_mm - cradle.ear_length_mm / 2, cd.a_max_mm + cradle.ear_length_mm / 2)
-    cradle_holes = tuple((-s * a, s * ear_y) for s in (1, -1) for a in ear_a)
-    span = (cd.a_min_mm - cradle.ear_length_mm, cd.a_max_mm + cradle.ear_length_mm)
-    foot_y = (base.cradle_back_y_mm, base.cradle_back_y_mm + back_wall + cradle.cheek_height_mm)
-    feet = (
-        (-span[1], -span[0], foot_y[0], foot_y[1]),
-        (span[0], span[1], -foot_y[1], -foot_y[0]),
-    )
+    # Wheel module v2 (2026-11-24): its foot and beam bolts. The cradles' holes are gone; plate
+    # v1, drilled for them, is the spare.
+    wm = derive_wheel_module(case, horn, cradle, layout, wheel)
+    wheel_holes = wm.plate_holes
+    feet = wm.footprint
 
     cupd = derive_caster_cup(caster, heights, cup)
     cx = layout.caster_x_mm
@@ -868,7 +1082,7 @@ def derive_base_plate(
 
     # Checks: every hole on the plate with margin, and no two features touching.
     r3 = CLEARANCE_MM["M3"] / 2
-    circles = [(x, y, r3) for x, y in (*cradle_holes, *cup_holes, *grid, *front)]
+    circles = [(x, y, r3) for x, y in (*wheel_holes, *cup_holes, *grid, *front)]
     circles += [(x, y, p.cliff_window_mm / 2) for x, y in cliffs]
     for x, y, r in circles:
         tol = 1e-6
@@ -887,7 +1101,7 @@ def derive_base_plate(
 
     keep = [*slots, battery_box]
     for x, y, r in circles:
-        if (x, y) in cradle_holes:
+        if (x, y) in wheel_holes:
             continue
         for rect in (*keep, *feet):
             if in_rect(x, y, r, rect):
@@ -903,10 +1117,10 @@ def derive_base_plate(
     for fx0, fx1, fy0, fy1 in feet:
         bx0, bx1, by0, by1 = battery_box
         if fx0 < bx1 and bx0 < fx1 and fy0 < by1 + p.fence_mm and by0 - p.fence_mm < fy1:
-            raise ValueError("a servo cradle overlaps the battery's fences")
+            raise ValueError("the wheel module overlaps the battery's fences")
 
     screws = {
-        "cradles": "4 x M3 x 12 button head and nut (ear 4 mm + plate 4 mm + nut)",
+        "wheel module": f"{wm.screws['foot']}; {wm.screws['beam']}",
         "caster": f"4 x {cupd.screw} (caster to cup)",
         "cup": f"4 x {cupd.mount_screw} (cup to plate, from under the plate)",
     }
@@ -916,8 +1130,8 @@ def derive_base_plate(
         half_width_mm=half,
         thickness_mm=t,
         measured=p.strap_width_mm is not None,
-        cradle_holes=cradle_holes,
-        cradle_feet=feet,
+        wheel_holes=wheel_holes,
+        wheel_footprint=feet,
         caster_xy=(cx, 0.0),
         cup=cupd,
         cup_holes=cup_holes,

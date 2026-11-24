@@ -38,6 +38,7 @@ from exp003_cad.params import (  # noqa: E402
     derive_deck,
     derive_heights,
     derive_tire,
+    derive_wheel_module,
     load,
     load_case,
     load_tire,
@@ -45,6 +46,7 @@ from exp003_cad.params import (  # noqa: E402
 from exp003_cad.power_tray import power_tray  # noqa: E402
 from exp003_cad.servo_bridge import servo_bridge_for_print  # noqa: E402
 from exp003_cad.tire import tire  # noqa: E402
+from exp003_cad.wheel_module import wheel_module_coupon, wheel_module_for_print  # noqa: E402
 
 PETG_G_PER_MM3 = 1.27e-3 * 0.6  # 4 walls, 30% infill: about 0.6 of solid
 
@@ -56,6 +58,9 @@ PARTS = {
     "caster_cup": lambda p: caster_cup(Caster(), _heights(p)),
     "caster_cup_test": lambda p: caster_cup(Caster(), _heights(p), CASTER_CUP_TEST),
     "deck_coupon": lambda p: deck_coupon(),
+    # Wheel module v2 (2026-11-24): both servo boxes and the beam, printed front face down.
+    "wheel_module": lambda p: wheel_module_for_print(load_case(HERE / "servo.toml"), p.horn),
+    "wheel_module_coupon": lambda p: wheel_module_coupon(load_case(HERE / "servo.toml"), p.horn),
 }
 
 
@@ -116,6 +121,14 @@ def main() -> None:
     print(
         f"servo cradle: supplied M2 x 6 screws go {cr.screw_depth_mm:.1f} mm into the case; "
         f"wheel axle {cr.axle_above_foot_mm:.1f} mm above the foot"
+    )
+    wm = derive_wheel_module(load_case(HERE / "servo.toml"), p.horn, Cradle(), BaseLayout())
+    print(
+        f"wheel module v2: {wm.wheel_load_n:.0f} N per wheel static with the arm, designed for "
+        f"{wm.design_load_n:.0f} N; lever {wm.lever_ratio:.2f} to 1; outboard bolts "
+        f"{wm.bolt_tension_n:.0f} N each; walls {wm.wall_stress_mpa:.2f} MPa; about "
+        f"{grams['wheel_module']:.0f} g PETG (coupon {grams['wheel_module_coupon']:.0f} g); "
+        + "; ".join(wm.screws.values())
     )
     h = _heights(p)
     cup = derive_caster_cup(Caster(), h, CasterCup())
