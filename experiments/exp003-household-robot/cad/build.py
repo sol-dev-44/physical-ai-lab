@@ -19,7 +19,9 @@ sys.path.insert(0, str(HERE))
 
 from exp003_cad.base_plate import base_plate  # noqa: E402
 from exp003_cad.caster_cup import caster_cup  # noqa: E402
+from exp003_cad.compute_tray import compute_tray  # noqa: E402
 from exp003_cad.cradle import cradle  # noqa: E402
+from exp003_cad.deck_coupon import deck_coupon  # noqa: E402
 from exp003_cad.hub import full_hub, hub_coupon  # noqa: E402
 from exp003_cad.params import (  # noqa: E402
     CASTER_CUP_TEST,
@@ -28,17 +30,23 @@ from exp003_cad.params import (  # noqa: E402
     Caster,
     CasterCup,
     Cradle,
+    Deck,
     derive,
     derive_base_plate,
     derive_caster_cup,
     derive_cradle,
+    derive_deck,
     derive_heights,
     derive_tire,
     load,
     load_case,
     load_tire,
 )
+from exp003_cad.power_tray import power_tray  # noqa: E402
+from exp003_cad.servo_bridge import servo_bridge_for_print  # noqa: E402
 from exp003_cad.tire import tire  # noqa: E402
+
+PETG_G_PER_MM3 = 1.27e-3 * 0.6  # 4 walls, 30% infill: about 0.6 of solid
 
 PARTS = {
     "hub_coupon": hub_coupon,
@@ -47,6 +55,7 @@ PARTS = {
     "servo_cradle": lambda p: cradle(load_case(HERE / "servo.toml"), p.horn),
     "caster_cup": lambda p: caster_cup(Caster(), _heights(p)),
     "caster_cup_test": lambda p: caster_cup(Caster(), _heights(p), CASTER_CUP_TEST),
+    "deck_coupon": lambda p: deck_coupon(),
 }
 
 
@@ -76,6 +85,11 @@ def main() -> None:
     plate = _plate(p)
     parts = dict(PARTS)
     parts["base_plate" + ("" if plate.measured else "_UNMEASURED")] = lambda _p: base_plate(plate)
+    deck = derive_deck(plate)
+    parts["compute_tray"] = lambda _p: compute_tray(deck)
+    parts["servo_bridge"] = lambda _p: servo_bridge_for_print(deck)
+    parts["power_tray"] = lambda _p: power_tray(deck)
+    grams: dict[str, float] = {}
     for name, make in parts.items():
         part = make(p)
         for ext in ("step", "stl"):
@@ -84,6 +98,7 @@ def main() -> None:
                 cq.exporters.export(part, str(path), tolerance=0.02, angularTolerance=0.1)
             else:
                 cq.exporters.export(part, str(path))
+        grams[name] = part.val().Volume() * PETG_G_PER_MM3
         print(f"{name}: {path.with_suffix('.step').name} and .stl, {part.val().Volume():.0f} mm3")
 
     step = f", underside stepped up {d.relief_mm:.1f} mm beyond the horn" if d.relief_mm else ""
@@ -115,6 +130,18 @@ def main() -> None:
         f"base plate: {plate.x_front_mm - plate.x_back_mm:.0f} x {2 * plate.half_width_mm:.1f} mm, "
         f"caster {-plate.caster_xy[0]:.0f} mm behind the axle; screws: "
         + "; ".join(plate.screws.values())
+    )
+    print(
+        "electronics deck: compute tray, servo bridge (printed upside down), power tray with the "
+        "switch panel; about "
+        + ", ".join(f"{grams[k]:.0f} g" for k in ("compute_tray", "servo_bridge", "power_tray"))
+        + f" PETG; grid holes {len(deck.compute.holes)} + {len(deck.bridge.posts)} + "
+        f"{len(deck.power.holes)}; " + "; ".join(f"{n} x {k}" for k, n in deck.fasteners.items())
+    )
+    print(
+        f"electronics deck: switch panel face at x {deck.power.panel.x0:.0f}; a paddle "
+        f"{Deck().rocker_front_mm:.0f} mm proud stays {deck.rocker_inside_mm:.0f} mm inside the "
+        "plate's back edge"
     )
     if not plate.measured:
         print("base plate: strap width not measured (BasePlate.strap_width_mm); do not print it")

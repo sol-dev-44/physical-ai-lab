@@ -29,6 +29,9 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
 | exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
+| exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
+| exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
+| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
 | exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
@@ -91,6 +94,19 @@ not tracked yet; the AMS shows an estimate per spool.
 | 6" C-clamps | 4 | Active | Bench |
 | Felt desk mat | 1 | Active | Bench |
 | Mywish 1290-piece M2 to M5 button-head hex socket screw kit (B0CQWYFTXC) | 1 | Spare | Each size in 8, 12, 16 and 20 mm, with nuts, flat washers and hex keys. No M3 shorter than 8 mm |
+| WEP 948DQ-III soldering station with fume extractor (2-in-1) | 1 | On order | Ordered 2026-11-23. Due 2026-11-25. For the exp003 power harness; run the fume extractor while soldering |
+| Hakko CHP-170 micro soft wire cutters | 1 | On order | Ordered 2026-11-23. 2-pack. Due 2026-11-25 |
+| MG Chemicals 8341 no-clean flux paste, 10 mL | 1 | On order | Ordered 2026-11-23. Due 2026-11-25 |
+| MG Chemicals 4900 SAC305 lead-free solder, 0.032 in, 1/4 lb | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. Lead-free: runs hotter than leaded (about 350 C tip) |
+| Klein Tools 3005CR ratcheting crimper, 10 to 22 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For insulated terminals, e.g. the spade terminals (exp003 row 31); not for bare ferrules |
+| IRWIN Vise-Grip wire stripper, 10 to 24 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
+| QWORK 300 W mini heat gun | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For the heat-shrink kit (exp003 row 23) |
+| Copper solder wick braid, 2.5 mm | 1 | On order | Ordered 2026-11-23. 2-pack. Due 2026-11-27 |
+| Hakko 599B-02 tip cleaning wire and holder | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
+| Acid/flux brushes, 3/8 in | 1 | On order | Ordered 2026-11-23. 36 count. Due 2026-11-27 |
+| PAFOWO silicone soldering mat, 17.7 x 11.8 in | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
+| NoCry clear anti-fog safety glasses | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. Wear them when soldering and clipping leads |
+| Amazon Basics 99% isopropyl alcohol, 16 oz | 1 | On order | Ordered 2026-11-23. Due 2026-11-28. Cleans flux off boards |
 
 ## exp003 household robot parts (ordered 2026-11-17, due 2026-11-21 to 23)
 
@@ -129,6 +145,7 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads and fuse 
 | 29 | JST-XH pre-crimped connector kit | B08G18PWQ6 | | 2026-11-20 |
 | 30 | AYL mini speaker, 3.5 mm aux, about 64 mm, USB-charged | B007OYAVLI | | 2026-11-20 |
 | 31 | AIRIC blue female spade terminals, 16 to 14 AWG, 100-pack | | For the battery's F2 (6.35 mm) tabs: check they are 6.3 mm (0.250") on arrival | Due by 2026-11-25 |
+| 32 | Antrader USB 3.0 right-angle up and down extension, 4-pack (ordered 2026-11-23) | B07F7Y21GW | Turns the UCTRONICS's USB-A output 90 degrees so the Pi's power cable stays inside the plate (cad/DECK.md); check it says up and down, not left and right | Due 2026-11-27 (Friday) |
 
 ## Consumables: stock, usage and reorders
 
@@ -147,15 +164,15 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 413 g | about 587 g | about 520 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 500 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
-| PLA Basic Jade White (AMS A2) | 1000 g | about 450 g (toy truck: coupon 35 g; chassis, axles, bins 415 g) | about 550 g | about 65 g est. (toy truck: cab window band) | One spool per colour is enough for now | Bambu store about 1 week |
-| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | None planned (toy truck body and tailgate printing 2026-11-22, the last blue parts) | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 13 g (toy truck hub caps) | about 987 g | about 200 g est. (toy truck: cab, arm) | | |
+| PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
+| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | None planned (toy truck blue parts all printed) | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 240 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g) | about 760 g | None planned (toy truck yellow parts all sent) | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
-| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | 4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts | about 16 of each length if 20 | Electronics deck on the plate's M3 grid, est. 4 to 8 M3 | Count the compartments when the deck picks lengths | Amazon 1 to 2 days |
+| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | 4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts) | about 16 of each length if 20 | Electronics deck on the plate's M3 grid, est. 4 to 8 M3 | Count the compartments when the deck picks lengths | Amazon 1 to 2 days |
 | M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
 | Brass heat-set inserts M2 to M5 | 520 (arrived 2026-11-20) | 0 | 520 | Shells est. 20 to 40 (the plate and cup use nuts) | Plenty | |
 | M2.5 brass standoffs | 160 (arrived 2026-11-20) | 0 | 160 | Pi 5 and boards est. 12 to 16 | Plenty | |
@@ -178,21 +195,30 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-21 | Chassis assembled: cradles to plate, caster to cup, cup to plate | 4 x M3 x 12 and 4 M3 nuts (cradles); 4 x M4 x 8 and 4 M4 nuts (caster); 4 x M3 x 20 and 4 M3 nuts (cup; M3 x 16 with the corrected cup) |
 | 2026-11-22 | Caster cup (corrected), 8.6 mm (27 min 24 s, left nozzle, 4 walls, 30% infill) | PETG 9.89 g (slicer) |
 | 2026-11-22 | Caster cup swapped: caster into the corrected cup, cup to plate | 4 x M3 x 16 and 4 M3 nuts (cup to plate); the caster's 4 x M4 x 8 and nuts moved over. The old cup's 4 x M3 x 20 and nuts back to the kit |
+| 2026-11-23 | Electronics deck fit coupon (27 min 46 s, left nozzle, 4 walls, 30% infill) | PETG 8.85 g (slicer) |
+| 2026-11-23 | Electronics deck power tray and servo bridge, one plate (1 h 38 min, left nozzle, 4 walls, 30% infill) | PETG 34.78 g (slicer) |
+| 2026-11-23 | Electronics deck: compute tray (42 min 16 s, left nozzle, 4 walls, 30% infill) | PETG 17.44 g (slicer) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 | 2026-11-21 | Toy truck chassis, 3 axles, 2 bins | PLA Jade White 414.74 g (slicer) |
 | 2026-11-22 | Toy truck body and tailgate (7 h 46 min, left nozzle, 4 walls, 15% infill, 5 mm brim) | PLA Blue 359.90 g (slicer) |
+| 2026-11-22 | Toy truck assembled so far: 6 wheels, body to chassis, hopper hinge | 6 x M4 x 16, 6 M4 nuts, 6 M4 washers (wheels); 4 x M4 x 20 (body hold-down); 2 x M4 x 16 and 2 M4 nuts (hinge) |
+| 2026-11-22 | Toy truck cab, bin arm, push-out paddle (4 h 41 min, left nozzle, 2 colour changes, 4 walls, 15% infill, 5 mm brim) | PLA 270.52 g (slicer): Sunflower Yellow 227.32 g, Jade White 43.20 g |
+| 2026-11-22 | Toy truck cab, arm and paddle fitted (truck complete) | 4 x M4 x 20 (cab); 2 x M4 x 16 and 2 M4 nuts (arm pivot) |
+| 2026-11-22 | Toy truck bin slide test, 3 pieces (30 min, left nozzle) | PLA Jade White 12.17 g (slicer) |
+| 2026-11-23 | Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle) | PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers |
 
 ### Orders to place
 
 - **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
-  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 587 g; with the
-  sealed spool that is about 1.6 kg, against about 520 g still planned (electronics
+  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 526 g (after the deck coupon and all three deck parts); with the
+  sealed spool that is about 1.5 kg, against about 500 g still planned (electronics
   deck, shells, bumper mounts) plus daily printing. Bambu store, about 1 week. Spools with the RFID
   tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
   a second colour for the shells is the owner's call.
 
 The battery's spade terminals were ordered 2026-11-21 (row 31).
+The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
 
 PETG covers the planned parts with about 1100 g to spare. The TPU on hand covers the bumper.
 
@@ -227,6 +253,8 @@ Toys for sessions alongside the robot work. Not lab hardware; listed so nothing 
 | 2026-11-07 | Amazon | $165.91 | Sabrent hub, 2x STS3215 spares, C-clamps, screw assortment, desk mat |
 | 2026-11-07 | Amazon | $75.68 | reSpeaker XVF3800 |
 | 2026-11-17 | Amazon | $639.60 before tax | exp003 robot parts, items 1 to 30 above |
+| 2026-11-23 | Amazon | $275.26 | Soldering station, solder, flux, crimper, stripper, cutters, heat gun and bench supplies (Tools and bench, On order) |
+| 2026-11-23 | Amazon | $10.38 | Item 32: right-angle USB-A up/down extensions (Pi power) |
 
 The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 
@@ -249,6 +277,10 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-20: toy truck wheel plate logged (172.75 g: blue tyres, yellow caps).
 - 2026-11-21: toy truck white plate logged (414.74 g Jade White). AMS now feeds the left nozzle.
 - 2026-11-22: toy truck blue plate logged (359.90 g Blue); about 480 g left on the A3 spool, a spare Blue spool on hand.
+- 2026-11-22: toy truck yellow+white plate logged (227.32 g Yellow, 43.20 g White) and its M4 hardware so far; the last truck plate.
 - 2026-11-20: most of the 2026-11-17 exp003 order arrived (Arrived column); Pi 5, XT60, fuse assortment and limit switches due 2026-11-21. TPU on hand.
 - 2026-11-22: corrected caster cup fitted; the chassis sits level.
 - 2026-11-22: Pi 5, XT60 leads and the fuse assortment marked arrived (2026-11-21); limit switches still out.
+- 2026-11-22: soldering and wiring tools proposed for the power harness (Orders to place).
+- 2026-11-22: toy truck finished (cab and arm hardware logged); bin slide test logged (12.17 g White).
+- 2026-11-23: toy truck new bin with spinning wheels logged (about 40 g White, estimate).

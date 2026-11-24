@@ -9,10 +9,12 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-22):** the chassis is assembled and sits level: base plate, both wheel servos
-in their cradles, TPU-tired wheels and the rear caster in its corrected cup. The robot console
-(phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated
-wheels. Next: check the power parts, then the power harness and the Pi (see
+**Status (2026-11-23):** the chassis is assembled and sits level: base plate, both wheel servos
+in their cradles, TPU-tired wheels and the rear caster in its corrected cup. The electronics deck
+(compute tray, servo board bridge, power tray with switch panel; [cad/DECK.md](cad/DECK.md)) is
+printed and waiting for a dry fit. The robot console (phone control app,
+[CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated wheels. Next: dry-fit the
+deck, then the power harness (soldering tools arrive 2026-11-25 to 11-28; see
 [docs/inventory.md](../../docs/inventory.md)).
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
@@ -137,6 +139,9 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. Full-strength cup with mounting bosses printed 2026-11-21 (33 min, 12 g) but 4 mm too tall |
 | Caster cup (corrected, 8.6 mm) | PETG | Printed 2026-11-22 (27 min 24 s, 9.9 g, 4 walls, 30% infill) and fitted with M3 x 16 to the plate: the plate sits level |
 | Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; [cad/BASE_PLATE.md](cad/BASE_PLATE.md), "The plate"); cradles and caster cup fitted, level on the floor |
+| Electronics deck fit coupon | PETG | Printed 2026-11-23 (27 min 46 s, 8.85 g): the rocker snaps in, the M2.5 boss holds, the UCTRONICS slides into a 27.6 mm channel ([cad/DECK.md](cad/DECK.md)) |
+| Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); not fitted yet |
+| Compute tray | PETG | Printed 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); not fitted yet |
 
 ## Progress log
 
@@ -252,3 +257,10 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   now sits perfectly level on the floor. The chassis is done.
 - 2026-11-22: the Pi 5, XT60 leads and fuse assortment (arrived 2026-11-21) are logged; the
   limit switches are still to come. The build page and site log are brought up to date.
+- 2026-11-23: electronics deck designed ([cad/DECK.md](cad/DECK.md)) and printed. A fit coupon
+  settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts:
+  the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster
+  cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch
+  and charge-socket panel). The e-stop moved to v2: v1 runs only under the owner's supervision,
+  and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is a dry
+  fit of all three parts, then the power harness.

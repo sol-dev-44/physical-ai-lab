@@ -106,6 +106,9 @@ reach it.
 | Tire | `out/tire.step` | TPU 95A ring for the hub: 120 mm outside, 107 mm bore (grips the 108 mm seat), lips over both flanges. |
 | Base plate | `out/base_plate.step` | 300 x 261.6 x 4 mm. Carries the cradles, the caster cup, the battery (fences and strap slots) and hole patterns for the electronics deck, bumper and sensors. See `BASE_PLATE.md`. |
 | Caster cup | `out/caster_cup.step` | Light open cup (55 x 55 x 8.6 mm) the rear caster bolts up into: the raised pocket that holds the plate level. A box for the caster's plate joined with a circle for the fork's sweep. A separate part so the base plate prints flat. |
+| Compute tray | `out/compute_tray.step` | Deck, left: the Pi 5 on four coupon M2.5 bosses (11 mm standoffs) and the UCTRONICS in a 27.6 mm channel with two zip ties. Floor on the bed. See `DECK.md`. |
+| Servo bridge | `out/servo_bridge.step` | Deck, centre back: a platform over the caster cup on four posts (M3 nut wells), the servo board on 20 mm standoffs. Exported upside down, ready to print. |
+| Power tray | `out/power_tray.step` | Deck, right: slotted pads with sliding-nut channels for the DROK, an INA226 pocket, fuse-holder tie points, and the upright switch panel (rocker, charge jack). Floor on the bed. |
 
 The servo body itself, for brackets and the base plate, is the `[case]` table in `servo.toml`
 and the vendored STS3215 model in [vendor/](vendor/README.md).

@@ -9,6 +9,7 @@ Axis convention: z is the wheel axis, and z = 0 is the hub face that sits on the
 
 from __future__ import annotations
 
+import itertools
 import math
 import tomllib
 from dataclasses import dataclass, field
@@ -956,3 +957,1051 @@ def load(path: Path) -> HubParams:
             lengths_mm=tuple(raw.get("lengths_mm", screws.lengths_mm)),
         )
     return HubParams(horn=Horn(**data["horn"]), measured=bool(data["measured"]), screws=screws)
+
+
+# Electronics deck (DECK.md). M2.5 hardware comes from the HanTof standoff kit (inventory row 5):
+# brass standoffs with a 5 or 6 mm male stud, M2.5 x 5 screws and M2.5 hex nuts.
+M25_NUT_AF_MM = 5.0  # across flats (ISO 4032)
+M25_NUT_MM = 2.0
+M25_STUD_MM = 6.0  # the 11 and 20 mm standoffs' male stud
+ROCKER_CUTOUT_MM = (19.2, 13.2)  # DaierTek KCD1-101 (Daier sheet), long x short
+JACK_THREAD_MM = 11.4  # charge jack's threaded tube, owner's caliper on the kit socket (DECK.md)
+UCTRONICS_MM = (63.5, 27.3, 10.0)  # 5 V buck, long x wide x tall (owner's caliper 2026-11-23)
+
+
+@dataclass(frozen=True)
+class DeckCoupon:
+    """One flat print that checks the deck's new fits before the real parts: two rocker cutouts,
+    three jack holes, an M2.5 boss with a nut pocket underneath, and a short channel at the
+    UCTRONICS's width. Frame: x along the coupon, y across, z up from the bed (plate underside).
+    """
+
+    length_mm: float = 96.0
+    width_mm: float = 45.0
+    panel_mm: float = 2.0  # the rocker's clips and the jack's nut both take a thin panel
+    rocker_play_mm: tuple[float, float] = (0.2, 0.5)  # added to each side length: snug, loose
+    jack_holes_mm: tuple[float, float, float] = (8.2, 8.4, 8.6)
+    nut_clearance_mm: float = 0.2  # per side round the hex nut (PETG slip fit, printing.md)
+    boss_mm: float = 9.0  # boss diameter
+    # Per side round the UCTRONICS's width: 27.6 mm inside, which the coupon proved (a tiny bit
+    # of play on the measured 27.3 mm board).
+    channel_play_mm: float = 0.15
+    channel_wall_mm: float = 1.6
+    channel_height_mm: float = 8.0  # above the panel
+    channel_length_mm: float = 20.0
+
+
+@dataclass(frozen=True)
+class DeckCouponDerived:
+    rockers: tuple[tuple[float, float, float, float], ...]  # x, y centre; long, short side
+    jacks: tuple[tuple[float, float, float], ...]  # x, y, diameter
+    boss_xy: tuple[float, float]
+    boss_height_mm: float
+    nut_pocket_af_mm: float
+    nut_pocket_depth_mm: float  # from the bed up
+    stud_hole_mm: float
+    channel_inner_mm: float
+    channel_x_mm: tuple[float, float]
+
+
+def derive_deck_coupon(c: DeckCoupon) -> DeckCouponDerived:
+    """Places every feature and checks the M2.5 stack: a standoff's stud must reach through the
+    boss into the nut, but its tip must stop short of the bed (in the deck, the base plate)."""
+    w = c.width_mm
+    rockers = tuple(
+        (15.0, y, ROCKER_CUTOUT_MM[0] + p, ROCKER_CUTOUT_MM[1] + p)
+        for y, p in zip((w * 0.25, w * 0.75), c.rocker_play_mm, strict=True)
+    )
+    jacks = tuple((38.0, w * f, d) for f, d in zip((0.2, 0.5, 0.8), c.jack_holes_mm, strict=True))
+    # The nut is pulled up against the pocket's roof, so the stud engages it from the roof down.
+    # Pocket depth = nut + room for the stud's tip; boss height = roof + pocket depth, where the
+    # roof (stud length less the nut) keeps the tip clear of the bed.
+    tip_room = 1.0
+    depth = M25_NUT_MM + tip_room
+    roof = M25_STUD_MM - M25_NUT_MM
+    height = depth + roof
+    if roof < 2.0:
+        raise ValueError("the boss's roof over the nut is under 2 mm: too weak")
+    inner = UCTRONICS_MM[1] + 2 * c.channel_play_mm
+    x0 = c.length_mm - c.channel_length_mm - 4.0
+    if x0 < 56.0 + c.boss_mm / 2 + 2.0:
+        raise ValueError("the channel runs into the boss")
+    if inner + 2 * c.channel_wall_mm > w:
+        raise ValueError("the channel is wider than the coupon")
+    return DeckCouponDerived(
+        rockers=rockers,
+        jacks=jacks,
+        boss_xy=(56.0, w / 2),
+        boss_height_mm=height,
+        nut_pocket_af_mm=M25_NUT_AF_MM + 2 * c.nut_clearance_mm,
+        nut_pocket_depth_mm=depth,
+        stud_hole_mm=CLEARANCE_MM["M2.5"],
+        channel_inner_mm=inner,
+        channel_x_mm=(x0, x0 + c.channel_length_mm),
+    )
+
+
+# The electronics deck itself (DECK.md, "Parts to model"): a compute tray (left), a bridge over the
+# caster cup for the servo board (centre back) and a power tray with the switch panel (right).
+# Frame: the base plate's, x fore-aft (+ forward, axle at 0), y across (+ is the robot's left),
+# z up from the base plate's TOP face. Every part bolts to the plate's M3 grid with M3 screws up
+# from under the plate and nuts on top. `derive_deck` places every part, component, plug and
+# screw as boxes and raises on any clash.
+KIT_M3_MM = (8, 12, 16, 20)  # Mywish kit lengths
+M3_NUT_AF_MM = 5.5  # across flats (ISO 4032)
+M4_NUT_MM = 3.2
+NUT_ROOM_MM = 4.0  # radius kept free round a nut on top of a part: the nut (3.2) and fingers
+CUP_MIN_AIR_MM = 0.5  # least air any deck part keeps over the cup's nuts and tips
+STRAP_KEEP_MM = 3.5  # deck parts stay this far behind the rear strap slots (x <= -84)
+BATTERY_KEEP_MM = 4.0  # and this far behind the battery's back fences (x <= -80)
+PI_BOARD_MM = 1.6
+PI_UNDERSIDE_MM = 2.0  # through-hole pins and parts under a board
+CHARGE_JACK_HOLE_MM = JACK_THREAD_MM + 1.0  # 12.4: prints about 12.1 (DECK.md)
+PLATE_EDGE_KEEP_MM = 1.0  # the rocker's paddle stays this far inside the plate's back edge
+
+
+def kit_screw(stack_mm: float, what: str) -> int:
+    """Shortest kit M3 that passes `stack_mm` of plate and plastic and still has three threads
+    (1.5 mm) in the nut, the rule the caster cup uses. Raises ValueError naming the joint."""
+    need = stack_mm + M3_MIN_ENGAGE_MM
+    for n in KIT_M3_MM:
+        if n >= need - 1e-9:
+            return n
+    raise ValueError(f"{what}: needs an M3 of {need:.1f} mm, longer than the kit's 20 mm")
+
+
+Rect = tuple[float, float, float, float]  # x0, x1, y0, y1 in plan
+
+
+@dataclass(frozen=True)
+class Box:
+    """An axis-aligned box in the plate frame. `kind` is "part" (printed plastic), "component"
+    (a board or body), "reach" (room a plug, lead or terminal needs) or "hardware" (a nut on top
+    and the screw's tip). `owner` is the printed part or the component it belongs to."""
+
+    name: str
+    owner: str
+    kind: str
+    x0: float
+    x1: float
+    y0: float
+    y1: float
+    z0: float
+    z1: float
+
+    def plan(self) -> Rect:
+        return (self.x0, self.x1, self.y0, self.y1)
+
+    def overlaps(self, o: Box) -> bool:
+        """True if the boxes share volume; boxes that only touch do not."""
+        tol = 1e-6
+        return (
+            self.x0 < o.x1 - tol
+            and o.x0 < self.x1 - tol
+            and self.y0 < o.y1 - tol
+            and o.y0 < self.y1 - tol
+            and self.z0 < o.z1 - tol
+            and o.z0 < self.z1 - tol
+        )
+
+
+def _box(name: str, owner: str, kind: str, r: Rect, z0: float, z1: float) -> Box:
+    return Box(name, owner, kind, min(r[0], r[1]), max(r[0], r[1]), r[2], r[3], z0, z1)
+
+
+def _around(x: float, y: float, r: float) -> Rect:
+    return (x - r, x + r, y - r, y + r)
+
+
+@dataclass(frozen=True)
+class TiePoint:
+    """A zip tie's anchor: two slots through a floor and a groove under the floor joining them,
+    so the tie runs under the floor (which sits on the base plate) and round the component."""
+
+    slots: tuple[Rect, Rect]
+    groove: Rect
+    groove_mm: float  # depth, from the floor's underside
+
+
+TIE_SLOT_MM = (2.0, 4.5)  # across the tie (its thickness) x along it (its width: ties up to 3.6)
+TIE_GROOVE_MM = 1.5
+
+
+def _tie(a: float, b: float, at: float, along_x: bool) -> TiePoint:
+    """Slots centred at a and b (on the tie's path), at `at` on the other axis. along_x: the tie's
+    path runs in x (its slots are thin in x)."""
+    t, w = TIE_SLOT_MM
+    lo, hi = sorted((a, b))
+    if along_x:
+        s1 = (lo - t / 2, lo + t / 2, at - w / 2, at + w / 2)
+        s2 = (hi - t / 2, hi + t / 2, at - w / 2, at + w / 2)
+        groove = (lo - t / 2, hi + t / 2, at - w / 2, at + w / 2)
+    else:
+        s1 = (at - w / 2, at + w / 2, lo - t / 2, lo + t / 2)
+        s2 = (at - w / 2, at + w / 2, hi - t / 2, hi + t / 2)
+        groove = (at - w / 2, at + w / 2, lo - t / 2, hi + t / 2)
+    return TiePoint(slots=(s1, s2), groove=groove, groove_mm=TIE_GROOVE_MM)
+
+
+@dataclass(frozen=True)
+class Deck:
+    """Design choices and component facts for the deck (sources in DECK.md)."""
+
+    floor_mm: float = 3.0  # the trays' floors
+    edge_margin_mm: float = 1.0  # printed parts stay this far inside the plate's outline
+    cup_clearance_mm: float = 1.0  # air over the caster cup's nuts and screw tips
+    hole_margin_mm: float = 1.0  # a grid nut's room stays this far inside its part's floor
+    holes_per_part: int = 4
+
+    # Compute tray: the Pi 5 (RP-008347) and the UCTRONICS behind it.
+    pi_board: Rect = (-144.0, -88.0, 39.0, 124.0)
+    pi_holes_x: tuple[float, float] = (-140.5, -91.5)
+    pi_holes_y: tuple[float, float] = (62.5, 120.5)
+    pi_standoff_mm: float = 11.0
+    pi_tall_mm: float = 16.0  # USB stack above the board's top
+    pi_port_overhang_mm: float = 3.0  # USB/Ethernet past the inboard end
+    pi_usb_reach: Rect = (-128.0, -92.0, 5.0, 36.0)  # spec: the plugs' lane, kept clear in plan
+    pi_power_y_mm: float = 113.0  # USB-C on the back edge
+    pi_power_reach_mm: float = 18.0  # a USB-C plug's body behind the back edge
+    pi_window: Rect = (-129.0, -101.0, 69.0, 112.0)
+    uct_x_mm: float = -165.5  # channel centre: x about -152 to -179 (spec)
+    uct_y0_mm: float = 52.5  # input end (inboard); output end at y0 + 63.5
+    uct_in_reach_mm: float = 7.0  # screw-terminal leads before they bend
+    uct_out_reach_mm: float = 14.0  # the right-angle cable's USB-A head
+    uct_wall_inset_mm: float = 4.0  # channel walls stop short of the board's ends (open ends)
+    uct_tie_inset_mm: float = 8.0  # zip ties this far in from the board's ends
+    uct_window_mm: float = 4.0  # the cradle's floor window stops this far from walls and ties
+    cradle_floor_y0_mm: float = 46.0
+
+    # Servo board bridge: Waveshare Bus Servo Adapter (A), 42 x 33 mm, holes 37 x 28.
+    servo_xy: tuple[float, float] = (-158.0, 0.0)
+    servo_mm: tuple[float, float] = (42.0, 33.0)  # fore-aft x across
+    servo_holes_mm: tuple[float, float] = (37.0, 28.0)
+    servo_standoff_mm: float = 20.0  # lifts its plugs above the Pi's USB stack (see derive_deck)
+    servo_tall_mm: float = 10.0
+    servo_overhang_mm: float = 2.0  # USB-C and the jack past the +y edge
+    servo_plus_y_reach_mm: float = 28.0  # USB-C or barrel plug, toward the Pi
+    servo_minus_y_reach_mm: float = 15.0  # bus servo plugs
+    platform_mm: float = 3.0
+    # Posts on grid holes clear of the cup. (-135, +40) would stand under the Pi's USB end
+    # (2 mm below the board), so the fourth post is (-115, 0) instead.
+    posts: tuple[tuple[float, float], ...] = (
+        (-175.0, 40.0),
+        (-175.0, -40.0),
+        (-135.0, -40.0),
+        (-115.0, 0.0),
+    )
+    post_mm: float = 9.5
+    post_nut_seat_mm: float = 5.0  # the M3 nut sits on this, at the bottom of a hex well
+    platform_window_mm: tuple[float, float] = (24.0, 18.0)
+
+    # Power tray: DROK, INA226, two fuse holders, and the switch panel.
+    drok_xy: tuple[float, float] = (-118.0, -100.0)
+    drok_mm: tuple[float, float, float] = (57.0, 39.0, 22.0)
+    drok_spacing_mm: tuple[float, float] = (54.0, 68.0)  # ear holes, scaled about 61
+    drok_ear_mm: tuple[float, float, float] = (1.5, 3.0, 3.5)  # ear thickness: min, design, max
+    drok_ear_reach_mm: float = 35.0  # ear tips from the centre (scaled)
+    drok_lead_reach_mm: float = 6.0  # potted leads leave the inboard face
+    pad_mm: tuple[float, float] = (14.0, 9.0)  # width (y), height
+    pad_inner_mm: float = 22.0  # pads run from here out to the channel's open end
+    pad_roof_mm: float = 3.0
+    ina_xy: tuple[float, float] = (-161.0, -61.0)
+    ina_mm: tuple[float, float, float] = (26.0, 22.0, 14.0)  # GODIYMODULES, long x across
+    ina_pocket_mm: tuple[float, float] = (27.0, 23.0)
+    ina_wall_mm: tuple[float, float] = (5.0, 1.5)  # long walls, end stops (catch the PCB)
+    ina_reach_mm: float = 10.0  # terminals (+x end) and I2C header (-x end)
+    ina_tie_x_mm: tuple[float, float] = (-154.0, -164.0)
+    fuse_axes_y_mm: tuple[float, float] = (-44.0, -61.0)  # main 10 A, servo rail 5 A
+    fuse_x_mm: tuple[float, float] = (-124.0, -84.0)
+    fuse_mm: float = 15.0  # round body (DECK.md); its length is assumed 40 (Low)
+    fuse_tie_x_mm: tuple[float, float] = (-92.0, -116.0)
+    # Its back face: far enough in that the rocker's paddle (rocker_front_mm) stays 1 mm inside
+    # the plate's back edge, so the plate takes the knocks.
+    panel_x_mm: float = -179.0
+    panel_mm: float = 2.0  # the coupon's
+    panel_y_mm: tuple[float, float] = (-124.5, -74.5)
+    panel_top_mm: float = 28.0
+    gusset_mm: tuple[float, float] = (2.0, 10.0)  # thickness, reach behind the panel
+    rocker_y_mm: float = -115.0  # outboard of the DROK's back pad and ear (y -93 to -107)
+    jack_y_mm: float = -84.5  # inboard of them
+    switch_z_mm: float = 14.5  # centres of the rocker and the jack
+    rocker_bezel_mm: tuple[float, float] = (15.0, 21.0)  # across, tall
+    rocker_body_mm: tuple[float, float, float] = (13.4, 18.7, 21.4)  # with clips, tall, deep
+    rocker_crimp_mm: float = 6.0  # 4.8 mm spade crimps on its tabs
+    rocker_front_mm: float = 10.0  # bezel and paddle in front of the panel: assumed at most
+    jack_body_mm: tuple[float, float] = (16.0, 25.0)  # collar diameter, depth with leads (Low)
+    jack_front_mm: float = 3.0  # its nut, in front
+    power_floor: tuple[Rect, ...] = (
+        (-128.5, -84.0, -110.0, -35.0),  # fuses and the DROK's front half
+        (-179.0, -128.5, -110.0, -46.0),  # the DROK's back half, the INA226, the panel
+        (-169.5, -141.0, -110.0, -44.9),  # under the INA226's tie slots, between the posts
+        (-84.0, -80.8, -110.0, -74.0),  # the DROK's front pad
+        (-179.0, -140.0, -125.0, -110.0),  # the panel's far end
+    )
+
+
+@dataclass(frozen=True)
+class ComputeTrayDerived:
+    floor: tuple[Rect, ...]
+    windows: tuple[Rect, ...]
+    bosses: tuple[tuple[float, float], ...]
+    walls: tuple[Box, ...]
+    ties: tuple[TiePoint, ...]
+    holes: tuple[tuple[float, float], ...]
+    screw_mm: int
+
+
+@dataclass(frozen=True)
+class BridgeDerived:
+    platform: Rect
+    window: Rect
+    arms: tuple[Rect, ...]
+    platform_z_mm: tuple[float, float]
+    bosses: tuple[tuple[float, float], ...]
+    boss_bottom_mm: float
+    posts: tuple[tuple[float, float], ...]
+    post_mm: float
+    nut_seat_mm: float
+    well_af_mm: float
+    screw_mm: int
+
+
+@dataclass(frozen=True)
+class Pad:
+    pad: Rect
+    slot: Rect  # the ear screw's slot through the roof
+    channel: Rect  # hex channel in the underside, open at the pad's outer end
+    channel_mm: float  # depth from the tray's underside
+    top_mm: float
+
+
+@dataclass(frozen=True)
+class PowerTrayDerived:
+    floor: tuple[Rect, ...]
+    pads: tuple[Pad, Pad]
+    channel_af_mm: float
+    pocket_walls: tuple[Box, ...]
+    ties: tuple[TiePoint, ...]
+    panel: Box
+    gussets: tuple[Box, ...]
+    rocker_cutout: tuple[float, float, float, float]  # y, z centre; across, tall
+    jack_hole: tuple[float, float, float]  # y, z centre; diameter
+    holes: tuple[tuple[float, float], ...]
+    screw_mm: int
+    ear_screw_mm: int
+
+
+@dataclass(frozen=True)
+class DeckDerived:
+    compute: ComputeTrayDerived
+    bridge: BridgeDerived
+    power: PowerTrayDerived
+    coupon: DeckCouponDerived
+    floor_mm: float
+    boxes: tuple[Box, ...]
+    cup_reach_mm: float
+    rocker_inside_mm: float  # the rocker's paddle tip to the plate's back edge
+    fasteners: dict[str, int]
+
+
+def _in_plate(x: float, y: float, plate: BasePlateDerived, radius: float, margin: float) -> bool:
+    x0, x1, h = plate.x_back_mm, plate.x_front_mm, plate.half_width_mm
+    tol = 1e-6
+    if not (x0 + margin - tol <= x <= x1 - margin + tol and abs(y) <= h - margin + tol):
+        return False
+    cx = min(max(x, x0 + radius), x1 - radius)
+    cy = min(max(y, -h + radius), h - radius)
+    return math.hypot(x - cx, y - cy) <= radius - margin + tol
+
+
+def _dist_to_rect(x: float, y: float, r: Rect) -> float:
+    dx = max(r[0] - x, 0.0, x - r[1])
+    dy = max(r[2] - y, 0.0, y - r[3])
+    return math.hypot(dx, dy)
+
+
+def _hull_area(pts: tuple[tuple[float, float], ...]) -> float:
+    ps = sorted(pts)
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    lower: list[tuple[float, float]] = []
+    upper: list[tuple[float, float]] = []
+    for p in ps:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    for p in reversed(ps):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    hull = lower[:-1] + upper[:-1]
+    n = len(hull)
+    return (
+        abs(
+            sum(
+                hull[i][0] * hull[(i + 1) % n][1] - hull[(i + 1) % n][0] * hull[i][1]
+                for i in range(n)
+            )
+        )
+        / 2
+    )
+
+
+def _pick_holes(
+    part: str,
+    grid: tuple[tuple[float, float], ...],
+    taken: set[tuple[float, float]],
+    floor: tuple[Rect, ...],
+    keep_free: tuple[Rect, ...],
+    floor_mm: float,
+    tip_mm: float,
+    obstacles: list[Box],
+    d: Deck,
+) -> tuple[tuple[tuple[float, float], ...], list[Box]]:
+    """The grid holes a part bolts down with: holes well inside its floor, clear of its cuts, whose
+    nut and screw tip hit nothing; of those, the `holes_per_part` spread widest."""
+    cands: list[tuple[float, float]] = []
+    for x, y in grid:
+        if (x, y) in taken:
+            continue
+        room = NUT_ROOM_MM + d.hole_margin_mm
+        if not any(
+            r[0] + room <= x <= r[1] - room and r[2] + room <= y <= r[3] - room for r in floor
+        ):
+            continue
+        if any(_dist_to_rect(x, y, r) < NUT_ROOM_MM + d.hole_margin_mm for r in keep_free):
+            continue
+        hw = _box(
+            f"{part} nut at ({x:.0f}, {y:.0f})",
+            part,
+            "hardware",
+            _around(x, y, NUT_ROOM_MM),
+            floor_mm,
+            tip_mm,
+        )
+        if any(hw.overlaps(o) for o in obstacles):
+            continue
+        cands.append((x, y))
+    if len(cands) < d.holes_per_part:
+        raise ValueError(
+            f"the {part} finds only {len(cands)} free grid holes, needs {d.holes_per_part}"
+        )
+    best = max(
+        itertools.combinations(sorted(cands), d.holes_per_part),
+        key=lambda c: (round(_hull_area(c), 6), c),
+    )
+    hw = [
+        _box(
+            f"{part} nut at ({x:.0f}, {y:.0f})",
+            part,
+            "hardware",
+            _around(x, y, NUT_ROOM_MM),
+            floor_mm,
+            tip_mm,
+        )
+        for x, y in best
+    ]
+    return best, hw
+
+
+def derive_deck(
+    plate: BasePlateDerived,
+    d: Deck | None = None,
+    base: BasePlate | None = None,
+    cup: CasterCup | None = None,
+) -> DeckDerived:
+    """Places the four deck parts on the base plate (`derive_base_plate`, as build.py makes it)
+    and raises ValueError naming whatever collides: two footprints, a plug's reach, a shared grid
+    hole, the strap slots, the caster cup, the battery or the plate's edges."""
+    d = d or Deck()
+    base = base or BasePlate()
+    cup = cup or CasterCup()
+    co = derive_deck_coupon(DeckCoupon())
+    cc = DeckCoupon()
+    t = d.floor_mm
+    boxes: list[Box] = []
+
+    # --- The caster cup: its radius with the bosses, and its height with nuts and tips. ---
+    cx, cy = plate.caster_xy
+    cup_r = cup.boss_at_mm + cup.boss_mm / 2
+    h = plate.cup.height_mm
+    cup_screw = kit_screw(PLATE_MM + h, "cup to plate")  # as derive_caster_cup picks it
+    caster_plate = 3.0  # the caster's plate under the roof (derive_caster_cup)
+    m4 = next(n for n in KIT_M3_MM if n >= caster_plate + cup.roof_mm + M4_MIN_ENGAGE_MM)
+    cup_reach = max(
+        h + M3_NUT_MM,  # the cup's own nuts on its bosses
+        cup_screw - PLATE_MM,  # their tips
+        h + M4_NUT_MM,  # the caster's nuts on the roof
+        h + m4 - caster_plate - cup.roof_mm,  # their tips
+    )
+
+    # --- Compute tray ---
+    ct = "compute tray"
+    px0, px1, py0, py1 = d.pi_board
+    pi_bottom = co.boss_height_mm + d.pi_standoff_mm
+    bosses = tuple((x, y) for x in d.pi_holes_x for y in d.pi_holes_y)
+    for x, y in bosses:
+        if _dist_to_rect(x, y, (px0 + 3.5, px1 - 3.5, py0 + 3.5, py1 - 3.5)) > 1e-6:
+            raise ValueError(f"Pi hole ({x}, {y}) is not 3.5 mm inside the board (RP-008347)")
+    boxes += [
+        _box(f"Pi boss ({x}, {y})", ct, "part", _around(x, y, cc.boss_mm / 2), 0, co.boss_height_mm)
+        for x, y in bosses
+    ]
+    boxes.append(
+        _box(
+            "Pi 5",
+            "Pi 5",
+            "component",
+            (px0, px1, py0 - d.pi_port_overhang_mm, py1),
+            pi_bottom - PI_UNDERSIDE_MM,
+            pi_bottom + PI_BOARD_MM + d.pi_tall_mm,
+        )
+    )
+    # The plugs' lane, from under the board (cables sag) to above the USB stack. Below it the lane
+    # passes over the caster cup's keep-out, which is fine: the cup is 12 mm tall.
+    boxes.append(
+        _box(
+            "Pi USB plugs",
+            "Pi 5",
+            "reach",
+            d.pi_usb_reach,
+            pi_bottom - 4.0,
+            pi_bottom + PI_BOARD_MM + d.pi_tall_mm + 4.0,
+        )
+    )
+    boxes.append(
+        _box(
+            "Pi USB-C power plug",
+            "Pi 5",
+            "reach",
+            (px0 - d.pi_power_reach_mm, px0, d.pi_power_y_mm - 8, d.pi_power_y_mm + 8),
+            pi_bottom,
+            pi_bottom + PI_BOARD_MM + 8.0,
+        )
+    )
+    ul, uw, uh = UCTRONICS_MM
+    inner = co.channel_inner_mm
+    if inner < uw:
+        raise ValueError("the UCTRONICS channel is narrower than the board")
+    ux0, ux1 = d.uct_x_mm - uw / 2, d.uct_x_mm + uw / 2
+    uy0, uy1 = d.uct_y0_mm, d.uct_y0_mm + ul
+    boxes.append(_box("UCTRONICS", "UCTRONICS", "component", (ux0, ux1, uy0, uy1), t, t + uh))
+    boxes.append(
+        _box(
+            "UCTRONICS input leads",
+            "UCTRONICS",
+            "reach",
+            (ux0, ux1, uy0 - d.uct_in_reach_mm, uy0),
+            t,
+            t + uh,
+        )
+    )
+    boxes.append(
+        _box(
+            "UCTRONICS USB-A plug",
+            "UCTRONICS",
+            "reach",
+            (ux0, ux1, uy1, uy1 + d.uct_out_reach_mm),
+            t,
+            t + uh,
+        )
+    )
+    wi = (d.uct_x_mm - inner / 2, d.uct_x_mm + inner / 2)
+    ww = cc.channel_wall_mm
+    wy = (uy0 + d.uct_wall_inset_mm, uy1 - d.uct_wall_inset_mm)
+    walls = (
+        _box(
+            "UCTRONICS wall (back)",
+            ct,
+            "part",
+            (wi[0] - ww, wi[0], *wy),
+            t,
+            t + cc.channel_height_mm,
+        ),
+        _box(
+            "UCTRONICS wall (front)",
+            ct,
+            "part",
+            (wi[1], wi[1] + ww, *wy),
+            t,
+            t + cc.channel_height_mm,
+        ),
+    )
+    boxes += walls
+    st = TIE_SLOT_MM[0]
+    a, b = wi[0] - ww - st / 2, wi[1] + ww + st / 2
+    uties = tuple(
+        _tie(a, b, y, along_x=True) for y in (uy0 + d.uct_tie_inset_mm, uy1 - d.uct_tie_inset_mm)
+    )
+    floor_c = (
+        (
+            px0 - 2.0,
+            px1 + 2.0,
+            min(d.pi_holes_y) - cc.boss_mm / 2 - 1.5,
+            max(d.pi_holes_y) + cc.boss_mm / 2 + 2.0,
+        ),
+        (
+            a - st / 2 - 1.5,
+            px0 - 2.0,
+            d.cradle_floor_y0_mm,
+            max(d.pi_holes_y) + cc.boss_mm / 2 + 2.0,
+        ),
+    )
+    boxes += [_box(f"compute tray floor {i}", ct, "part", r, 0, t) for i, r in enumerate(floor_c)]
+    g0, g1 = uties[0].groove, uties[1].groove
+    uct_window = (
+        wi[0] + d.uct_window_mm,
+        wi[1] - d.uct_window_mm,
+        g0[3] + d.uct_window_mm,
+        g1[2] - d.uct_window_mm,
+    )
+    if uct_window[3] - uct_window[2] < 10.0:
+        raise ValueError("the UCTRONICS ties are too close together for a floor window")
+    for w in (d.pi_window, uct_window):
+        if not any(r[0] < w[0] and w[1] < r[1] and r[2] < w[2] and w[3] < r[3] for r in floor_c):
+            raise ValueError(f"window {w} is not inside the compute tray's floor")
+    for x, y in bosses:
+        if any(_dist_to_rect(x, y, w) < cc.boss_mm / 2 + 1.0 for w in (d.pi_window,)):
+            raise ValueError(f"the Pi window cuts the boss at ({x}, {y})")
+
+    # --- Servo board bridge ---
+    br = "servo bridge"
+    sx, sy = d.servo_xy
+    sl, sw = d.servo_mm
+    hx, hy = d.servo_holes_mm[0] / 2, d.servo_holes_mm[1] / 2
+    sbosses = tuple((sx + i * hx, sy + j * hy) for i in (-1, 1) for j in (-1, 1))
+    boss_bottom = cup_reach + d.cup_clearance_mm
+    top = boss_bottom + co.boss_height_mm
+    if top < 15.0:
+        raise ValueError("the bridge's platform must stand at least 15 mm (DECK.md)")
+    under = top - d.platform_mm
+    if under - boss_bottom < co.nut_pocket_depth_mm - 1e-6:
+        raise ValueError("the platform is thicker than the boss's roof: the nut pocket closes")
+    br_r = cc.boss_mm / 2 + 1.0
+    platform = (sx - hx - br_r, sx + hx + br_r, sy - hy - br_r + 0.5, sy + hy + br_r - 0.5)
+    wx, wy_ = d.platform_window_mm
+    window = (sx - wx / 2, sx + wx / 2, sy - wy_ / 2, sy + wy_ / 2)
+    for x, y in sbosses:
+        if _dist_to_rect(x, y, window) < cc.boss_mm / 2 + 1.0:
+            raise ValueError("the platform's window cuts a boss")
+    boxes.append(_box("bridge platform", br, "part", platform, under, top))
+    boxes += [
+        _box(
+            f"bridge boss ({x:.1f}, {y:.1f})",
+            br,
+            "part",
+            _around(x, y, cc.boss_mm / 2),
+            boss_bottom,
+            top,
+        )
+        for x, y in sbosses
+    ]
+    pr = d.post_mm / 2
+    well_af = M3_NUT_AF_MM + 2 * cc.nut_clearance_mm
+    if pr - well_af / math.sqrt(3) < 1.2:
+        raise ValueError("the posts' walls round the nut wells are under 1.2 mm")
+    grid = set(plate.grid_holes)
+    arms: list[Rect] = []
+    for x, y in d.posts:
+        if (x, y) not in grid:
+            raise ValueError(f"bridge post ({x}, {y}) is not on a grid hole")
+        if math.hypot(x - cx, y - cy) - pr < cup_r - 1e-6:
+            raise ValueError(f"bridge post ({x}, {y}) stands on the caster cup")
+        boxes.append(_box(f"bridge post ({x:.0f}, {y:.0f})", br, "part", _around(x, y, pr), 0, top))
+        if platform[0] <= x <= platform[1]:
+            q = min(max(y, platform[2]), platform[3])
+            arms.append((x - pr, x + pr, min(y, q), max(y, q)))
+        elif platform[2] <= y <= platform[3]:
+            q = min(max(x, platform[0]), platform[1])
+            arms.append((min(x, q), max(x, q), y - pr, y + pr))
+        else:
+            raise ValueError(f"bridge post ({x}, {y}) is off the platform's axes: no straight arm")
+    boxes += [_box(f"bridge arm {i}", br, "part", r, under, top) for i, r in enumerate(arms)]
+    post_screw = kit_screw(PLATE_MM + d.post_nut_seat_mm, "bridge posts")
+    if post_screw - PLATE_MM > top:
+        raise ValueError("the bridge posts' screws stand out of the wells")
+    s_bottom = top + d.servo_standoff_mm
+    s_rect = (sx - sl / 2, sx + sl / 2, sy - sw / 2, sy + sw / 2 + d.servo_overhang_mm)
+    s_z = (s_bottom - PI_UNDERSIDE_MM, s_bottom + PI_BOARD_MM + d.servo_tall_mm)
+    boxes.append(_box("servo board", "servo board", "component", s_rect, *s_z))
+    boxes.append(
+        _box(
+            "servo board USB-C and 12 V",
+            "servo board",
+            "reach",
+            (s_rect[0], s_rect[1], s_rect[3], s_rect[3] + d.servo_plus_y_reach_mm),
+            s_z[0],
+            s_z[1] + 2.0,
+        )
+    )
+    boxes.append(
+        _box(
+            "servo bus plugs",
+            "servo board",
+            "reach",
+            (s_rect[0], s_rect[1], s_rect[2] - d.servo_minus_y_reach_mm, s_rect[2]),
+            s_z[0],
+            s_z[1],
+        )
+    )
+
+    # --- Power tray and switch panel ---
+    pw = "power tray"
+    dx_, dy_ = d.drok_xy
+    dl, dw, dh = d.drok_mm
+    pad_w, pad_top = d.pad_mm
+    s_lo, s_hi = d.drok_spacing_mm[0] / 2, d.drok_spacing_mm[1] / 2
+    e_min, e_design, e_max = d.drok_ear_mm
+    ear_screw = kit_screw(e_design + d.pad_roof_mm, "DROK ears")
+    if ear_screw - e_max - d.pad_roof_mm < M3_MIN_ENGAGE_MM - 1e-6:
+        raise ValueError("the DROK's ear screw is short for its thickest ear")
+    channel = pad_top - d.pad_roof_mm
+    if pad_top + e_min - ear_screw < 0.5:
+        raise ValueError("the DROK's ear screw reaches the base plate under its thinnest ear")
+    if channel < M3_NUT_MM + 0.5:
+        raise ValueError("the DROK pads' nut channels are shallower than a nut")
+    pads: list[Pad] = []
+    nut_r = well_af / math.sqrt(3)
+    r3 = CLEARANCE_MM["M3"] / 2
+    for s in (1, -1):
+        outer = s_hi + r3 + 1.5
+        pad = (dx_ + s * d.pad_inner_mm, dx_ + s * outer, dy_ - pad_w / 2, dy_ + pad_w / 2)
+        slot = (dx_ + s * (s_lo - r3), dx_ + s * (s_hi + r3), dy_ - r3, dy_ + r3)
+        ch = (
+            dx_ + s * (s_lo - nut_r),
+            dx_ + s * (outer + 1.0),
+            dy_ - well_af / 2,
+            dy_ + well_af / 2,
+        )
+        if s * (dx_ + s * (s_lo - nut_r)) <= s * (dx_ + s * d.pad_inner_mm):
+            raise ValueError("the DROK pad's nut channel runs past the pad's inner end")
+        pad, slot, ch = ((min(r[0], r[1]), max(r[0], r[1]), r[2], r[3]) for r in (pad, slot, ch))
+        pads.append(Pad(pad=pad, slot=slot, channel=ch, channel_mm=channel, top_mm=pad_top))
+        boxes.append(
+            _box(f"DROK pad ({'front' if s > 0 else 'back'})", pw, "part", pad, 0, pad_top)
+        )
+    boxes.append(
+        _box(
+            "DROK",
+            "DROK",
+            "component",
+            (dx_ - dl / 2, dx_ + dl / 2, dy_ - dw / 2, dy_ + dw / 2),
+            pad_top,
+            pad_top + dh,
+        )
+    )
+    boxes += [
+        _box(
+            f"DROK ear ({'front' if s > 0 else 'back'})",
+            "DROK",
+            "component",
+            (
+                min(dx_ + s * dl / 2, dx_ + s * d.drok_ear_reach_mm),
+                max(dx_ + s * dl / 2, dx_ + s * d.drok_ear_reach_mm),
+                dy_ - pad_w / 2,
+                dy_ + pad_w / 2,
+            ),
+            pad_top,
+            pad_top + e_max,
+        )
+        for s in (1, -1)
+    ]
+    boxes.append(
+        _box(
+            "DROK leads",
+            "DROK",
+            "reach",
+            (dx_ - dl / 2, dx_ + dl / 2, dy_ + dw / 2, dy_ + dw / 2 + d.drok_lead_reach_mm),
+            pad_top,
+            pad_top + dh,
+        )
+    )
+
+    ix, iy = d.ina_xy
+    il, iw, ih = d.ina_mm
+    ipl, ipw = d.ina_pocket_mm
+    if ipl < il or ipw < iw:
+        raise ValueError("the INA226 pocket is smaller than the board")
+    lw, ew = d.ina_wall_mm
+    pin = (ix - ipl / 2, ix + ipl / 2, iy - ipw / 2, iy + ipw / 2)
+    pocket = (
+        _box("INA226 wall (+y)", pw, "part", (pin[0], pin[1], pin[3], pin[3] + ww), t, t + lw),
+        _box("INA226 wall (-y)", pw, "part", (pin[0], pin[1], pin[2] - ww, pin[2]), t, t + lw),
+        _box("INA226 stop (+x)", pw, "part", (pin[1], pin[1] + ww, pin[2], pin[3]), t, t + ew),
+        _box("INA226 stop (-x)", pw, "part", (pin[0] - ww, pin[0], pin[2], pin[3]), t, t + ew),
+    )
+    boxes += pocket
+    ina = (ix - il / 2, ix + il / 2, iy - iw / 2, iy + iw / 2)
+    boxes.append(_box("INA226", "INA226", "component", ina, t, t + ih))
+    zr = (t + ew + 0.1, t + ih)  # wires and plugs pass over the end stops
+    boxes.append(
+        _box(
+            "INA226 terminals",
+            "INA226",
+            "reach",
+            (ina[1], ina[1] + d.ina_reach_mm, ina[2], ina[3]),
+            *zr,
+        )
+    )
+    boxes.append(
+        _box(
+            "INA226 I2C header",
+            "INA226",
+            "reach",
+            (ina[0] - d.ina_reach_mm, ina[0], ina[2], ina[3]),
+            *zr,
+        )
+    )
+    ina_ties = tuple(
+        _tie(pin[2] - ww - st / 2, pin[3] + ww + st / 2, x, along_x=False) for x in d.ina_tie_x_mm
+    )
+    fuses = tuple(
+        _box(
+            f"fuse holder ({'main' if i == 0 else 'servo'})",
+            f"fuse {i + 1}",
+            "component",
+            (d.fuse_x_mm[0], d.fuse_x_mm[1], y - d.fuse_mm / 2, y + d.fuse_mm / 2),
+            t,
+            t + d.fuse_mm,
+        )
+        for i, y in enumerate(d.fuse_axes_y_mm)
+    )
+    boxes += fuses
+    fuse_ties = tuple(
+        _tie(y - 4.5, y + 4.5, x, along_x=False) for y in d.fuse_axes_y_mm for x in d.fuse_tie_x_mm
+    )
+
+    p_in = d.panel_x_mm + d.panel_mm
+    panel = _box("switch panel", pw, "part", (d.panel_x_mm, p_in, *d.panel_y_mm), 0, d.panel_top_mm)
+    gt, gr = d.gusset_mm
+    gussets = (
+        _box(
+            "panel gusset (+y)",
+            pw,
+            "part",
+            (p_in, p_in + gr, d.panel_y_mm[1] - gt, d.panel_y_mm[1]),
+            t,
+            d.panel_top_mm,
+        ),
+        _box(
+            "panel gusset (-y)",
+            pw,
+            "part",
+            (p_in, p_in + gr, d.panel_y_mm[0], d.panel_y_mm[0] + gt),
+            t,
+            d.panel_top_mm,
+        ),
+    )
+    boxes += [panel, *gussets]
+    zc = d.switch_z_mm
+    ra, rt, rd = d.rocker_body_mm
+    ba, bt = d.rocker_bezel_mm
+    boxes.append(
+        _box(
+            "rocker",
+            "rocker",
+            "component",
+            (p_in, p_in + rd + d.rocker_crimp_mm, d.rocker_y_mm - ra / 2, d.rocker_y_mm + ra / 2),
+            zc - rt / 2,
+            zc + rt / 2,
+        )
+    )
+    boxes.append(
+        _box(
+            "rocker bezel",
+            "rocker",
+            "component",
+            (d.panel_x_mm - 2.0, d.panel_x_mm, d.rocker_y_mm - ba / 2, d.rocker_y_mm + ba / 2),
+            zc - bt / 2,
+            zc + bt / 2,
+        )
+    )
+    jd, jl = d.jack_body_mm
+    boxes.append(
+        _box(
+            "charge jack",
+            "charge jack",
+            "component",
+            (p_in, p_in + jl, d.jack_y_mm - jd / 2, d.jack_y_mm + jd / 2),
+            zc - jd / 2,
+            zc + jd / 2,
+        )
+    )
+    boxes.append(
+        _box(
+            "charge jack nut",
+            "charge jack",
+            "component",
+            (
+                d.panel_x_mm - d.jack_front_mm,
+                d.panel_x_mm,
+                d.jack_y_mm - jd / 2 - 1,
+                d.jack_y_mm + jd / 2 + 1,
+            ),
+            zc - jd / 2 - 1,
+            zc + jd / 2 + 1,
+        )
+    )
+    rc = co.rockers[0]  # the snug cutout the coupon proved
+    rocker_cut = (d.rocker_y_mm, zc, rc[3], rc[2])  # long side vertical
+    if zc - bt / 2 < t + 0.5 or zc + bt / 2 > d.panel_top_mm - 1.5:
+        raise ValueError("the rocker's bezel does not fit on the panel")
+    if zc - CHARGE_JACK_HOLE_MM / 2 < t + 2.0:
+        raise ValueError("the charge jack's hole runs into the floor")
+    if abs(d.rocker_y_mm - d.jack_y_mm) < ba / 2 + jd / 2 + 1.0:
+        raise ValueError("the rocker and the charge jack are too close on the panel")
+    for yy, half in ((d.rocker_y_mm, ba / 2), (d.jack_y_mm, jd / 2)):
+        if yy - half < d.panel_y_mm[0] + gt or yy + half > d.panel_y_mm[1] - gt:
+            raise ValueError("the rocker or the jack runs off the panel or into a gusset")
+    boxes += [
+        _box(f"power tray floor {i}", pw, "part", r, 0, t) for i, r in enumerate(d.power_floor)
+    ]
+
+    # --- Grid holes: each part takes its own, the bridge's posts first. ---
+    taken = set(d.posts)
+    floor_screw = kit_screw(PLATE_MM + t, "tray floors")
+    tip = max(floor_screw - PLATE_MM, t + M3_NUT_MM)
+    others = [
+        b for b in boxes if not (b.kind == "part" and b.name.startswith("compute tray floor"))
+    ]
+    ckeep = (d.pi_window, uct_window, *(tie.groove for tie in uties))
+    c_holes, c_hw = _pick_holes(ct, plate.grid_holes, taken, floor_c, ckeep, t, tip, others, d)
+    taken |= set(c_holes)
+    others = [b for b in boxes if not (b.kind == "part" and b.name.startswith("power tray floor"))]
+    pkeep = (
+        *(p.channel for p in pads),
+        *(tie.groove for tie in (*ina_ties, *fuse_ties)),
+    )
+    p_holes, p_hw = _pick_holes(
+        pw, plate.grid_holes, taken, d.power_floor, pkeep, t, tip, others + c_hw, d
+    )
+    boxes += c_hw + p_hw
+    used = [*d.posts, *c_holes, *p_holes]
+    if len(used) != len(set(used)):
+        raise ValueError("two deck parts claim one grid hole")
+
+    _check_deck(boxes, plate, base, d, (cx, cy), cup_r, cup_reach)
+    for tie in (*uties, *ina_ties, *fuse_ties):
+        for s_ in tie.slots:
+            floors = floor_c if tie in uties else d.power_floor
+            if not any(
+                r[0] + 1.0 <= s_[0]
+                and s_[1] <= r[1] - 1.0
+                and r[2] + 1.0 <= s_[2]
+                and s_[3] <= r[3] - 1.0
+                for r in floors
+            ):
+                raise ValueError(f"a zip-tie slot at {s_} runs off its part's floor")
+            owner = ct if tie in uties else pw
+            for b in boxes:  # the tie must rise straight out of its slot
+                if b.owner == owner and b.kind == "part" and b.z0 > 0.0:
+                    sb = _box("tie slot", owner, "cut", s_, b.z0, b.z0 + 1.0)
+                    if sb.overlaps(b):
+                        raise ValueError(f"a zip-tie slot at {s_} is under the {b.name}")
+
+    rocker_inside = d.panel_x_mm - d.rocker_front_mm - plate.x_back_mm
+    if rocker_inside < PLATE_EDGE_KEEP_MM - 1e-6:
+        raise ValueError(
+            f"the rocker's paddle stands {d.rocker_front_mm:.0f} mm proud of the panel: only "
+            f"{rocker_inside:.1f} mm inside the plate's back edge (keep {PLATE_EDGE_KEEP_MM:.0f})"
+        )
+    n_ties = len(uties) + len(ina_ties) + len(fuse_ties)
+    fasteners = {
+        f"M3 x {floor_screw} (trays to plate)": len(c_holes) + len(p_holes),
+        f"M3 x {post_screw} (bridge posts to plate)": len(d.posts),
+        f"M3 x {ear_screw} (DROK ears)": 2,
+        "M3 nuts": len(c_holes) + len(p_holes) + len(d.posts) + 2,
+        f"M2.5 x {d.pi_standoff_mm:.0f} mm standoffs (Pi)": 4,
+        f"M2.5 x {d.servo_standoff_mm:.0f} mm standoffs (servo board)": 4,
+        "M2.5 nuts": 8,
+        "M2.5 x 5 screws": 8,
+        "zip ties": n_ties,
+    }
+    return DeckDerived(
+        compute=ComputeTrayDerived(
+            floor=floor_c,
+            windows=(d.pi_window, uct_window),
+            bosses=bosses,
+            walls=walls,
+            ties=uties,
+            holes=c_holes,
+            screw_mm=floor_screw,
+        ),
+        bridge=BridgeDerived(
+            platform=platform,
+            window=window,
+            arms=tuple(arms),
+            platform_z_mm=(under, top),
+            bosses=sbosses,
+            boss_bottom_mm=boss_bottom,
+            posts=d.posts,
+            post_mm=d.post_mm,
+            nut_seat_mm=d.post_nut_seat_mm,
+            well_af_mm=well_af,
+            screw_mm=post_screw,
+        ),
+        power=PowerTrayDerived(
+            floor=d.power_floor,
+            pads=(pads[0], pads[1]),
+            channel_af_mm=well_af,
+            pocket_walls=pocket,
+            ties=(*ina_ties, *fuse_ties),
+            panel=panel,
+            gussets=gussets,
+            rocker_cutout=rocker_cut,
+            jack_hole=(d.jack_y_mm, zc, CHARGE_JACK_HOLE_MM),
+            holes=p_holes,
+            screw_mm=floor_screw,
+            ear_screw_mm=ear_screw,
+        ),
+        coupon=co,
+        floor_mm=t,
+        boxes=tuple(boxes),
+        cup_reach_mm=cup_reach,
+        rocker_inside_mm=rocker_inside,
+        fasteners=fasteners,
+    )
+
+
+def _check_deck(
+    boxes: list[Box],
+    plate: BasePlateDerived,
+    base: BasePlate,
+    d: Deck,
+    cup_xy: tuple[float, float],
+    cup_r: float,
+    cup_reach: float,
+) -> None:
+    """Every box against the plate's outline, the battery, the strap slots, the caster cup and
+    every other box. Raises ValueError naming the first clash."""
+    rear = [s for s in plate.strap_slots if s[0] < plate.battery_box[0]]
+    strap_x = min(s[0] for s in rear) - STRAP_KEEP_MM
+    front = plate.battery_box[0] - base.fence_mm - BATTERY_KEEP_MM
+    for b in boxes:
+        margin = d.edge_margin_mm if b.kind == "part" else 0.0
+        for x in (b.x0, b.x1):
+            for y in (b.y0, b.y1):
+                if not _in_plate(x, y, plate, base.corner_radius_mm, margin):
+                    raise ValueError(f"{b.name} runs off the base plate at ({x:.1f}, {y:.1f})")
+        if b.x1 > front + 1e-6:
+            raise ValueError(f"{b.name} reaches x {b.x1:.1f}, past the deck's front ({front:.1f})")
+        for s in rear:
+            if b.x1 > strap_x + 1e-6 and b.y0 < s[3] and s[2] < b.y1:
+                raise ValueError(f"{b.name} is in a battery strap's way (keep x <= {strap_x:.1f})")
+        over_cup = _dist_to_rect(*cup_xy, b.plan()) < cup_r - 1e-6
+        if over_cup and b.z0 < cup_reach + CUP_MIN_AIR_MM - 1e-6:
+            raise ValueError(
+                f"{b.name} hits the caster cup (radius {cup_r:.0f}, {cup_reach:.0f} mm tall)"
+            )
+    for i, a in enumerate(boxes):
+        for b in boxes[i + 1 :]:
+            if a.kind == "reach" and b.kind == "reach":
+                continue  # cables may share room
+            if a.owner == b.owner and (a.kind == b.kind == "part" or "reach" in (a.kind, b.kind)):
+                continue
+            if a.owner == b.owner and a.kind == b.kind == "component":
+                continue
+            if a.overlaps(b):
+                raise ValueError(f"{a.name} collides with {b.name}")

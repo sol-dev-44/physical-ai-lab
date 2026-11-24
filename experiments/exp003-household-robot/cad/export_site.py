@@ -47,6 +47,7 @@ BOM_GROUPS: dict[int, str] = {
     **dict.fromkeys(range(25, 30), "Sensing and wiring"),
     30: "Audio",
     31: "Power",
+    32: "Power",
 }  # A new row in docs/inventory.md's exp003 order table needs its number here.
 
 
