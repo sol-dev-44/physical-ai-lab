@@ -2,7 +2,7 @@
 title: Household robot
 date: 2026-11-17
 status: building
-summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The chassis is printed, assembled and sits level, and a phone control app drives it on simulated wheels. The power wiring and the Pi come next.
+summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The chassis and the electronics deck are printed, but the first wheel mounts rolled over under the robot's weight, so a stiffer wheel module comes next. A phone control app already drives it on simulated wheels.
 tags: [robot, mobile-base, cad, 3d-printing, exp003]
 parts:
   - 2 × Feetech STS3215 12V servos, wheel mode
@@ -26,10 +26,13 @@ about where it may go and when, and take remote driving. This is lab experiment 
   it is told. It ends with a vision-language-action policy trained on its own driving.
 - **v2** adds an arm to pick up light toys and put them away.
 
-Where it stands: the chassis is done. The base plate, both wheels with their TPU tires, both
-servo cradles and the rear caster are printed and bolted together, and the robot sits level on
-the floor. A control app for a phone is built and drives simulated wheels. Next come the power
-wiring, the Raspberry Pi and real wheels. Nothing runs against hardware yet.
+Where it stands: everything for the chassis and the electronics deck is printed: the base plate, both wheels with their TPU tires, the servo
+cradles, the rear caster and the three deck trays. With everything laid out on the plate, the
+wheel mounts failed: under the robot's weight each servo cradle rolls over and its wheel leans
+in. The fix is a stiffer wheel module, a boxed servo mount on a wide foot with a beam tying left
+and right together (see the servo mount and the lessons below). Then come the power wiring, the
+Raspberry Pi and real wheels. A control app for a phone is built and drives simulated wheels.
+Nothing runs against hardware yet.
 
 <Callout>
   Every dimension, mass and count on this page is exported from the CAD parameters and the lab's
@@ -120,6 +123,17 @@ should, on a servo lowered 0.6 mm. Both cradles are printed and fitted: each ser
 flat on its pads and holds solid. The loose metal idler disc on the servo's bottom comes off first
 and goes with the spares.
 
+The fit was right, but the cradle was not stiff enough. With the deck laid out on the plate, the
+cradles rolled over under the robot's weight (see "The hinge with two bolts" below). The
+replacement keeps the same screws into the servo. It adds:
+
+- a box round the whole case;
+- a foot almost as wide as the gap to the battery, with six bolts on two lines;
+- a print orientation that keeps the bending along the layers;
+- a beam across the robot joining the two wheel mounts.
+
+A bearing that carries the wheel, so the servo only drives, follows before the arm.
+
 <ServoSheet />
 
 The servo's numbers come from two places. The vendored STS3215 model, from The Robot Studio's
@@ -172,7 +186,7 @@ infill, no supports), the tires in TPU 95A.
 
 <PrintedParts />
 
-Still to print: the electronics deck, the bumper and the shells.
+Still to print: the wheel module v2 (two servo boxes, an axle beam and a second base plate with their holes), the bumper and the shells. The electronics deck is printed and waits for the new plate.
 
 ## Parts list
 
@@ -245,7 +259,7 @@ Each phase ends with a test it has to pass before the next one starts. The build
 
 ## Lessons
 
-Measure twice, cut once. The first week produced five misses. None cost more than a small print,
+Measure twice, cut once. The first week produced six misses. None cost more than a small print,
 and each one changed how the next part gets designed.
 
 ### The coupon that nearly touched
@@ -286,6 +300,16 @@ sized as if the cup started at the plate's underside, but it stands on the top f
 plate's 4 mm was counted twice and the caster sat 4 mm high. A test now adds the stacked heights
 up to the floor, and the corrected cup sits level.
 
+### The hinge with two bolts
+
+With the deck laid out on the plate, the wheels leaned in. One servo cradle had rolled over
+about the inside edge of its foot. Each cradle held the plate with two bolts on a single line,
+11 mm from that edge, while the tire pushed up 53 mm out. That is a lever of almost five to one.
+The cradle's 2 to 3 mm walls also took the bending across their print layers, the weakest
+direction of a printed part, and PETG creeps under a steady load. Every earlier check was about
+fit; none asked where the part would tip. The new wheel module puts its bolts on two lines across
+a wide foot, prints so the bending runs along the layers, and ties both wheels to one beam.
+
 ### The checklist
 
 Since then, a "before designing a part" checklist gates every printed part:
@@ -304,3 +328,6 @@ Since then, a "before designing a part" checklist gates every printed part:
 7. Ask whatever is still open in one go, before modelling. A test print checks a fit; it never
    stands in for a number nobody measured.
 8. Record what was measured and what was read from a model, so the next part starts from facts.
+9. Trace the load path. Name the edge a loaded part would tip about and keep the load's lever to
+   the bolts' lever under about two to one. Print so the bending runs along the layers. Tie
+   matching left and right loads together. Allow for three times the static load, and for creep.

@@ -43,6 +43,9 @@ something new is learned.
 - **Background clicks on the 3D canvas go to the last hovered toolbar icon** (2026-11-22): after
   clicking Add Plate, two more canvas clicks each added a plate. Remove strays with Edit > Undo
   (app menu), one at a time, and screenshot between. Buttons in the top bar (Slice plate) are fine.
+- **Open several parts one file per `open` call** (2026-11-23): `open -a BambuStudio a.stl b.stl`
+  pops "Object with multiple parts was detected", a dialog in another process that only the owner
+  can answer (No keeps separate objects).
 - **Watch out:** opening a file adds to the current plate. Hidden leftovers get cloned too, so clear
   first.
 - **Slice:** the green "Slice plate" button at the top right (about 993, 50 in a 1200 x 800
@@ -96,6 +99,11 @@ something new is learned.
   Toys and light parts in PLA are fine with 3 walls and 15 to 20%.
 - **Orientation:** put the flattest functional face on the plate and avoid supports. Lab parts so far
   (hubs, cradles) print support-free by design.
+- **Strength comes before a flat face** for anything that carries a load: a print is weakest across
+  its layers, so orient it so the main bending runs along them. The exp003 wheel cradles printed
+  back wall down, took the wheel's moment across their layers and rolled over under the robot's
+  weight (2026-11-23; `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). PETG also creeps
+  under constant load, so loaded parts get more walls (6) and infill (40%).
 - **PETG** sticks well to textured PEI. Dry it if it strings.
 - **TPU 95A** ([Bambu's H2 TPU guide](https://wiki.bambulab.com/en/h2/h2d-tpu-printing-guide); it
   blocks automated fetches, so read it in the built-in browser):

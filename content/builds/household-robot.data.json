@@ -389,7 +389,7 @@
    "item": "exp003 servo cradle, PETG",
    "qty": "2",
    "status": "Reserved",
-   "notes": "Fitted to both exp003 wheel servos 2026-11-19"
+   "notes": "Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (experiments/exp003-household-robot/cad/WHEEL_MOUNT.md). Keep the weight off the wheels until then"
   },
   {
    "item": "exp003 hub coupon v1, PETG",
@@ -428,10 +428,16 @@
    "notes": "Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md)"
   },
   {
+   "item": "exp003 compute tray, PETG",
+   "qty": "1",
+   "status": "Reserved",
+   "notes": "Printed 2026-11-23, dry-fitted; bolts to base plate v2: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
+  },
+  {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
+   "notes": "exp003 chassis. To be replaced by plate v2 with holes for the wheel module v2 (same grid; this one becomes a spare and drilling template). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -440,15 +446,15 @@
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 456.4,
+ "petg_used_g": 473.9,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "457 g",
-    "left": "about 543 g",
-    "planned": "about 520 g est. (electronics deck, shells, bumper mounts)",
+    "used": "474 g",
+    "left": "about 526 g",
+    "planned": "about 375 g est. for wheel module v2 (servo boxes, axle beam, coupon, base plate v2; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
@@ -475,16 +481,16 @@
     "start": "1000 g",
     "used": "about 520 g (toy truck: tyres 160 g; body and tailgate 360 g)",
     "left": "about 480 g",
-    "planned": "None planned (toy truck blue parts all printed)",
+    "planned": "Tessera keys, a few grams each, once the test keys pick a fit",
     "reorder": "",
     "lead_time": ""
    },
    {
     "item": "PLA Basic Sunflower Yellow (AMS A4)",
     "start": "1000 g",
-    "used": "about 240 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g)",
-    "left": "about 760 g",
-    "planned": "None planned (toy truck yellow parts all sent)",
+    "used": "about 331 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g)",
+    "left": "about 669 g",
+    "planned": "Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module",
     "reorder": "",
     "lead_time": ""
    },
@@ -634,6 +640,11 @@
     "used": "PETG 34.78 g (slicer)"
    },
    {
+    "date": "2026-11-23",
+    "what": "Electronics deck: compute tray (42 min 16 s, left nozzle, 4 walls, 30% infill)",
+    "used": "PETG 17.44 g (slicer)"
+   },
+   {
     "date": "2026-11-19",
     "what": "Toy truck joint coupon (home project, files in ~/toys/garbage-truck)",
     "used": "PLA Jade White 35.3 g (slicer)"
@@ -672,6 +683,11 @@
     "date": "2026-11-22",
     "what": "Toy truck bin slide test, 3 pieces (30 min, left nozzle)",
     "used": "PLA Jade White 12.17 g (slicer)"
+   },
+   {
+    "date": "2026-11-23",
+    "what": "Tessera bench storage, first piece: cups TIPS and SPARE (No. 001, 002) and test keys 10, 15, 20, 52 mm grid (3 h 30 min, left nozzle, 4 walls, 30% infill)",
+    "used": "PLA Sunflower Yellow 90.66 g (slicer)"
    },
    {
     "date": "2026-11-23",
@@ -1111,7 +1127,11 @@
   },
   {
    "date": "2026-11-23",
-   "text": "electronics deck designed (cad/DECK.md) and printed. A fit coupon settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts: the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch and charge-socket panel). The power tray and bridge are printed; the compute tray is sliced. The e-stop moved to v2: v1 runs only under the owner's supervision, and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is the compute tray print, a dry fit of all three parts, then the power harness."
+   "text": "electronics deck designed (cad/DECK.md) and printed. A fit coupon settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts: the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch and charge-socket panel). The power tray and bridge are printed; the compute tray followed the same evening. The e-stop moved to v2: v1 runs only under the owner's supervision, and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is a dry fit of all three parts, then the power harness."
+  },
+  {
+   "date": "2026-11-23",
+   "text": "in the evening all three deck parts were dry-fitted on the plate. A CAD overlay on the owner's top-view photo matched the layout; the servo board and the INA226 each turn half a turn, and the assembly order is written up in cad/DECK.md. Then the wheels were found \"bending\". The +y cradle had rolled about the inboard edge of its foot, the servo's outer end lifted and the wheel leaned in. - Cause: each cradle's two bolts sit on one line 11 mm from that edge while the tire pushes 53 mm out (a 4.7 to 1 lever), and the cheeks take the bending across their print layers. - Plan: wheel module v2, with a boxed servo mount on a wide six-bolt foot (printed on its end), an axle beam tying the two sides together, and a base plate v2. Later, a 6806 bearing so the servo only drives. - A ninth checklist rule: trace the load path (cad/WHEEL_MOUNT.md). - The deck waits for plate v2."
   }
  ],
  "design": {

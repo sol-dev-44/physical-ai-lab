@@ -53,6 +53,17 @@ reach it.
    print is the test", and the fork hit the walls. One caliper reading would have caught it.
 8. **Record** what was measured (lab) and what was read from a model or datasheet (model) in
    `servo.toml` and the docs, so the next part starts from facts.
+9. **Trace the load path** for any part that carries weight or a moment. The miss behind this rule
+   (2026-11-23): the wheel cradles rolled over under the robot's weight. Two bolts sat on one line
+   11 mm from the edge the cradle tipped about, while the tire pushed 53 mm out, a 4.7 to 1
+   lever. And the cheeks took the bending across their print layers. For each joint:
+   - Name the pivot edge and keep the load's lever to the bolts' lever under about 2 to 1, with
+     bolts on two lines.
+   - Orient the print so the main bending lies in the layer plane.
+   - Tie left and right together when they carry matching loads.
+   - Design for about 3 x the static load and for PETG creep.
+
+   Details: [WHEEL_MOUNT.md](WHEEL_MOUNT.md).
 
 ## Gotchas and hints (for agents)
 

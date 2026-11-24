@@ -24,14 +24,15 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels, tires fitted 2026-11-21 |
 | exp003 tire, TPU 95A | 2 | Reserved | On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
-| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19 |
+| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (`experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). Keep the weight off the wheels until then |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
 | exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
 | exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
 | exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
-| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
+| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23, dry-fitted; bolts to base plate v2: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
+| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. To be replaced by plate v2 with holes for the wheel module v2 (same grid; this one becomes a spare and drilling template). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
@@ -163,11 +164,11 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 457 g | about 543 g | about 520 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 375 g est. for wheel module v2 (servo boxes, axle beam, coupon, base plate v2; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
-| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | None planned (toy truck blue parts all printed) | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 240 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g) | about 760 g | None planned (toy truck yellow parts all sent) | | |
+| PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | Tessera keys, a few grams each, once the test keys pick a fit | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 331 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g) | about 669 g | Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
@@ -196,6 +197,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-22 | Caster cup swapped: caster into the corrected cup, cup to plate | 4 x M3 x 16 and 4 M3 nuts (cup to plate); the caster's 4 x M4 x 8 and nuts moved over. The old cup's 4 x M3 x 20 and nuts back to the kit |
 | 2026-11-23 | Electronics deck fit coupon (27 min 46 s, left nozzle, 4 walls, 30% infill) | PETG 8.85 g (slicer) |
 | 2026-11-23 | Electronics deck power tray and servo bridge, one plate (1 h 38 min, left nozzle, 4 walls, 30% infill) | PETG 34.78 g (slicer) |
+| 2026-11-23 | Electronics deck: compute tray (42 min 16 s, left nozzle, 4 walls, 30% infill) | PETG 17.44 g (slicer) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 | 2026-11-21 | Toy truck chassis, 3 axles, 2 bins | PLA Jade White 414.74 g (slicer) |
@@ -204,21 +206,29 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-22 | Toy truck cab, bin arm, push-out paddle (4 h 41 min, left nozzle, 2 colour changes, 4 walls, 15% infill, 5 mm brim) | PLA 270.52 g (slicer): Sunflower Yellow 227.32 g, Jade White 43.20 g |
 | 2026-11-22 | Toy truck cab, arm and paddle fitted (truck complete) | 4 x M4 x 20 (cab); 2 x M4 x 16 and 2 M4 nuts (arm pivot) |
 | 2026-11-22 | Toy truck bin slide test, 3 pieces (30 min, left nozzle) | PLA Jade White 12.17 g (slicer) |
+| 2026-11-23 | Tessera bench storage, first piece: cups TIPS and SPARE (No. 001, 002) and test keys 10, 15, 20, 52 mm grid (3 h 30 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 90.66 g (slicer) |
 | 2026-11-23 | Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle) | PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers |
 
 ### Orders to place
 
 - **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
-  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 543 g (after the deck coupon, power tray and servo bridge); with the
-  sealed spool that is about 1.5 kg, against about 520 g still planned (electronics
+  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 526 g (after the deck coupon and all three deck parts); with the
+  sealed spool that is about 1.5 kg, against about 500 g still planned (electronics
   deck, shells, bumper mounts) plus daily printing. Bambu store, about 1 week. Spools with the RFID
   tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
   a second colour for the shells is the owner's call.
 
+- **PETG is now urgent:** wheel module v2 (about 375 g est., `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`) leaves about 1.15 kg of the two spools, and about 750 g after the shells and bumper mounts too, well under the 2 kg rule. Order the 3 spools above first.
+- **6806-2RS deep-groove ball bearings, 30 x 42 x 7 mm, 4 pcs** (two for the wheels plus spares;
+  2026-11-23). Stage 2 of the wheel mount: each wheel turns on its own bearing so the STS3215 only
+  drives. Any rubber-sealed (2RS) 6806 / 61806 from a bearing brand or a 4- or 10-pack on Amazon;
+  check the size on arrival. Needed before the v2 arm, or sooner if the stage 1 load check shows
+  lean inside the servo.
+
 The battery's spade terminals were ordered 2026-11-21 (row 31).
 The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
 
-PETG covers the planned parts with about 1100 g to spare. The TPU on hand covers the bumper.
+PETG covers the planned parts with about 750 g to spare, below the 2 kg rule (order above). The TPU on hand covers the bumper.
 
 ## Wishlist (Amazon list "Robot - later")
 
@@ -282,3 +292,5 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-22: soldering and wiring tools proposed for the power harness (Orders to place).
 - 2026-11-22: toy truck finished (cab and arm hardware logged); bin slide test logged (12.17 g White).
 - 2026-11-23: toy truck new bin with spinning wheels logged (about 40 g White, estimate).
+- 2026-11-23: Tessera bench storage first piece sent (90.66 g Yellow, `bench/tessera/`); about 669 g Yellow left.
+- 2026-11-23: the exp003 servo cradles roll over under load; wheel module v2 planned (about 375 g PETG est.); 6806-2RS bearings added to Orders to place and the PETG order marked urgent. Compute tray printed; all three deck parts dry-fitted.

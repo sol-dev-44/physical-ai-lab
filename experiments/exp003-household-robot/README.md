@@ -9,13 +9,32 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-23):** the chassis is assembled and sits level: base plate, both wheel servos
-in their cradles, TPU-tired wheels and the rear caster in its corrected cup. The electronics deck
-(compute tray, servo board bridge, power tray with switch panel; [cad/DECK.md](cad/DECK.md)) is
-modelled; the power tray and servo bridge are printed, the compute tray is next. The robot console (phone control app,
-[CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated wheels. Next: dry-fit the
-deck, then the power harness (soldering tools arrive 2026-11-25 to 11-28; see
-[docs/inventory.md](../../docs/inventory.md)).
+**Status (2026-11-23, evening):** the chassis is assembled, but the wheel mounts failed the
+dry fit: under the robot's weight the servo cradles roll over and the wheels lean in. The cause
+is two bolts on one line beside the edge the cradle tips about, and walls loaded across their
+print layers. The fix is a wheel module v2: a boxed servo mount on a wide six-bolt foot, an axle
+beam tying left and right together, and a base plate v2 with the new holes
+([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)). All three electronics deck parts are printed and
+dry-fitted ([cad/DECK.md](cad/DECK.md)). They bolt to plate v2, which keeps the same grid. The
+robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on
+simulated wheels.
+
+**Next, in order:**
+
+1. Keep the weight off the wheels until the new mounts are in, so the old cradles do not creep.
+2. Model wheel module v2 (servo boxes, axle beam, plate v2) with load and fit tests. Then print a
+   30-minute fit coupon, the boxes and the beam (about 3 h), and plate v2 (about 5 h).
+3. Rebuild the chassis on plate v2 and pass the load check: under 0.5 degrees of lean with 1 kg
+   extra, and no change after 10 drops and 24 h loaded.
+4. Bolt the deck to plate v2 in the assembly order in [cad/DECK.md](cad/DECK.md).
+5. Power harness: the wiring diagram first, then soldering once the kit lands (2026-11-25 to 27;
+   see [docs/inventory.md](../../docs/inventory.md)).
+6. Phase 0 bench test of the servos in wheel mode. It does not need the chassis, so it can run
+   in between.
+7. Before the v2 arm, or sooner if step 3 shows lean inside the servo: a 6806 bearing so the
+   servo only drives and the box carries the weight (stage 2 in WHEEL_MOUNT.md). The bearings and
+   the 3-spool PETG order are in "Orders to place".
+
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
 
@@ -134,14 +153,14 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Hub coupon v2 (flat seat) | PETG | Printed 2026-11-19; kept as the fit gauge and phase 0 spin indicator |
 | Wheel hub x 2 | PETG | Printed 2026-11-19; fit and spin true |
 | Tire x 2 | TPU 95A | Printed 2026-11-21 (8 h 8 min, 105 g), right hotend through the rear TPU inlet; fit snug, first try |
-| Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each): solid |
+| Servo cradle x 2 | PETG | Both printed and fitted 2026-11-19 (34 min, 10.0 g each). Failed under load 2026-11-23: they roll over under the robot's weight; replaced by wheel module v2 ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)) |
 | Caster cup v1 (test piece) | PETG | Printed 2026-11-21 (24 min 47 s, 8.3 g), first print from the AMS on the left nozzle. Plate and holes fit; the fork hit the walls |
 | Caster cup v2 (round cavity for the fork) | PETG | Light fit test printed 2026-11-21 (22 min 30 s, 5.4 g) and passed: the fork swivels clear all the way round. Full-strength cup with mounting bosses printed 2026-11-21 (33 min, 12 g) but 4 mm too tall |
 | Caster cup (corrected, 8.6 mm) | PETG | Printed 2026-11-22 (27 min 24 s, 9.9 g, 4 walls, 30% infill) and fitted with M3 x 16 to the plate: the plate sits level |
 | Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; [cad/BASE_PLATE.md](cad/BASE_PLATE.md), "The plate"); cradles and caster cup fitted, level on the floor |
 | Electronics deck fit coupon | PETG | Printed 2026-11-23 (27 min 46 s, 8.85 g): the rocker snaps in, the M2.5 boss holds, the UCTRONICS slides into a 27.6 mm channel ([cad/DECK.md](cad/DECK.md)) |
-| Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); not fitted yet |
-| Compute tray | PETG | Sliced 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); not printed yet |
+| Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); dry-fitted, bolt to plate v2 |
+| Compute tray | PETG | Printed 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); dry-fitted, bolts to plate v2 |
 
 ## Progress log
 
@@ -261,6 +280,18 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts:
   the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster
   cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch
-  and charge-socket panel). The power tray and bridge are printed; the compute tray is sliced. The e-stop moved to v2: v1 runs only under the owner's supervision,
-  and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is the compute tray print, a dry
+  and charge-socket panel). The power tray and bridge are printed; the compute tray followed the same evening. The e-stop moved to v2: v1 runs only under the owner's supervision,
+  and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is a dry
   fit of all three parts, then the power harness.
+- 2026-11-23: in the evening all three deck parts were dry-fitted on the plate. A CAD overlay on the
+  owner's top-view photo matched the layout; the servo board and the INA226 each turn half a
+  turn, and the assembly order is written up in [cad/DECK.md](cad/DECK.md). Then the wheels were
+  found "bending". The +y cradle had rolled about the inboard edge of its foot, the servo's outer
+  end lifted and the wheel leaned in.
+  - Cause: each cradle's two bolts sit on one line 11 mm from that edge while the tire pushes
+    53 mm out (a 4.7 to 1 lever), and the cheeks take the bending across their print layers.
+  - Plan: wheel module v2, with a boxed servo mount on a wide six-bolt foot (printed on its end),
+    an axle beam tying the two sides together, and a base plate v2. Later, a 6806 bearing so the
+    servo only drives.
+  - A ninth checklist rule: trace the load path ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)).
+  - The deck waits for plate v2.

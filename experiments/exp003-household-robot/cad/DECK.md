@@ -176,3 +176,40 @@ test in `tests/test_exp003_deck.py`:
 
 Fasteners: 12 x M3 x 12, 2 x M3 x 8 (DROK ears), 14 M3 nuts; 4 x 11 mm and 4 x 20 mm M2.5 M-F
 standoffs, 8 M2.5 nuts, 8 x M2.5 x 5; 8 zip ties.
+
+## Dry fit and assembly order (owner, 2026-11-23)
+
+All three deck parts are printed and were laid on the plate (photos, 2026-11-23). An overlay of
+the CAD on the owner's top-view photo (registered to 40 plate holes, mean error 0.3 mm) matched
+the layout. Orientation as laid out:
+
+- Right as placed: the Pi (USB and Ethernet to the centre, GPIO forward, USB-C and HDMI back),
+  the DROK (leads to the centre, ears fore and aft on the pads) and the servo bridge.
+- **Servo board: turn half a turn.** Its barrel jack, screw terminal and USB-C face the Pi (+y);
+  the servo sockets face the power side. The jumper caps go on **B (USB to servo)**; the two loose
+  yellow caps in the bag are spares.
+- **INA226: turn half a turn.** Screw terminal forward (toward the fuses), I2C header back.
+- UCTRONICS: long side across in its channel, USB-A output at the outboard end beside the Pi's
+  USB-C.
+
+Every deck screw goes up from under the plate into a nut in the part, so a part must be bolted
+down before anything covers its nuts (the Pi covers the compute tray's, the DROK the power
+tray's). Order:
+
+1. Standoffs into the trays before they go on the plate (the M2.5 nut pockets are underneath):
+   M2.5 nut plus 11 mm standoff at each compute tray boss, nut plus 20 mm standoff at each
+   bridge boss.
+2. The three parts to the plate, 4 x M3 x 12 each (power tray, compute tray, bridge): nut in the
+   well, screw up from below, snug only. **Wait for base plate v2** ([WHEEL_MOUNT.md](WHEEL_MOUNT.md));
+   the grid does not change.
+3. DROK: M3 nut slid into each pad's channel, ears on the pads, M3 x 8 through each ear.
+4. INA226 in its pocket, UCTRONICS in its channel, two zip ties each.
+5. Rocker snapped into the panel and the charge jack through its hole, once their leads are on
+   (the rocker is hard to remove once snapped in).
+6. Pi (cooler fitted first) and servo board on their standoffs, M2.5 x 5.
+7. Fuse holders on their tie points while wiring.
+
+Solder or crimp on the bench, away from the PETG (it softens at about 80 C), before fitting: the
+INA226 header (if its pins are only pushed through), the rocker's leads (4.8 mm spades or
+soldered) and the power harness joins (DROK, fuse holders, XT60s, charge jack), heat-shrunk as
+one harness. Nothing else on the deck needs solder.
