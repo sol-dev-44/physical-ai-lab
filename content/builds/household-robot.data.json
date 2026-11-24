@@ -488,8 +488,8 @@
    {
     "item": "PLA Basic Sunflower Yellow (AMS A4)",
     "start": "1000 g",
-    "used": "about 331 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g)",
-    "left": "about 669 g",
+    "used": "about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g)",
+    "left": "about 649 g",
     "planned": "Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module",
     "reorder": "",
     "lead_time": ""
@@ -693,6 +693,11 @@
     "date": "2026-11-23",
     "what": "Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle)",
     "used": "PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers"
+   },
+   {
+    "date": "2026-11-24",
+    "what": "Tessera test plate 2: keys 05 (plain), R1 and R2 (crush ribs), 52 mm (48 min, left nozzle, 4 walls, 30% infill)",
+    "used": "PLA Sunflower Yellow 19.51 g (slicer)"
    }
   ]
  },

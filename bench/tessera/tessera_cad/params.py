@@ -31,6 +31,13 @@ class Joint:
     boss_skin_mm: float = 1.6  # plastic round a socket, inside the module
     key_clearance_mm: float = 0.15  # per side; the first plate tests 0.10 to 0.20
     key_lead_mm: float = 0.6  # chamfer on the key's bottom edges
+    # Crush ribs (2026-11-24): the flanks sit only 16.5 degrees off the pull direction, so
+    # every 0.1 mm of side clearance lets a socket travel 0.35 mm. All three plain test keys
+    # (0.10 to 0.20) had play. A ribbed key keeps 0.10 clearance so it starts in easily, and
+    # one vertical rib per flank stands rib_interference_mm past the socket wall and crushes.
+    rib_radius_mm: float = 1.0
+    rib_interference_mm: float = 0.10  # per flank, past the socket wall; picked by test plate 2
+    rib_start_mm: float = 2.5  # ribs begin above the lead chamfer, rounded, so they ease in
 
 
 @dataclass(frozen=True)
@@ -67,6 +74,34 @@ def bowtie(j: Joint, g: Grid, clearance: float = 0.0) -> list[Point]:
     r = reach - clearance
     end = neck + slope * r
     return [(-r, -end), (0.0, -neck), (r, -end), (r, end), (0.0, neck), (-r, end)]
+
+
+def flank_play(j: Joint, g: Grid, clearance: float) -> float:
+    """How far two keyed modules can move apart and together with a plain key, in mm."""
+    slope = (j.end_mm - j.neck_mm) / 2 / (g.gap_mm + j.depth_mm)
+    sin_flank = slope / math.hypot(1.0, slope)
+    return 2 * clearance / sin_flank + 2 * clearance  # both sockets' flanks, then both ends
+
+
+def ribs(j: Joint, g: Grid, interference: float | None = None) -> list[Point]:
+    """Centres (plan view) of a key's four crush ribs, radius j.rib_radius_mm.
+
+    One rib per flank, midway along the part of the flank inside the socket, its crest
+    interference beyond the socket wall (clearance 0) along the flank's outward normal.
+    """
+    i = j.rib_interference_mm if interference is None else interference
+    rho = j.rib_radius_mm
+    reach = g.gap_mm + j.depth_mm
+    slope = (j.end_mm - j.neck_mm) / 2 / reach
+    norm = math.hypot(1.0, slope)
+    u = (g.gap_mm + reach) / 2
+    w = half_width(j, g, u)
+    out: list[Point] = []
+    for sx in (1.0, -1.0):
+        for sy in (1.0, -1.0):
+            nx, ny = -sx * slope / norm, sy / norm  # outward normal of that flank
+            out.append((sx * u + nx * (i - rho), sy * w + ny * (i - rho)))
+    return out
 
 
 def module_height(g: Grid, steps: int) -> float:
@@ -130,4 +165,6 @@ class Cup:
 GRID, JOINT, ENGRAVING = Grid(), Joint(), Engraving()  # the defaults the solids use
 
 FIRST_PIECE_CUPS = (Cup(label="TIPS", serial=1), Cup(label="SPARE", serial=2))
-TEST_KEY_CLEARANCES = (0.10, 0.15, 0.20)
+TEST_KEY_CLEARANCES = (0.10, 0.15, 0.20)  # test plate 1 (2026-11-23): all three had play
+TEST_PLATE_2_PLAIN = 0.05  # plain key, clearance 0.05: the tightest plain fit worth trying
+TEST_PLATE_2_RIBS = (0.10, 0.20)  # ribbed keys R1 and R2: rib interference per flank

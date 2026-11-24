@@ -20,6 +20,8 @@ from tessera_cad.module import cup  # noqa: E402
 from tessera_cad.params import (  # noqa: E402
     FIRST_PIECE_CUPS,
     TEST_KEY_CLEARANCES,
+    TEST_PLATE_2_PLAIN,
+    TEST_PLATE_2_RIBS,
     Grid,
     module_height,
 )
@@ -41,6 +43,11 @@ def main() -> None:
     for c in TEST_KEY_CLEARANCES:
         mark = f"{round(c * 100):d}"
         _write(f"tessera_test_key_{mark}", key(h, clearance=c, mark=mark))
+    # test plate 2 (2026-11-24): one tighter plain key and two ribbed keys
+    mark = f"{round(TEST_PLATE_2_PLAIN * 100):02d}"
+    _write(f"tessera_test_key_{mark}", key(h, clearance=TEST_PLATE_2_PLAIN, mark=mark))
+    for n, i in enumerate(TEST_PLATE_2_RIBS, start=1):
+        _write(f"tessera_test_key_r{n}", key(h, clearance=0.10, mark=f"R{n}", rib_interference=i))
 
 
 if __name__ == "__main__":

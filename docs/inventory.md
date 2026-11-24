@@ -168,7 +168,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | Tessera keys, a few grams each, once the test keys pick a fit | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 331 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g) | about 669 g | Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g) | about 649 g | Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
@@ -208,6 +208,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-22 | Toy truck bin slide test, 3 pieces (30 min, left nozzle) | PLA Jade White 12.17 g (slicer) |
 | 2026-11-23 | Tessera bench storage, first piece: cups TIPS and SPARE (No. 001, 002) and test keys 10, 15, 20, 52 mm grid (3 h 30 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 90.66 g (slicer) |
 | 2026-11-23 | Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle) | PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers |
+| 2026-11-24 | Tessera test plate 2: keys 05 (plain), R1 and R2 (crush ribs), 52 mm (48 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 19.51 g (slicer) |
 
 ### Orders to place
 
@@ -294,3 +295,4 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-23: toy truck new bin with spinning wheels logged (about 40 g White, estimate).
 - 2026-11-23: Tessera bench storage first piece sent (90.66 g Yellow, `bench/tessera/`); about 669 g Yellow left.
 - 2026-11-23: the exp003 servo cradles roll over under load; wheel module v2 planned (about 375 g PETG est.); 6806-2RS bearings added to Orders to place and the PETG order marked urgent. Compute tray printed; all three deck parts dry-fitted.
+- 2026-11-24: Tessera test plate 2 logged (19.51 g Yellow): all three plate 1 keys had play, so the new keys carry crush ribs; about 649 g Yellow left.

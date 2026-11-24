@@ -13,8 +13,10 @@ from tessera_cad.params import (
     boss_size,
     bowtie,
     cavity,
+    flank_play,
     half_width,
     module_height,
+    ribs,
     sockets,
 )
 
@@ -91,3 +93,33 @@ def test_heights_come_in_steps():
 def test_first_piece_cups_have_labels_and_serials():
     assert [c.label for c in FIRST_PIECE_CUPS] == ["TIPS", "SPARE"]
     assert [c.serial for c in FIRST_PIECE_CUPS] == [1, 2]
+
+
+def test_plain_keys_always_leave_play():
+    # the shallow flanks multiply clearance by about 3.5: why plate 1's keys all rattled
+    assert flank_play(J, G, 0.10) == pytest.approx(0.90, abs=0.01)
+    assert flank_play(J, G, 0.05) == pytest.approx(0.45, abs=0.01)
+    assert flank_play(J, G, 0.0) == 0.0
+
+
+def _beyond_socket_wall(c, sx, sy):
+    """Signed distance from the socket flank (clearance 0) to the rib's crest, outward +."""
+    reach = G.gap_mm + J.depth_mm
+    x0, y0 = 0.0, sy * J.neck_mm / 2
+    x1, y1 = sx * reach, sy * J.end_mm / 2
+    tx, ty = x1 - x0, y1 - y0
+    n = math.hypot(tx, ty)
+    # the flank's normal that points away from the key's centre
+    nx, ny = (-ty / n, tx / n) if (sx * sy) > 0 else (ty / n, -tx / n)
+    d_centre = (c[0] - x0) * nx + (c[1] - y0) * ny
+    return d_centre + J.rib_radius_mm
+
+
+@pytest.mark.parametrize("interference", [0.10, 0.20])
+def test_each_rib_crest_stands_its_interference_past_the_socket_wall(interference):
+    cs = ribs(J, G, interference)
+    assert len(cs) == 4
+    for c, (sx, sy) in zip(cs, [(1, 1), (1, -1), (-1, 1), (-1, -1)], strict=True):
+        assert _beyond_socket_wall(c, sx, sy) == pytest.approx(interference)
+        # inside the socket, not in the gap between modules, and short of the socket's end
+        assert G.gap_mm + J.rib_radius_mm < abs(c[0]) < G.gap_mm + J.depth_mm - J.rib_radius_mm

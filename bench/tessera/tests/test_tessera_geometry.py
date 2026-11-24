@@ -1,5 +1,7 @@
 """Tessera's solids. Skipped unless CadQuery is installed."""
 
+import math
+
 import pytest
 
 cq = pytest.importorskip("cadquery")
@@ -85,3 +87,26 @@ def test_key_drops_between_two_cups_without_touching(clearance):
 def test_test_key_carries_its_mark():
     plain, marked = key(G.unit_mm, 0.15), key(G.unit_mm, 0.15, mark="15")
     assert plain.val().Volume() - marked.val().Volume() > 0.5
+
+
+def _volume(part):
+    return part.val().Volume() if part.solids().vals() else 0.0
+
+
+@pytest.mark.parametrize("interference", [0.10, 0.20])
+def test_ribbed_key_grips_only_on_its_ribs(interference):
+    left = cup(Cup(label="", serial=1))
+    k = key(G.unit_mm, clearance=0.10, rib_interference=interference)
+    k = k.translate((G.unit_mm, G.unit_mm / 2, 0))
+    plain = key(G.unit_mm, clearance=0.10).translate((G.unit_mm, G.unit_mm / 2, 0))
+    assert len(k.solids().vals()) == 1
+    overlap = k.intersect(left).val().Volume()
+    # two ribs bite into each cup: a circular segment of the rib along its straight height
+    rho, h = J.rib_radius_mm, interference
+    segment = rho**2 * math.acos((rho - h) / rho) - (rho - h) * math.sqrt(2 * rho * h - h * h)
+    assert overlap == pytest.approx(2 * segment * (G.unit_mm - J.rib_start_mm), rel=0.05)
+    assert _volume(plain.intersect(left)) < 1e-6
+    # the ribs start above the lead chamfer, so the key still starts in by hand
+    low = cq.Workplane("XY").box(40, 40, 1.4, centered=(True, True, False))
+    low = low.translate((G.unit_mm, G.unit_mm / 2, 0))
+    assert _volume(k.intersect(left).intersect(low)) < 1e-6

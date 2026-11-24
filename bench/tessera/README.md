@@ -43,9 +43,36 @@ Bowtie (plan view), centred on the line between two modules: neck 9.0 mm wide on
 angle about 16 degrees. Behind each socket the wall thickens into a boss 16.2 mm wide that
 stands 6.1 mm into the cavity (wall 2.0 mm, 1.6 mm of plastic round the socket).
 
-Key fit is set by `key_clearance_mm` per side. The first plate tests 0.10, 0.15 and 0.20
-(engraved on each test key's top as 10, 15 and 20); the owner picks the one that slides in
-by hand and holds.
+Key fit is set by `key_clearance_mm` per side. The first plate tested 0.10, 0.15 and 0.20
+(engraved on each test key's top as 10, 15 and 20).
+
+**Test plate 1 result (owner, 2026-11-24): all three keys had too much play.** The flanks
+run only 16.5 degrees off the direction the modules pull apart, so each 0.1 mm of side
+clearance lets a socket travel 0.35 mm; with both sockets and both key ends, the 0.10 key
+still lets two cups move about 0.9 mm (`flank_play`). Shaving the clearance only shrinks
+this: a plain key cannot slide in and also have no play.
+
+**Test plate 2: crush ribs.** A ribbed key keeps 0.10 clearance on its flats, so it starts
+in as easily as key 10, and carries one vertical rib (radius 1.0 mm) on each of its four
+flanks, midway along the socket. Each rib's crest stands past the socket wall and crushes a
+little on the way in. The ribs press the key toward the deep ends of both sockets, so the
+key's ends seat against the socket ends and the joint has no play in any direction. Ribs
+start 2.5 mm up, rounded, so the key's lead chamfer still finds the socket.
+
+| Key | Clearance on the flats | Rib crest past the socket wall |
+|---|---|---|
+| 05 | 0.05 (plain, for comparison) | no ribs |
+| R1 | 0.10 | 0.10 |
+| R2 | 0.10 | 0.20 |
+
+The owner tries each between the two cups: a key should go in by thumb pressure (a tap on a
+table is fine for the last few mm) and leave the two cups moving as one. If R1 still moves,
+R2 is the fit; if R2 will not go in, R1 is. The winner sets `rib_interference_mm`, and every
+blue key after that is ribbed.
+
+**Lifting a module out with ribbed keys:** a ribbed key holds by friction, so it no longer
+drops out. Push it up from underneath (lift the pair, thumb on the key's bottom) before lifting
+a module out.
 
 ## First piece (2026-11-23)
 
