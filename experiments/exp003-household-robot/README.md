@@ -12,7 +12,7 @@ household's rules about where it may go and when, and can be driven by remote.
 **Status (2026-11-23):** the chassis is assembled and sits level: base plate, both wheel servos
 in their cradles, TPU-tired wheels and the rear caster in its corrected cup. The electronics deck
 (compute tray, servo board bridge, power tray with switch panel; [cad/DECK.md](cad/DECK.md)) is
-printed and waiting for a dry fit. The robot console (phone control app,
+modelled; the power tray and servo bridge are printed, the compute tray is next. The robot console (phone control app,
 [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated wheels. Next: dry-fit the
 deck, then the power harness (soldering tools arrive 2026-11-25 to 11-28; see
 [docs/inventory.md](../../docs/inventory.md)).
@@ -141,7 +141,7 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; [cad/BASE_PLATE.md](cad/BASE_PLATE.md), "The plate"); cradles and caster cup fitted, level on the floor |
 | Electronics deck fit coupon | PETG | Printed 2026-11-23 (27 min 46 s, 8.85 g): the rocker snaps in, the M2.5 boss holds, the UCTRONICS slides into a 27.6 mm channel ([cad/DECK.md](cad/DECK.md)) |
 | Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); not fitted yet |
-| Compute tray | PETG | Printed 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); not fitted yet |
+| Compute tray | PETG | Sliced 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); not printed yet |
 
 ## Progress log
 
@@ -261,6 +261,6 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts:
   the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster
   cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch
-  and charge-socket panel). The e-stop moved to v2: v1 runs only under the owner's supervision,
-  and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is a dry
+  and charge-socket panel). The power tray and bridge are printed; the compute tray is sliced. The e-stop moved to v2: v1 runs only under the owner's supervision,
+  and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is the compute tray print, a dry
   fit of all three parts, then the power harness.

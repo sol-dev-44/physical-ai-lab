@@ -31,7 +31,6 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
 | exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
 | exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
-| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
 | exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
@@ -164,7 +163,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 500 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 457 g | about 543 g | about 520 g est. (electronics deck, shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | None planned (toy truck blue parts all printed) | | |
@@ -197,7 +196,6 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-22 | Caster cup swapped: caster into the corrected cup, cup to plate | 4 x M3 x 16 and 4 M3 nuts (cup to plate); the caster's 4 x M4 x 8 and nuts moved over. The old cup's 4 x M3 x 20 and nuts back to the kit |
 | 2026-11-23 | Electronics deck fit coupon (27 min 46 s, left nozzle, 4 walls, 30% infill) | PETG 8.85 g (slicer) |
 | 2026-11-23 | Electronics deck power tray and servo bridge, one plate (1 h 38 min, left nozzle, 4 walls, 30% infill) | PETG 34.78 g (slicer) |
-| 2026-11-23 | Electronics deck: compute tray (42 min 16 s, left nozzle, 4 walls, 30% infill) | PETG 17.44 g (slicer) |
 | 2026-11-19 | Toy truck joint coupon (home project, files in ~/toys/garbage-truck) | PLA Jade White 35.3 g (slicer) |
 | 2026-11-20 | Toy truck wheels, 6 (blue tyres, yellow caps) | PLA 172.75 g total (slicer): about 160 g Blue, about 13 g Sunflower Yellow (split estimated) |
 | 2026-11-21 | Toy truck chassis, 3 axles, 2 bins | PLA Jade White 414.74 g (slicer) |
@@ -211,8 +209,8 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 ### Orders to place
 
 - **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
-  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 526 g (after the deck coupon and all three deck parts); with the
-  sealed spool that is about 1.5 kg, against about 500 g still planned (electronics
+  day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 543 g (after the deck coupon, power tray and servo bridge); with the
+  sealed spool that is about 1.5 kg, against about 520 g still planned (electronics
   deck, shells, bumper mounts) plus daily printing. Bambu store, about 1 week. Spools with the RFID
   tag (or refills plus the reusable spool) so the AMS reads them. Orange matches the robot so far;
   a second colour for the shells is the owner's call.

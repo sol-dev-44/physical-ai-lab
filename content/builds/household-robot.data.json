@@ -428,12 +428,6 @@
    "notes": "Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md)"
   },
   {
-   "item": "exp003 compute tray, PETG",
-   "qty": "1",
-   "status": "Reserved",
-   "notes": "Printed 2026-11-23: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
-  },
-  {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
@@ -446,15 +440,15 @@
    "notes": "Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate"
   }
  ],
- "petg_used_g": 473.9,
+ "petg_used_g": 456.4,
  "consumables": {
   "stock": [
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "474 g",
-    "left": "about 526 g",
-    "planned": "about 500 g est. (electronics deck, shells, bumper mounts)",
+    "used": "457 g",
+    "left": "about 543 g",
+    "planned": "about 520 g est. (electronics deck, shells, bumper mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
@@ -638,11 +632,6 @@
     "date": "2026-11-23",
     "what": "Electronics deck power tray and servo bridge, one plate (1 h 38 min, left nozzle, 4 walls, 30% infill)",
     "used": "PETG 34.78 g (slicer)"
-   },
-   {
-    "date": "2026-11-23",
-    "what": "Electronics deck: compute tray (42 min 16 s, left nozzle, 4 walls, 30% infill)",
-    "used": "PETG 17.44 g (slicer)"
    },
    {
     "date": "2026-11-19",
@@ -1122,7 +1111,7 @@
   },
   {
    "date": "2026-11-23",
-   "text": "electronics deck designed (cad/DECK.md) and printed. A fit coupon settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts: the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch and charge-socket panel). The e-stop moved to v2: v1 runs only under the owner's supervision, and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is a dry fit of all three parts, then the power harness."
+   "text": "electronics deck designed (cad/DECK.md) and printed. A fit coupon settled the rocker cutout, the M2.5 standoff boss and the UCTRONICS channel first. Three parts: the compute tray (Pi 5 on 11 mm standoffs, the UCTRONICS behind it), a bridge over the caster cup for the servo board, and the power tray (DROK on slotted pads, INA226, fuse ties, switch and charge-socket panel). The power tray and bridge are printed; the compute tray is sliced. The e-stop moved to v2: v1 runs only under the owner's supervision, and the main rocker is its one hardware cut. Soldering and wiring tools ordered; next is the compute tray print, a dry fit of all three parts, then the power harness."
   }
  ],
  "design": {
