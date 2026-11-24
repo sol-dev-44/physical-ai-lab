@@ -61,19 +61,23 @@ def _half(case: Case, horn: Horn, cradle: Cradle, layout: BaseLayout, m: WheelMo
 
     body = _box(fx0, fx1, fy0, fy1, 0.0, m.foot_mm)
     body = body.fuse(_box(rx0, nx1, by0, out, 0.0, top))
-    # Gussets: both end walls carried inboard to the foot's edge. The rear one has a notch at its
-    # low inboard corner for the servo cables, which run back to the deck.
+    # The front end wall carries on inboard as a gusset (the beam is under it in the print). The
+    # rear brace is a fin along x, so it prints without support; the cables pass inboard of it.
     full = [(fy0, 0.0), (by0, 0.0), (by0, top), (fy0, m.foot_mm)]
-    ny, nz = m.gusset_notch_mm
-    notched = [
-        (fy0, 0.0),
-        (by0, 0.0),
-        (by0, top),
-        (fy0 + ny, nz),
-        (fy0 + ny, m.foot_mm),
-        (fy0, m.foot_mm),
-    ]
-    body = body.fuse(_gusset(nx0, nx1, full)).fuse(_gusset(rx0, rx1, notched))
+    body = body.fuse(_gusset(nx0, nx1, full))
+    # Rear fin: a block from the foot to the top, against the back wall. Its front end tapers at
+    # 45 degrees (in plan), so in the print each layer reaches one step further off the wall.
+    fin_x0, fin_x1, fin_y = d.rear_fin
+    fin = _box(fin_x0, fin_x1, fin_y, by0 + 0.01, 0.0, top)
+    reach = by0 - fin_y
+    taper = (
+        cq.Workplane("XY", origin=(0, 0, -1))
+        .polyline([(fin_x1, fin_y), (fin_x1 + 0.01, by0), (fin_x1 - reach, fin_y)])
+        .close()
+        .extrude(top + 2)
+        .val()
+    )
+    body = body.fuse(fin.cut(taper))
 
     cx0, cx1, cz0, cz1, cy0 = d.cavity
     body = body.cut(_box(cx0, cx1, cy0, BIG, cz0, cz1))
@@ -172,7 +176,7 @@ def wheel_module_coupon(case: Case, horn: Horn) -> cq.Workplane:
     """A 30-minute slice of the +y box, printed the same way as the module (front face down).
 
     It has the real back wall (counterbores, pads, disc opening, connector window), 11 mm of all
-    four walls round the case, both gussets with the cable notch, the driver grooves, and three
+    four walls round the case, the front gusset and the rear fin, the driver grooves, and three
     foot bolt holes. Push a servo's step face in, drive the four M2 x 6, and bolt it to plate v1's
     spare (or anything 4 mm) with M3 x 12: that checks the case fit, the screw bite, and the
     teardrop holes.

@@ -127,6 +127,10 @@ These are in the "Before designing a part" checklist ([README.md](README.md)) fr
   everywhere outside the case's footprint instead.
 - **Beam solid**, 15.6 mm (x) by 33.2 mm (z), not a hollow box: infill does the job, and the
   bolts go through it in counterbores.
+- **A fin, not a rear gusset.** Printing on the beam's face, a plate across x hangs over air
+  unless the beam is under it; Bambu Studio flagged the rear gusset as a floating cantilever. The
+  rear brace is a fin running along x instead, tapered at 45 degrees where it starts, so every
+  layer stands on the one below. The front gusset sits on the beam and stays.
 
 **The part (+y side; the -y side mirrors it):**
 
@@ -134,7 +138,7 @@ These are in the "Before designing a part" checklist ([README.md](README.md)) fr
 |---|---|
 | Servo box | Case 45.4 x 24.8 mm, 0.2 mm clearance; walls 5 mm on top and both ends, 3 mm under, back wall 5 mm |
 | Back wall | 4 counterbores, 4.4 mm across and 3 mm deep, so the M2 x 6 bites 3.5 mm as before; pads, idler disc opening, connector window as the cradle |
-| Gussets | Both end walls carried inboard to the foot's edge (y 81); a 6 x 12 mm notch in the rear one for the servo cables |
+| Braces | The front end wall carried inboard to the foot's edge (y 81) as a gusset; at the rear, a fin from the foot to the top along the back wall (x -44 to -35.8, 5 mm off the wall), its front end tapered at 45 degrees. The servo cables pass inboard of the fin, over the foot |
 | Foot | 5 mm thick, x -52 to 15.4, y 81 to 130.8; grooves 6 mm wide down to 2 mm so a screwdriver reaches the lower M2 screws |
 | Beam | x 15.4 to 31, across the robot, full box height |
 | Bolts to the plate | 8 x M3 x 12 through the feet (y 85, 105, 124), 7 x M3 x 16 through the beam (y 0, +-42, +-85, +-124), heads in counterbores, nuts under the plate |
@@ -154,7 +158,7 @@ The vendor servo model sits in both boxes with no overlap (`test_exp003_wheel_mo
 
 **Printing:** PETG, 6 walls, 40% infill, front face of the beam down, no supports (the holes
 across the print are teardrops). About 190 g; the build's estimate at 4 walls and 30% is 152 g.
-The coupon (`wheel_module_coupon`, 14 g) is a 28 mm slice at the back wall: push a servo in,
+The coupon (`wheel_module_coupon`, 18 g, 1 h 24 min) is a 28 mm slice at the back wall: push a servo in,
 drive the four M2 screws, and bolt it down with M3 x 12 to check the case fit, the screw bite and
 the holes before the 190 g print.
 
@@ -180,7 +184,10 @@ wheel leaning while the box stays put).
   - The ring's lower half hangs past the plate edge; its bottom is about 37 mm off the floor.
   - The spacer must leave the horn screws reachable.
   - The width over the tires grows by about 16 mm (330 to about 346 mm).
-- **To order now** so it never blocks: 4 x 6806-2RS (two plus spares). See
+- **Order now** (owner, 2026-11-24: don't hold up the build), though the one-piece module may
+  make stage 2 unnecessary until the arm: 4 x 6806-2RS. The 10 x 608-ZZ on hand (8 mm bore) cannot go round
+  the 20 mm horn, so they do not fit this concept; they could carry an outboard stub axle on a
+  bracket round the tire instead (free, but wider and bulkier). See
   [docs/inventory.md](../../../docs/inventory.md), "Orders to place".
 
 ### Meanwhile
@@ -195,9 +202,9 @@ wheel leaning while the box stays put).
 
 ### PETG
 
-The new parts use about 430 g (model, 2026-11-24):
+The new parts use about 435 g (model and slicer, 2026-11-24):
 - wheel module (boxes and beam in one): about 190 g
-- coupon: about 14 g
+- coupon: about 18 g
 - plate v2: about 225 g
 
 Spool 1 has about 526 g, and spool 2 is sealed. That covers it, but it takes the buffer well

@@ -77,11 +77,25 @@ def test_driver_reaches_the_lower_screws(part):
         assert not inside(part, x, 87.0, M.driver_groove_mm[1] + 1.0)
 
 
-def test_cable_notch_in_the_rear_gusset(part):
+def test_rear_fin_braces_the_back_wall_and_leaves_a_cable_path(part):
+    x0, x1, fin_y = D.rear_fin
+    xm = (x0 + x1) / 2
+    assert inside(part, xm, D.back_wall_y_mm[0] - 1.0, 25.0)  # fin, high up at the wall
+    assert not inside(part, xm, fin_y - 2.0, M.foot_mm + 3.0)  # cables pass inboard of it
+
+
+def test_every_brace_prints_without_support():
+    """Printing front face down (x up the print), nothing may start in mid-air: the rear fin's
+    front end tapers at 45 degrees off the back wall, and there is no rear gusset plate."""
+    part = wheel_module(CASE, HORN)
+    x0, x1, fin_y = D.rear_fin
+    wall = D.back_wall_y_mm[0]
+    for step in (1.0, 2.5, 4.0):  # one step back along the print, one step off the wall
+        assert inside(part, x1 - step - 0.3, wall - step + 0.3, 20.0)
+        assert not inside(part, x1 - step + 0.3, wall - step - 0.3, 20.0)
+    assert inside(part, x0 + 0.5, fin_y + 0.5, 30.0)  # full section further back
     (r0, r1), _ = D.end_walls_x
-    y = D.foot[2] + 3.0
-    assert not inside(part, (r0 + r1) / 2, y, M.foot_mm + 3.0)
-    assert inside(part, (r0 + r1) / 2, D.back_wall_y_mm[0] - 1.0, 20.0)  # gusset above it
+    assert not inside(part, (r0 + r1) / 2, D.foot[2] + 2.0, 20.0)  # no rear gusset plate
 
 
 def test_prints_on_the_beam_front_within_the_bed():

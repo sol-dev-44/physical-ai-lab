@@ -460,7 +460,7 @@
     "start": "1000 g",
     "used": "474 g",
     "left": "about 526 g",
-    "planned": "about 430 g est. for wheel module v2 (module 190 g in one piece, coupon 14 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
+    "planned": "about 435 g est. for wheel module v2 (module 190 g in one piece, coupon 18 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
     "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
     "lead_time": "Bambu store about 1 week"
    },
@@ -1151,7 +1151,7 @@
   },
   {
    "date": "2026-11-24",
-   "text": "wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it \"hella sturdy\", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. A 14 g coupon checks the servo fit first."
+   "text": "wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it \"hella sturdy\", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. An 18 g coupon checks the servo fit first; the rear brace became a 45-degree-tapered fin after the slicer flagged it as a floating cantilever."
   }
  ],
  "design": {

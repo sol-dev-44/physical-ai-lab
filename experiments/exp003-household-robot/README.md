@@ -24,7 +24,7 @@ simulated wheels.
 1. Keep the weight off the wheels until the new mounts are in, so the old cradles do not creep.
 2. Wheel module v2 is modelled (2026-11-24): both servo boxes and the beam in one PETG piece,
    checked at 5 x the static load ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md), "Stage 1 as
-   modelled"). Print the fit coupon (14 g), then the module (about 190 g, front face down, 6
+   modelled"). Print the fit coupon (18 g, 1 h 24 min), then the module (about 190 g, front face down, 6
    walls, 40% infill) and plate v2 (about 225 g).
 3. Rebuild the chassis on plate v2 and pass the load check: under 0.5 degrees of lean with 1 kg
    extra, and no change after 10 drops and 24 h loaded.
@@ -297,4 +297,4 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
     servo only drives.
   - A ninth checklist rule: trace the load path ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)).
   - The deck waits for plate v2.
-- 2026-11-24: wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it "hella sturdy", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. A 14 g coupon checks the servo fit first.
+- 2026-11-24: wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it "hella sturdy", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. An 18 g coupon checks the servo fit first; the rear brace became a 45-degree-tapered fin after the slicer flagged it as a floating cantilever.

@@ -777,7 +777,7 @@ class WheelModule:
 
     back_wall_mm: float = 5.0  # the servo screws into this; counterbored for the M2 x 6
     top_wall_mm: float = 5.0  # over the case's upper long side
-    end_wall_mm: float = 5.0  # at both ends of the case, carried inboard as gussets
+    end_wall_mm: float = 5.0  # at both ends of the case; the front one carried inboard as a gusset
     foot_mm: float = 5.0  # slab on the plate, outside the case's footprint
     # Under the case the wall stays the cradle's 3 mm (Cradle.cheek_mm), so the axle keeps its
     # height and the caster cup still levels the robot.
@@ -785,7 +785,11 @@ class WheelModule:
     fence_gap_mm: float = 2.0  # foot's inboard edge to the battery fence
     foot_back_mm: float = -52.0  # foot's rear edge (x); the deck starts at x = -80.8
     beam_x_mm: tuple[float, float] = (15.4, 31.0)  # solid beam, ahead of the front end walls
-    gusset_notch_mm: tuple[float, float] = (6.0, 12.0)  # cable notch: from the foot edge, height
+    # The rear brace is a fin running along x (the print direction), so every layer stands on the
+    # last: a plate across x hangs over air when printing on the beam's face (the slicer flagged
+    # it, 2026-11-24). The cables pass inboard of it, over the foot.
+    rear_fin_x0_mm: float = -44.0
+    rear_fin_y_mm: float = 88.0  # the fin's inboard face; it rises from here to the back wall
     driver_groove_mm: tuple[float, float] = (6.0, 2.0)  # width, floor height: screwdriver path
     counterbore_mm: float = 4.4  # for the M2 screw heads (SCREW_HEAD_MM plus 0.4)
     screw_bite_mm: float = 3.5  # how far the M2 x 6 goes into the case
@@ -809,6 +813,7 @@ class WheelModuleDerived:
     outer_y_mm: float  # boxes and beam end here, 2 mm short of the hub
     top_z_mm: float
     end_walls_x: tuple[tuple[float, float], tuple[float, float]]  # far (rear), near (front)
+    rear_fin: tuple[float, float, float]  # x0, x1, inboard face y
     foot: tuple[float, float, float, float]  # x0, x1, y0, y1, +y side
     m2_holes: tuple[tuple[float, float], ...]  # (x, z) on the back wall
     counterbore_y_mm: tuple[float, float]  # from the back face to the counterbore floor
@@ -872,6 +877,11 @@ def derive_wheel_module(
     if low - 2.0 < m.driver_groove_mm[1]:
         raise ValueError("the driver groove is not deep enough for a 4 mm driver")
 
+    fin_x1 = min(ends[0][1], min(grooves) - m.driver_groove_mm[0] / 2)
+    fin = (m.rear_fin_x0_mm, fin_x1, m.rear_fin_y_mm)
+    if not (foot[0] <= fin[0] < ends[0][0] and fin[2] < back[0] - 2.0):
+        raise ValueError("the rear fin must start aft of the rear end wall and stand off the wall")
+
     # Bolts: on the plate, clear of the walls, window and grooves, two lines across the load.
     r_head = HEADS["button"]["M3"][0] / 2
     for x, y in m.foot_bolts:
@@ -886,6 +896,8 @@ def derive_wheel_module(
         for ex0, ex1 in ends:
             if ex0 - r_head < x < ex1 + r_head and y < back[0]:
                 raise ValueError(f"foot bolt ({x}, {y}) is under a gusset")
+        if fin[0] - r_head < x < fin[1] + r_head and fin[2] - r_head < y < back[0]:
+            raise ValueError(f"foot bolt ({x}, {y}) is under the rear fin")
     beam_x = sum(m.beam_x_mm) / 2
     if m.beam_x_mm[1] - m.beam_x_mm[0] < m.beam_counterbore_mm + 4.0:
         raise ValueError("the beam is too thin for its bolt counterbores")
@@ -949,6 +961,7 @@ def derive_wheel_module(
         outer_y_mm=outer,
         top_z_mm=top,
         end_walls_x=ends,
+        rear_fin=fin,
         foot=foot,
         m2_holes=holes,
         counterbore_y_mm=cb,

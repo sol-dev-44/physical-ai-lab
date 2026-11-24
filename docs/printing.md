@@ -114,6 +114,11 @@ something new is learned.
   back wall down, took the wheel's moment across their layers and rolled over under the robot's
   weight (2026-11-23; `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). PETG also creeps
   under constant load, so loaded parts get more walls (6) and infill (40%).
+- **Turning a part on its end turns its cross plates into shelves** (2026-11-24): the wheel
+  module prints standing on its beam, and its rear gusset (a plate across the print direction)
+  hung over air; Bambu Studio warned "floating cantilever". Every plate across the print axis
+  must sit on something below it, or become a fin along the axis with a 45-degree start. Read
+  the slicer's warnings before sending.
 - **PETG** sticks well to textured PEI. Dry it if it strings.
 - **TPU 95A** ([Bambu's H2 TPU guide](https://wiki.bambulab.com/en/h2/h2d-tpu-printing-guide); it
   blocks automated fetches, so read it in the built-in browser):
