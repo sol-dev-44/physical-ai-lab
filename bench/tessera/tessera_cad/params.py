@@ -29,14 +29,14 @@ class Joint:
     end_mm: float = 13.0  # bowtie width at each end
     depth_mm: float = 6.5  # socket depth into a module, from its outer face
     boss_skin_mm: float = 1.6  # plastic round a socket, inside the module
-    key_clearance_mm: float = 0.15  # per side; the first plate tests 0.10 to 0.20
+    key_clearance_mm: float = 0.10  # per side on a field key's flats (key R1, 2026-11-24)
     key_lead_mm: float = 0.6  # chamfer on the key's bottom edges
     # Crush ribs (2026-11-24): the flanks sit only 16.5 degrees off the pull direction, so
     # every 0.1 mm of side clearance lets a socket travel 0.35 mm. All three plain test keys
     # (0.10 to 0.20) had play. A ribbed key keeps 0.10 clearance so it starts in easily, and
     # one vertical rib per flank stands rib_interference_mm past the socket wall and crushes.
     rib_radius_mm: float = 1.0
-    rib_interference_mm: float = 0.10  # per flank, past the socket wall; picked by test plate 2
+    rib_interference_mm: float = 0.10  # per flank, past the socket wall: key R1 (owner, 2026-11-24)
     rib_start_mm: float = 2.5  # ribs begin above the lead chamfer, rounded, so they ease in
 
 
@@ -168,3 +168,6 @@ FIRST_PIECE_CUPS = (Cup(label="TIPS", serial=1), Cup(label="SPARE", serial=2))
 TEST_KEY_CLEARANCES = (0.10, 0.15, 0.20)  # test plate 1 (2026-11-23): all three had play
 TEST_PLATE_2_PLAIN = 0.05  # plain key, clearance 0.05: the tightest plain fit worth trying
 TEST_PLATE_2_RIBS = (0.10, 0.20)  # ribbed keys R1 and R2: rib interference per flank
+
+PARTS_TRAY = Cup(nx=2, ny=1, steps=1, label="PARTS", serial=3)  # plate 3 (2026-11-24)
+PLATE_3_KEYS = {52: 4, 26: 4}  # blue field keys by height (mm): count

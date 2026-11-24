@@ -45,3 +45,8 @@ def key(
             part = part.union(rod.extrude(height - z0))
             part = part.union(cq.Workplane("XY").sphere(rho).translate((cx, cy, z0)))
     return part
+
+
+def field_key(height: float, g: Grid = GRID, j: Joint = JOINT) -> cq.Workplane:
+    """The key every joint uses: R1, ribbed (key_clearance_mm on the flats, rib_interference_mm)."""
+    return key(height, j.key_clearance_mm, rib_interference=j.rib_interference_mm, g=g, j=j)

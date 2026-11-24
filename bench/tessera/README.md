@@ -30,11 +30,45 @@ Design agreed with the owner 2026-11-23.
 - **Easter eggs:** each module's underside carries "TESSERA" and its serial number; the
   alcohol tower will have a false floor with a hidden stash.
 
-First layout (agreed on the 40 mm grid; re-plan in 52 mm squares when the tools arrive):
-front: rack (crimper, stripper, 2 cutters) / tip-cleaner seat / small cups / glasses;
-back: solder / flux and brushes (tall) / heat gun (tall, PETG) / small cups / room to grow /
-alcohol (tall). Tool modules wait for the tools (due 2026-11-25 to 11-28);
-measure on arrival: flux syringe, solder spool, wick bobbin, heat gun body.
+## Bench layout (2026-11-24)
+
+Nine squares wide and three deep (468 x 156 mm, about the soldering mat's width), behind the
+mat. `tessera_cad/layout.py` holds it (tested: no overlaps, tall at the back, heat at the
+left, alcohol at the far right); `draw_layout.py` draws it to `out/layout.png`.
+
+**What fits where.** The socket bosses stand 6.1 mm into every cavity, so a round thing fits:
+up to 35 mm across in a 1 x 1 (and in a 3 x 1), 47.5 mm in a 2 x 1, 94 mm in a 2 x 2. A
+module's size follows from its tool, not a fixed ladder of sizes.
+
+| Module | Cells (col, row) | Size | Holds | Sized from | Est. |
+|---|---|---|---|---|---|
+| HEAT GUN | 0-1, 1-2 | 2 x 2, 104 mm, PETG | mini heat gun, nozzle up, stored cold (it has its own stand for use) | similar 300 W minis about 225 x 45 mm; check the body on arrival | 149 g PETG |
+| SOLDER | 2-3, 1-2 | 2 x 2, 52 mm | 1/4 lb spool on a spindle, wire out a front slot; 2 wick bobbins | listing 2.4 x 2.4 x 1.5 in: 61 mm round, too big for a 2 x 1 | 85 g |
+| FLUX | 4, 2 | 1 x 1, 104 mm | flux syringe standing up, a few brushes (6 in, 48 mm proud) | brushes 6 in; syringe length not published, check | 67 g |
+| TIPS | 4, 1 | 1 x 1, 52 mm | printed 2026-11-23 | | |
+| (room to grow) | 5-6, 1-2 | 2 x 2 kept free | | | |
+| ALCOHOL | 7-8, 1-2 | 2 x 2, 130 mm | 16 oz bottle, 37 mm proud; false floor with a stash | 6.38 x 6.38 x 16.69 cm (diagonal 90 mm, fits the 94) | 181 g |
+| RACK | 0-2, 0 | 3 x 1, 52 mm | crimper, stripper, 2 cutters, jaws down | Klein 3005CR 9 x 3 in; IRWIN 8 in; Hakko CHP-170 about 5 in; slot widths on arrival | 79 g |
+| GLASSES | 3-5, 0 | 3 x 1, 26 mm | safety glasses, folded flat | no folded size published; 151 mm cavity, check | 47 g |
+| SPARE | 6, 0 | 1 x 1, 52 mm | printed 2026-11-23 | | |
+| PARTS | 7-8, 0 | 2 x 1, 26 mm | heat-shrink offcuts, screws, pins | generic | 34 g |
+
+Not in the field: the Hakko 599B tip cleaner (70 mm round, 71 mm tall, with its own weighted
+base; Hakko datasheet) sits beside the iron, and the WEP 948DQ-III station sits left of the mat
+(no size published; check on arrival).
+
+Estimates scale the solid volume by the first piece's slicer weight (about 35.6 g per 1 x 1,
+52 mm cup), before keys. Yellow PLA: about 493 g of the 649 g left, so one Sunflower Yellow
+spool goes on the next order. The heat gun holster's 149 g PETG waits for the PETG order: the
+wheel module v2 takes most of spool 1.
+
+**Print order:**
+1. Now (no tool needed): PARTS tray, the first check that sockets line up over 104 mm, and
+   blue R1 keys for the field (about 6.5 g each).
+2. ALCOHOL: the bottle's size is listed; any time.
+3. After the flux and cutters arrive (2026-11-25): FLUX.
+4. After the rest arrives (2026-11-27): RACK (slot widths), SOLDER (spool), GLASSES; HEAT GUN
+   once the PETG order is in.
 
 ## Joint numbers
 
@@ -70,6 +104,9 @@ table is fine for the last few mm) and leave the two cups moving as one. If R1 s
 R2 is the fit; if R2 will not go in, R1 is. The winner sets `rib_interference_mm`, and every
 blue key after that is ribbed.
 
+**Test plate 2 result (owner, 2026-11-24): R1 is the fit,** "perfect key size". Every key from
+now on is ribbed at 0.10 past the socket wall on a 0.10 clearance (the `Joint` defaults).
+
 **Lifting a module out with ribbed keys:** a ribbed key holds by friction, so it no longer
 drops out. Push it up from underneath (lift the pair, thumb on the key's bottom) before lifting
 a module out.
@@ -80,10 +117,20 @@ Two 1 x 1 cups, 51.5 mm square and 52 mm tall, about 2 x 2 x 2 in ("TIPS" and "S
 underneath), plus three 52 mm test keys. One yellow plate. (A first plate on the 40 mm grid was
 sliced but never sent: too small.)
 
+## Plate 3 (2026-11-24)
+
+- **PARTS tray,** 2 x 1, 26 mm tall (4.1 x 2.0 x 1.0 in), yellow, "TESSERA No. 003" underneath.
+  The first check that sockets line up over 104 mm: set TIPS and SPARE side by side along its
+  back edge and key all three together.
+- **Blue field keys (R1),** 4 at 52 mm and 4 at 26 mm (`field_key`). A key is as tall as the
+  shorter of the two modules it joins; every key has the same R1 cross-section.
+- Two plates in one project, one colour each, so no filament swaps between layers.
+
 ## Files
 
 - `tessera_cad/params.py`: numbers and derived geometry; no CadQuery (tested by `uv run pytest`).
 - `tessera_cad/module.py`, `tessera_cad/key.py`: the solids.
+- `tessera_cad/layout.py`: the bench layout (plain Python, tested); `draw_layout.py` draws it.
 - `build.py`: writes STEP and STL to `out/` (gitignored).
 
 Build: `uv run --no-project --python 3.12 --with cadquery python -I bench/tessera/build.py`

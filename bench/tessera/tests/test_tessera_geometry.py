@@ -6,10 +6,11 @@ import pytest
 
 cq = pytest.importorskip("cadquery")
 
-from tessera_cad.key import key  # noqa: E402
+from tessera_cad.key import field_key, key  # noqa: E402
 from tessera_cad.module import cup, front_label_box  # noqa: E402
 from tessera_cad.params import (  # noqa: E402
     FIRST_PIECE_CUPS,
+    PARTS_TRAY,
     Cup,
     Grid,
     Joint,
@@ -110,3 +111,16 @@ def test_ribbed_key_grips_only_on_its_ribs(interference):
     low = cq.Workplane("XY").box(40, 40, 1.4, centered=(True, True, False))
     low = low.translate((G.unit_mm, G.unit_mm / 2, 0))
     assert _volume(k.intersect(left).intersect(low)) < 1e-6
+
+
+def test_parts_tray_is_one_low_2x1():
+    tray = cup(PARTS_TRAY)
+    assert len(tray.solids().vals()) == 1
+    bb = tray.val().BoundingBox()
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((103.5, 51.5, 26.0))
+
+
+def test_field_key_is_r1():
+    r1 = key(26, clearance=0.10, rib_interference=0.10)
+    assert field_key(26).val().Volume() == pytest.approx(r1.val().Volume())
+    assert field_key(26).val().Volume() > key(26, clearance=0.10).val().Volume()

@@ -168,7 +168,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 520 g (toy truck: tyres 160 g; body and tailgate 360 g) | about 480 g | Tessera keys, a few grams each, once the test keys pick a fit | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g) | about 649 g | Tessera bench storage: modules are yellow, est. 45 g per 1 x 1 cup and more per larger module | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 351 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g) | about 649 g | Tessera bench layout: about 493 g est. for 6 modules (bench/tessera/README.md); 1 spool to order | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
@@ -225,6 +225,10 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
   drives. Any rubber-sealed (2RS) 6806 / 61806 from a bearing brand or a 4- or 10-pack on Amazon;
   check the size on arrival. Needed before the v2 arm, or sooner if the stage 1 load check shows
   lean inside the servo.
+
+- **Bambu PLA Basic Sunflower Yellow, 1 x 1 kg** (2026-11-24): the Tessera bench layout
+  (`bench/tessera/README.md`) takes about 493 g of the 649 g left on A4, so add one spool to the
+  PETG order (same store). The Tessera heat gun holster (about 149 g) also waits for that PETG.
 
 The battery's spade terminals were ordered 2026-11-21 (row 31).
 The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
@@ -296,3 +300,4 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-23: Tessera bench storage first piece sent (90.66 g Yellow, `bench/tessera/`); about 669 g Yellow left.
 - 2026-11-23: the exp003 servo cradles roll over under load; wheel module v2 planned (about 375 g PETG est.); 6806-2RS bearings added to Orders to place and the PETG order marked urgent. Compute tray printed; all three deck parts dry-fitted.
 - 2026-11-24: Tessera test plate 2 logged (19.51 g Yellow): all three plate 1 keys had play, so the new keys carry crush ribs; about 649 g Yellow left.
+- 2026-11-24: key R1 chosen; Tessera bench layout drawn (about 493 g Yellow, 149 g PETG est.); one Yellow spool added to Orders to place.

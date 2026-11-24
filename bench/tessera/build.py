@@ -15,10 +15,12 @@ import cadquery as cq
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from tessera_cad.key import key  # noqa: E402
+from tessera_cad.key import field_key, key  # noqa: E402
 from tessera_cad.module import cup  # noqa: E402
 from tessera_cad.params import (  # noqa: E402
     FIRST_PIECE_CUPS,
+    PARTS_TRAY,
+    PLATE_3_KEYS,
     TEST_KEY_CLEARANCES,
     TEST_PLATE_2_PLAIN,
     TEST_PLATE_2_RIBS,
@@ -48,6 +50,10 @@ def main() -> None:
     _write(f"tessera_test_key_{mark}", key(h, clearance=TEST_PLATE_2_PLAIN, mark=mark))
     for n, i in enumerate(TEST_PLATE_2_RIBS, start=1):
         _write(f"tessera_test_key_r{n}", key(h, clearance=0.10, mark=f"R{n}", rib_interference=i))
+    # plate 3 (2026-11-24): the PARTS tray (yellow) and blue field keys, one file per height
+    _write("tessera_parts_2x1", cup(PARTS_TRAY))
+    for height in PLATE_3_KEYS:
+        _write(f"tessera_key_{height}", field_key(height))
 
 
 if __name__ == "__main__":

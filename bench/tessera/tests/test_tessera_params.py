@@ -123,3 +123,48 @@ def test_each_rib_crest_stands_its_interference_past_the_socket_wall(interferenc
         assert _beyond_socket_wall(c, sx, sy) == pytest.approx(interference)
         # inside the socket, not in the gap between modules, and short of the socket's end
         assert G.gap_mm + J.rib_radius_mm < abs(c[0]) < G.gap_mm + J.depth_mm - J.rib_radius_mm
+
+
+def test_layout_fills_the_field_once_and_keeps_room_to_grow():
+    from tessera_cad.layout import FIELD_COLS, FIELD_ROWS, GROW, LAYOUT, cells
+
+    taken = [c for p in LAYOUT for c in cells(p)]
+    assert len(taken) == len(set(taken)), "two modules share a cell"
+    assert not set(taken) & set(GROW)
+    field = {(c, r) for c in range(FIELD_COLS) for r in range(FIELD_ROWS)}
+    assert set(taken) | set(GROW) == field
+    assert [p.name for p in LAYOUT if p.status == "printed"] == ["TIPS", "SPARE"]
+
+
+def test_layout_puts_tall_at_the_back_and_heat_away_from_the_alcohol():
+    from tessera_cad.layout import LAYOUT
+
+    by = {p.name: p for p in LAYOUT}
+    assert all(p.steps <= 2 for p in LAYOUT if p.row == 0)  # front row 52 mm or lower
+    assert by["HEAT GUN"].col == 0 and by["ALCOHOL"].col + by["ALCOHOL"].nx == 9
+    assert by["HEAT GUN"].material == "PETG"
+
+
+@pytest.mark.parametrize(
+    ("name", "across_mm"),
+    [("SOLDER", 61.0), ("ALCOHOL", math.hypot(63.8, 63.8)), ("HEAT GUN", 45.0)],
+)
+def test_round_and_square_things_clear_the_socket_bosses(name, across_mm):
+    from tessera_cad.layout import LAYOUT
+
+    p = next(p for p in LAYOUT if p.name == name)
+    w, d = boss_size(G, J)
+    x0, x1, y0, y1 = cavity(G, p.nx, p.ny)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    room = min(cx - x0, cy - y0)
+    for s in sockets(G, p.nx, p.ny):
+        (sx, sy), (nx, ny) = s.at, s.normal
+        if nx == 0:
+            bx = (sx - w / 2, sx + w / 2)
+            by = (sy, sy + d) if ny < 0 else (sy - d, sy)
+        else:
+            by = (sy - w / 2, sy + w / 2)
+            bx = (sx, sx + d) if nx < 0 else (sx - d, sx)
+        px, py = min(max(cx, bx[0]), bx[1]), min(max(cy, by[0]), by[1])
+        room = min(room, math.hypot(cx - px, cy - py))
+    assert across_mm < 2 * room
