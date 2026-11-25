@@ -24,7 +24,8 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 wheel hub, PETG | 2 | Reserved | exp003 drive wheels, tires fitted 2026-11-21 |
 | exp003 tire, TPU 95A | 2 | Reserved | On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
-| exp003 servo cradle, PETG | 2 | Reserved | Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (modelled 2026-11-24, one piece) (`experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`). Keep the weight off the wheels until then |
+| exp003 servo cradle, PETG | 2 | Spare | Retired 2026-11-25: the servos moved into wheel module v2. They rolled over under the robot's weight (2026-11-23; `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`) |
+| exp003 wheel module v2, PETG | 1 | Reserved | Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25; cables not plugged in yet. Next: bolt to the drilled base plate (`experiments/exp003-household-robot/BUILD_STEPS.md`) |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
@@ -32,7 +33,7 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
 | exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
 | exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23, dry-fitted; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
-| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Drilled for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting (owner, 2026-11-25). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
+| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Drilled 2026-11-25 for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
@@ -60,9 +61,14 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | Bambu PLA Basic, Pumpkin Orange (10301), 1 kg | 1 | Spare | Studio preset: Bambu PLA Basic |
 | Bambu PLA Pure, Baby Blue (17600), 1 kg | 1 | Spare | Studio preset: Bambu PLA Pure |
 | Bambu PETG Basic, Orange (30301), 1 kg | 2 | Reserved | exp003 wheel hubs, brackets. Studio preset: Bambu PETG Basic. About 134 g used from the first spool by 2026-11-19 (two coupons, two hubs) |
+| Bambu PLA Basic, Sunflower Yellow (10402), 1 kg: 3 refills, 1 with spool | 4 | On order | Bambu US store, ordered 2026-11-25, about a week. Tessera bench storage |
+| Bambu PLA Basic, Jade White (10100), 1 kg: 2 refills, 1 with spool | 3 | On order | Same order |
+| Bambu PLA Basic, Blue (10601), 1 kg refill | 2 | On order | Same order |
+| Bambu PETG Basic, Orange (30301), 1 kg refill | 3 | On order | Same order. On top of the 3 spools from Amazon due 2026-11-27 |
+| Bambu PETG Matte, Avocado Green (35501), 1 kg with spool | 1 | On order | Same order; free gift at 10 rolls or more. No use planned yet |
 | SUNLU TPU 95A 1.75 mm, black, 1 kg | 1 | Reserved | Arrived 2026-11-20. exp003 tires and bumper. Studio preset: Generic TPU. Feed through the rear TPU inlet to the right hotend, not the AMS (docs/printing.md). Stored sealed in a bag with desiccant between prints (unloaded 2026-11-21, about 895 g) |
 
-All Bambu spools are 1 kg with RFID tags, so the AMS reads type and colour itself. Amounts left are
+All Bambu spools are 1 kg with RFID tags, so the AMS reads type and colour itself. Refills come without a spool: wind each onto an empty Bambu spool (the order brings 2, and every finished spool frees one) before it goes in the AMS. Amounts left are
 not tracked yet; the AMS shows an estimate per spool.
 
 ## Cameras, audio, control
@@ -156,19 +162,22 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 - **Forecast from the plan:** "Planned" lists what the next exp003 parts will use, from the
   models and slicer where they exist, estimates otherwise (marked "est.").
 - **Flag an order** when stock minus planned use falls below the reorder point, allowing for the
-  lead time. The owner prints every day (2026-11-21), so keep a bigger buffer: at least 2 kg of
-  PETG on hand after planned use, and a spare spool of each PLA colour that toys are using. Claude proposes the order with links; the owner places it (Amazon blocks AI agents,
+  lead time. The owner prints all day, every day (2026-11-25): plan on about 500 g a day
+  (3.5 kg a week; the H2D runs about 30 to 45 g an hour). Keep two weeks on hand, about 7 kg
+  across PETG and PLA, and order in batches of about 4 kg whenever usable stock drops under one
+  week (3.5 kg), since the Bambu store takes about a week. Within that: at least 2 kg of PETG,
+  and a sealed spare of every PLA colour in active use (Tessera yellow, white, blue keys). Claude proposes the order with links; the owner places it (Amazon blocks AI agents,
   and checkout is the owner's).
 
 ### Stock
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | about 656 g (wheel module coupon 17.96 g, wheel module 164.26 g) | about 344 g | about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24, due 2026-11-27 | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | about 656 g (wheel module coupon 17.96 g, wheel module 164.26 g) | about 344 g | about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24 (Amazon, due 2026-11-27) and 3 refills 2026-11-25 (Bambu store) | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 559 g (toy truck: tyres 160 g; body and tailgate 360 g; Tessera keys 38.71 g) | about 441 g | Tessera keys (R1), about 4 to 7 g each | | |
-| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 384 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g) | about 616 g | Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool to order | | |
+| PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 566 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g; ALCOHOL tower 181.62 g) | about 434 g | Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool due 2026-12-01 (Amazon) and 4 on order (Bambu store) | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
@@ -212,8 +221,11 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-24 | Tessera plate 3, two jobs: 8 blue R1 keys, 4 x 52 mm and 4 x 26 mm (1 h 33 min), and the PARTS tray, 2 x 1, 26 mm, No. 003 (1 h 13 min); left nozzle, 4 walls, 30% infill | PLA Blue 38.71 g, PLA Sunflower Yellow 33.31 g (slicer) |
 | 2026-11-24 | exp003 wheel module v2 fit coupon (1 h 24 min, left nozzle, 4 walls, 30% infill, front face down) | PETG Orange 17.96 g (slicer) |
 | 2026-11-24 | exp003 wheel module v2 (3 h 52 min, left nozzle, 6 walls, 40% infill, front face down; coupon passed) | PETG Orange 164.26 g (slicer) |
+| 2026-11-25 | Tessera ALCOHOL tower, 2 x 2, 130 mm, No. 004 (6 h 23 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 181.62 g (slicer) |
 
 ### Orders to place
+
+**Ordered 2026-11-25 (Bambu US store, the owner placed it; about a week):** 13 rolls at the 10-roll mix-and-match tier (35% off, free shipping): PLA Basic Sunflower Yellow (10402) 3 refills and 1 with spool, Jade White (10100) 2 refills and 1 with spool, Blue (10601) 2 refills; PETG Basic Orange (30301) 3 refills; plus the free PETG Matte Avocado Green (35501) with spool. The proposal priced it at about $119 (about $9.15 a kg); the final total was not recorded. Why Bambu, from a 15-vendor price check on 2026-11-25: the only exact Sunflower Yellow 10402 match, AMS RFID, and big single-colour boxes from Elegoo or Anycubic saved only $0.70 to $1.10 a kg. Cheaper but unproven, for utility colours only: Geeetech 20 rolls of PLA in black or white, $7.23 a kg; Jayo PETG 11 kg mixed colours on Amazon, $7.27 a kg.
 
 **Ordered 2026-11-24 (Amazon, $107.08 before tax):** 3 x Bambu PETG Basic Orange (30301), due 2026-11-27; 4 x 6806-2RS (one pack), due 2026-11-28; 1 x Bambu PLA Sunflower Yellow (10402) from a reseller, due 2026-12-01: its title says Matte, so check the spool label reads PLA Basic 10402 and return it if not. The three entries below stay for their reasons until they arrive.
 
@@ -275,6 +287,8 @@ Toys for sessions alongside the robot work. Not lab hardware; listed so nothing 
 | 2026-11-17 | Amazon | $639.60 before tax | exp003 robot parts, items 1 to 30 above |
 | 2026-11-23 | Amazon | $275.26 | Soldering station, solder, flux, crimper, stripper, cutters, heat gun and bench supplies (Tools and bench, On order) |
 | 2026-11-23 | Amazon | $10.38 | Item 32: right-angle USB-A up/down extensions (Pi power) |
+| 2026-11-24 | Amazon | $107.08 before tax | 3 x PETG Orange, 6806-2RS 4-pack, 1 x PLA Sunflower Yellow |
+| 2026-11-25 | Bambu Lab | about $119 (proposal; final not recorded) | 12 filament rolls plus a free PETG Matte (Printing, On order) |
 
 The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 
@@ -314,3 +328,7 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-24: wheel module v2 fit coupon logged (17.96 g PETG); about 508 g left on spool 1.
 - 2026-11-24: coupon passed (servo fits); wheel module v2 sliced at 164.26 g PETG (6 walls, 40%); about 344 g left on spool 1.
 - 2026-11-25: plate v2 (225 g PETG) dropped: plate v1 gets drilled instead.
+- 2026-11-25: reorder rule raised for all-day printing (500 g a day, two weeks on hand); 4 PLA spools proposed.
+- 2026-11-25: Tessera ALCOHOL tower sent (181.62 g yellow, about 434 g left). Next job: BIG bin and the ALCOHOL false floor in Jade White (215.48 g, 7 h 2 min, sliced).
+- 2026-11-25: plate v1 drilled for the wheel module; both servos fitted in the module, wheels on; cradles retired.
+- 2026-11-25: Bambu store filament order placed: 4 Yellow, 3 White, 2 Blue PLA, 3 Orange PETG, plus a free PETG Matte Avocado Green (Printing, On order).

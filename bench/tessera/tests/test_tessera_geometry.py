@@ -6,18 +6,30 @@ import pytest
 
 cq = pytest.importorskip("cadquery")
 
+from tessera_cad.false_floor import false_floor, false_floor_print  # noqa: E402
 from tessera_cad.key import field_key, key  # noqa: E402
 from tessera_cad.module import cup, front_label_box  # noqa: E402
 from tessera_cad.params import (  # noqa: E402
+    ALCOHOL,
+    ALCOHOL_BOTTLE_MM,
+    BIG,
+    FALSE_FLOOR,
     FIRST_PIECE_CUPS,
     PARTS_TRAY,
     Cup,
+    Engraving,
+    FalseFloor,
     Grid,
     Joint,
+    body,
     boss_size,
+    cavity,
+    false_floor_height,
+    false_floor_top,
+    module_height,
 )
 
-G, J = Grid(), Joint()
+G, J, E, F = Grid(), Joint(), Engraving(), FALSE_FLOOR
 M = G.unit_mm / 2  # middle of a 1 x 1 cell
 
 
@@ -124,3 +136,116 @@ def test_field_key_is_r1():
     r1 = key(26, clearance=0.10, rib_interference=0.10)
     assert field_key(26).val().Volume() == pytest.approx(r1.val().Volume())
     assert field_key(26).val().Volume() > key(26, clearance=0.10).val().Volume()
+
+
+@pytest.fixture(scope="module")
+def alcohol():
+    return cup(ALCOHOL)
+
+
+@pytest.fixture(scope="module")
+def insert():
+    return false_floor(ALCOHOL)
+
+
+def _cavity_centre(c):
+    x0, x1, y0, y1 = cavity(G, c.nx, c.ny)
+    return (x0 + x1) / 2, (y0 + y1) / 2
+
+
+@pytest.mark.parametrize("c", [ALCOHOL, BIG], ids=["ALCOHOL", "BIG"])
+def test_tall_2x2_cups_are_one_solid_over_4_in_square(c):
+    part = cup(c)
+    assert len(part.solids().vals()) == 1
+    bb = part.val().BoundingBox()
+    assert (bb.xlen, bb.ylen, bb.zlen) == pytest.approx((103.5, 103.5, 130.0))
+    assert bb.xlen > 4 * 25.4  # owner, 2026-11-25: at least 4 x 4 in, and deep
+    assert not inside(part, *_cavity_centre(c), 129.0)  # open all the way down
+    assert inside(part, *_cavity_centre(c), 1.2)
+
+
+@pytest.mark.parametrize("turn", [0, 15, 30, 45])
+def test_bottle_stands_on_the_false_floor_clear_of_the_bosses(alcohol, insert, turn):
+    w, d, h = ALCOHOL_BOTTLE_MM
+    cx, cy = _cavity_centre(ALCOHOL)
+    top = false_floor_top(G, F)
+
+    def block(z0, tall):
+        b = cq.Workplane("XY").box(w, d, tall, centered=(True, True, False))
+        return b.rotate((0, 0, 0), (0, 0, 1), turn).translate((cx, cy, z0))
+
+    bottle = block(top + 0.01, h)
+    assert _volume(bottle.intersect(alcohol)) < 1e-6
+    assert _volume(bottle.intersect(insert)) < 1e-6
+    # its base stands on plate: all of it square on, over 99% turned 45 (a corner over the notch)
+    foot = block(top - 0.5, 0.5)
+    held = _volume(foot.intersect(insert)) / foot.val().Volume()
+    assert held == pytest.approx(1.0) if turn < 45 else held > 0.99
+
+
+def test_false_floor_fits_the_cavity_at_its_clearance_and_no_looser(alcohol, insert):
+    assert len(insert.solids().vals()) == 1
+    assert insert.val().BoundingBox().zmin == pytest.approx(G.floor_mm)  # skirt on the floor
+    assert _volume(insert.intersect(alcohol)) < 1e-6
+    c = F.clearance_mm
+    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        near = insert.translate((dx * (c - 0.02), dy * (c - 0.02), 0))
+        assert _volume(near.intersect(alcohol)) < 1e-6
+        far = insert.translate((dx * (c + 0.05), dy * (c + 0.05), 0))
+        assert _volume(far.intersect(alcohol)) > 0.1  # a wall or boss stops it: no rattle
+    bb = insert.val().BoundingBox()
+    x0, x1, y0, y1 = cavity(G, ALCOHOL.nx, ALCOHOL.ny)
+    assert (bb.xlen, bb.ylen) == pytest.approx((x1 - x0 - 2 * c, y1 - y0 - 2 * c))
+
+
+def test_stash_is_its_depth_under_a_closed_plate(insert):
+    cx, cy = _cavity_centre(ALCOHOL)
+    x0, _, y0, _ = cavity(G, ALCOHOL.nx, ALCOHOL.ny)
+    floor, ceiling = G.floor_mm, G.floor_mm + F.stash_mm
+    assert F.stash_mm >= 10.0  # a USB stick, SD cards, folded notes
+    for z in (floor + 0.05, floor + F.stash_mm / 2, ceiling - 0.05):
+        assert not inside(insert, cx, cy + 25, z)  # the stash, away from the engraving
+        assert inside(insert, x0 + F.clearance_mm + F.skirt_mm / 2, cy, z)  # the skirt
+    assert inside(insert, cx, cy + 25, ceiling + E.depth_mm + 0.3)  # the plate above
+    assert insert.val().BoundingBox().zmax == pytest.approx(floor + false_floor_height(F))
+    # the lift notch is open top to bottom, the lip beside it has room under it to hook
+    assert not inside(insert, cx, y0 + F.notch_r_mm - 1, ceiling + 1)
+    hook = y0 + F.notch_r_mm + F.lip_mm / 2
+    assert inside(insert, cx, hook, ceiling + 1) and not inside(insert, cx, hook, ceiling - 1)
+    # and a skirt ring closes the stash behind the lip
+    assert inside(insert, cx, y0 + F.notch_r_mm + F.lip_mm + F.skirt_mm / 2, floor + 1)
+
+
+def test_stash_ceiling_carries_the_secret(insert):
+    plain = false_floor(ALCOHOL, FalseFloor(secret=""))
+    assert plain.val().Volume() - insert.val().Volume() > 5.0  # mm3 of letters
+
+
+def _overhangs(part):
+    """Centroids of triangles facing down more than 45 degrees (the slicer would support them)."""
+    verts, tris = part.val().tessellate(0.05, 0.2)
+    out = []
+    for a, b, c in tris:
+        p, q, r = verts[a], verts[b], verts[c]
+        n = (q - p).cross(r - p)
+        if n.Length > 1e-9 and n.z / n.Length < -math.cos(math.radians(45)) - 0.01:
+            out.append((p + q + r) * (1 / 3))
+    return out
+
+
+def test_false_floor_prints_flat_with_nothing_overhanging():
+    part = false_floor_print(ALCOHOL)
+    bb = part.val().BoundingBox()
+    assert bb.zmin == pytest.approx(0.0) and bb.zlen == pytest.approx(false_floor_height(F))
+    down = _overhangs(part)
+    assert down and all(abs(p.z) < 1e-6 for p in down)  # only the face on the bed
+
+
+@pytest.mark.parametrize("c", [ALCOHOL, BIG], ids=["ALCOHOL", "BIG"])
+def test_tall_cups_print_open_side_up_without_supports(c):
+    part = cup(c)
+    _, _, y0, _ = body(G, c.nx, c.ny)
+    for p in _overhangs(part):
+        on_bed = p.z < E.depth_mm + 1e-6  # the bed, and the underside letters' tiny bridges
+        label = p.y < y0 + E.depth_mm + 1e-6 and 0 < p.z < module_height(G, c.steps)
+        assert on_bed or label, f"overhang at {p}"

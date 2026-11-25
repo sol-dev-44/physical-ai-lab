@@ -63,6 +63,16 @@ LAYOUT: tuple[Placement, ...] = (
     ),
     Placement("TIPS", 4, 1, 1, 1, 2, "spare tips", status="printed"),
     Placement(
+        "BIG",
+        5,
+        1,
+        2,
+        2,
+        5,
+        "general bin, 99.5 mm square inside and 128 mm deep (owner: at least 4 x 4 in, and deep)",
+        sized_from="owner, 2026-11-25",
+    ),
+    Placement(
         "ALCOHOL",
         7,
         1,
@@ -104,9 +114,6 @@ LAYOUT: tuple[Placement, ...] = (
         sized_from="generic",
     ),
 )
-
-GROW = ((5, 1), (6, 1), (5, 2), (6, 2))  # 2 x 2 kept free in the back row
-"""Cells kept empty on purpose."""
 
 NOT_IN_THE_FIELD = (
     "Hakko 599B tip cleaner: 70 mm round, 71 mm tall, with its own weighted base; it sits "

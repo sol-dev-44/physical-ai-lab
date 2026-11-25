@@ -17,7 +17,7 @@ from matplotlib.patches import FancyBboxPatch, Rectangle  # noqa: E402
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from tessera_cad.layout import FIELD_COLS, FIELD_ROWS, GROW, LAYOUT  # noqa: E402
+from tessera_cad.layout import FIELD_COLS, FIELD_ROWS, LAYOUT  # noqa: E402
 from tessera_cad.params import GRID  # noqa: E402
 
 U = GRID.unit_mm
@@ -53,20 +53,6 @@ def main() -> None:
     )
     ax.add_patch(plt.Circle((-82, -55), 35, fc="#e6e6e6", ec="#888", ls="--"))
     ax.text(-82, -55, "599B\ntip\ncleaner", ha="center", va="center", fontsize=7, color="#555")
-    for c, r in GROW:
-        ax.add_patch(
-            Rectangle(
-                (c * U + 0.25, r * U + 0.25),
-                U - 0.5,
-                U - 0.5,
-                fc="white",
-                ec="#bbb",
-                ls=":",
-                hatch="..",
-                lw=0.8,
-            )
-        )
-    ax.text(6 * U, 2 * U, "room\nto grow", ha="center", va="center", color="#999", fontsize=9)
     for p in LAYOUT:
         fc = PETG if p.material == "PETG" else FILL[p.status]
         ax.add_patch(
@@ -117,7 +103,7 @@ def main() -> None:
     ax.text(
         -150,
         FIELD_ROWS * U + 60,
-        "Tessera bench layout, plan view (2026-11-24)",
+        "Tessera bench layout, plan view (2026-11-25)",
         fontsize=12,
         weight="bold",
     )

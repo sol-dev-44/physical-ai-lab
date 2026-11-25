@@ -15,9 +15,12 @@ import cadquery as cq
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from tessera_cad.false_floor import false_floor_print  # noqa: E402
 from tessera_cad.key import field_key, key  # noqa: E402
 from tessera_cad.module import cup  # noqa: E402
 from tessera_cad.params import (  # noqa: E402
+    ALCOHOL,
+    BIG,
     FIRST_PIECE_CUPS,
     PARTS_TRAY,
     PLATE_3_KEYS,
@@ -54,6 +57,11 @@ def main() -> None:
     _write("tessera_parts_2x1", cup(PARTS_TRAY))
     for height in PLATE_3_KEYS:
         _write(f"tessera_key_{height}", field_key(height))
+    # 2026-11-25: ALCOHOL (No. 004) and its false floor, printed plate down; BIG (No. 005).
+    # Cups print open side up, as built.
+    _write("tessera_alcohol_2x2", cup(ALCOHOL))
+    _write("tessera_alcohol_false_floor", false_floor_print(ALCOHOL))
+    _write("tessera_big_2x2", cup(BIG))
 
 
 if __name__ == "__main__":

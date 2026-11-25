@@ -28,7 +28,7 @@ Design agreed with the owner 2026-11-23.
 - **Engraving does the labelling:** each module's front face carries its name; each pocket's
   floor carries the outline of the tool that lives there, so an empty outline shows what's out.
 - **Easter eggs:** each module's underside carries "TESSERA" and its serial number; the
-  alcohol tower will have a false floor with a hidden stash.
+  alcohol tower has a false floor with a hidden stash (see ALCOHOL below).
 
 ## Bench layout (2026-11-24)
 
@@ -46,8 +46,8 @@ module's size follows from its tool, not a fixed ladder of sizes.
 | SOLDER | 2-3, 1-2 | 2 x 2, 52 mm | 1/4 lb spool on a spindle, wire out a front slot; 2 wick bobbins | listing 2.4 x 2.4 x 1.5 in: 61 mm round, too big for a 2 x 1 | 85 g |
 | FLUX | 4, 2 | 1 x 1, 104 mm | flux syringe standing up, a few brushes (6 in, 48 mm proud) | brushes 6 in; syringe length not published, check | 67 g |
 | TIPS | 4, 1 | 1 x 1, 52 mm | printed 2026-11-23 | | |
-| (room to grow) | 5-6, 1-2 | 2 x 2 kept free | | | |
-| ALCOHOL | 7-8, 1-2 | 2 x 2, 130 mm | 16 oz bottle, 37 mm proud; false floor with a stash | 6.38 x 6.38 x 16.69 cm (diagonal 90 mm, fits the 94) | 181 g |
+| BIG | 5-6, 1-2 | 2 x 2, 130 mm | general bin, 99.5 mm square inside, 128 mm deep; modelled (No. 005) | owner, 2026-11-25: at least 4 x 4 in, and deep | 181 g |
+| ALCOHOL | 7-8, 1-2 | 2 x 2, 130 mm | 16 oz bottle on a false floor over a 10 mm stash, 51 mm proud; modelled (No. 004) | 6.38 x 6.38 x 16.69 cm (diagonal 90 mm, fits the 94) | 181 g + 37 g floor |
 | RACK | 0-2, 0 | 3 x 1, 52 mm | crimper, stripper, 2 cutters, jaws down | Klein 3005CR 9 x 3 in; IRWIN 8 in; Hakko CHP-170 about 5 in; slot widths on arrival | 79 g |
 | GLASSES | 3-5, 0 | 3 x 1, 26 mm | safety glasses, folded flat | no folded size published; 151 mm cavity, check | 47 g |
 | SPARE | 6, 0 | 1 x 1, 52 mm | printed 2026-11-23 | | |
@@ -58,14 +58,16 @@ base; Hakko datasheet) sits beside the iron, and the WEP 948DQ-III station sits 
 (no size published; check on arrival).
 
 Estimates scale the solid volume by the first piece's slicer weight (about 35.6 g per 1 x 1,
-52 mm cup), before keys. Yellow PLA: about 493 g of the 649 g left, so one Sunflower Yellow
-spool goes on the next order. The heat gun holster's 149 g PETG waits for the PETG order: the
+52 mm cup), before keys. Yellow PLA still to print: about 677 g (2026-11-25, with BIG and the
+false floor), more than the 616 g left on A4. ALCOHOL, its floor and BIG (about 399 g) fit
+now; the spool on order (due 2026-12-01) covers the rest. The heat gun holster's 149 g PETG waits for the PETG order: the
 wheel module v2 takes most of spool 1.
 
 **Print order:**
 1. Now (no tool needed): PARTS tray, the first check that sockets line up over 104 mm, and
    blue R1 keys for the field (about 6.5 g each).
-2. ALCOHOL: the bottle's size is listed; any time.
+2. ALCOHOL (modelled 2026-11-25, with its false floor): the bottle's size is listed; any time.
+   BIG, general bin, any time.
 3. After the flux and cutters arrive (2026-11-25): FLUX.
 4. After the rest arrives (2026-11-27): RACK (slot widths), SOLDER (spool), GLASSES; HEAT GUN
    once the PETG order is in.
@@ -126,10 +128,40 @@ sliced but never sent: too small.)
   shorter of the two modules it joins; every key has the same R1 cross-section.
 - Two plates in one project, one colour each, so no filament swaps between layers.
 
+## ALCOHOL and BIG (2026-11-25)
+
+**ALCOHOL** (No. 004) is a 2 x 2 cup, 130 mm tall, for the 16 oz isopropyl bottle. A loose
+false floor sits in its bottom: a 2.4 mm plate on a 2 mm skirt, 12.4 mm tall in all. The skirt
+stands on the real floor and leaves a hidden stash 10 mm deep under the plate, about 95 mm
+square (a USB stick, SD cards, folded notes). The ceiling of the stash reads "YOU FOUND IT".
+
+- **Fit:** the plate is notched round all eight socket bosses and stands 0.2 mm in from every
+  wall and boss (docs/printing.md, slip fit). It slides in and out but cannot rattle.
+- **Lifting it:** take the bottle out. In the middle of the front edge there is a half-round
+  notch, 20 mm wide. The front wall hides it from the chair. Put a fingertip down the notch,
+  hook it under the plate's edge (it overhangs the notch by 4 mm) and lift. A ring of skirt
+  behind that edge keeps the stash closed, so nothing shows or slips out through the notch.
+  Or lift the module out (push its keys up first) and tip it over: the floor drops out.
+- **The bottle:** it stands on the plate, 14.4 mm above the bench, so its top is 51 mm above
+  the rim (39 mm without the false floor). That is fine: two thirds of the bottle is inside,
+  its middle sits 32 mm below the rim, and it can lean at most 9 degrees before the rim stops
+  it. The extra 12 mm makes it easier to grab. Turned 45 degrees, one corner sits over the notch
+  (under 1% of its base); square on, all of it stands on the plate.
+- **Printing:** the cup open side up; the floor plate side down, skirt up. Neither has an
+  overhang past 45 degrees (tested). Files: `out/tessera_alcohol_2x2`,
+  `out/tessera_alcohol_false_floor`.
+- **Label:** the builder puts every label left of the first front groove, so "ALCOHOL" is
+  shrunk to about 3.8 mm letters.
+
+**BIG** (No. 005) is the same 2 x 2 x 130 mm cup with no false floor: a general bin, 103.5 mm
+(4.1 in) square outside, 99.5 mm square and 128 mm deep inside. It takes the 2 x 2 once kept
+free to grow (cells 5-6, 1-2). File: `out/tessera_big_2x2`.
+
 ## Files
 
 - `tessera_cad/params.py`: numbers and derived geometry; no CadQuery (tested by `uv run pytest`).
-- `tessera_cad/module.py`, `tessera_cad/key.py`: the solids.
+- `tessera_cad/module.py`, `tessera_cad/key.py`: the solids; `tessera_cad/false_floor.py`:
+  ALCOHOL's false floor.
 - `tessera_cad/layout.py`: the bench layout (plain Python, tested); `draw_layout.py` draws it.
 - `build.py`: writes STEP and STL to `out/` (gitignored).
 

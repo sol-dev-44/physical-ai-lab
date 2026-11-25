@@ -171,3 +171,51 @@ TEST_PLATE_2_RIBS = (0.10, 0.20)  # ribbed keys R1 and R2: rib interference per 
 
 PARTS_TRAY = Cup(nx=2, ny=1, steps=1, label="PARTS", serial=3)  # plate 3 (2026-11-24)
 PLATE_3_KEYS = {52: 4, 26: 4}  # blue field keys by height (mm): count
+
+ALCOHOL = Cup(nx=2, ny=2, steps=5, label="ALCOHOL", serial=4)  # 16 oz bottle, false floor
+BIG = Cup(nx=2, ny=2, steps=5, label="BIG", serial=5)  # general bin (owner, 2026-11-25)
+
+# Amazon Basics 99% isopropyl alcohol, 16 oz: listing 6.38 x 6.38 x 16.69 cm (w, d, h, mm)
+ALCOHOL_BOTTLE_MM = (63.8, 63.8, 166.9)
+
+
+@dataclass(frozen=True)
+class FalseFloor:
+    """ALCOHOL's false floor: a loose plate on a skirt that stands on the real floor.
+
+    In use the skirt points down and the plate sits on top, so the stash is the space inside
+    the skirt, stash_mm tall. It prints plate down, skirt up: no overhangs.
+    """
+
+    stash_mm: float = 10.0  # clear height of the hidden stash (USB stick, SD cards, cash)
+    plate_mm: float = 2.4  # stiff enough under a full bottle (about 0.15 mm sag)
+    skirt_mm: float = 2.0  # skirt wall thickness
+    clearance_mm: float = 0.2  # per side in the cavity: docs/printing.md, slip fit
+    # Lift notch: a half round in the front edge, between the two front bosses, where the front
+    # wall hides it from the chair. Round it the plate overhangs lip_mm (a fingertip hooks
+    # under), then a skirt ring closes the stash, so nothing shows or slips out of the notch.
+    notch_r_mm: float = 10.0
+    lip_mm: float = 4.0
+    secret: str = "YOU FOUND IT"  # engraved on the stash's ceiling
+
+
+FALSE_FLOOR = FalseFloor()
+
+
+def false_floor_height(f: FalseFloor) -> float:
+    return f.stash_mm + f.plate_mm
+
+
+def notch_ring_r(f: FalseFloor) -> float:
+    """Outer radius of the skirt ring round the lift notch (centred on the cavity's front wall)."""
+    return f.notch_r_mm + f.lip_mm + f.skirt_mm
+
+
+def false_floor_top(g: Grid, f: FalseFloor) -> float:
+    """Height of the false floor's top face above the bench (what the bottle stands on)."""
+    return g.floor_mm + false_floor_height(f)
+
+
+def proud(g: Grid, c: Cup, standing_on: float, thing_mm: float) -> float:
+    """How far a thing thing_mm tall, standing at height standing_on, rises above the cup."""
+    return standing_on + thing_mm - module_height(g, c.steps)

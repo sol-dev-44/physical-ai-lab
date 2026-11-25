@@ -394,8 +394,14 @@
   {
    "item": "exp003 servo cradle, PETG",
    "qty": "2",
+   "status": "Spare",
+   "notes": "Retired 2026-11-25: the servos moved into wheel module v2. They rolled over under the robot's weight (2026-11-23; experiments/exp003-household-robot/cad/WHEEL_MOUNT.md)"
+  },
+  {
+   "item": "exp003 wheel module v2, PETG",
+   "qty": "1",
    "status": "Reserved",
-   "notes": "Fitted to both exp003 wheel servos 2026-11-19. Roll over under the robot's weight (2026-11-23); to be replaced by wheel module v2 (modelled 2026-11-24, one piece) (experiments/exp003-household-robot/cad/WHEEL_MOUNT.md). Keep the weight off the wheels until then"
+   "notes": "Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25; cables not plugged in yet. Next: bolt to the drilled base plate (experiments/exp003-household-robot/BUILD_STEPS.md)"
   },
   {
    "item": "exp003 hub coupon v1, PETG",
@@ -443,7 +449,7 @@
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "exp003 chassis. Drilled for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting (owner, 2026-11-25). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
+   "notes": "exp003 chassis. Drilled 2026-11-25 for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -461,7 +467,7 @@
     "used": "about 656 g (wheel module coupon 17.96 g, wheel module 164.26 g)",
     "left": "about 344 g",
     "planned": "about 400 g est. (shells, bumper mounts)",
-    "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24, due 2026-11-27",
+    "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24 (Amazon, due 2026-11-27) and 3 refills 2026-11-25 (Bambu store)",
     "lead_time": "Bambu store about 1 week"
    },
    {
@@ -494,9 +500,9 @@
    {
     "item": "PLA Basic Sunflower Yellow (AMS A4)",
     "start": "1000 g",
-    "used": "about 384 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g)",
-    "left": "about 616 g",
-    "planned": "Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool to order",
+    "used": "about 566 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g; ALCOHOL tower 181.62 g)",
+    "left": "about 434 g",
+    "planned": "Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool due 2026-12-01 (Amazon) and 4 on order (Bambu store)",
     "reorder": "",
     "lead_time": ""
    },
@@ -719,6 +725,11 @@
     "date": "2026-11-24",
     "what": "exp003 wheel module v2 (3 h 52 min, left nozzle, 6 walls, 40% infill, front face down; coupon passed)",
     "used": "PETG Orange 164.26 g (slicer)"
+   },
+   {
+    "date": "2026-11-25",
+    "what": "Tessera ALCOHOL tower, 2 x 2, 130 mm, No. 004 (6 h 23 min, left nozzle, 4 walls, 30% infill)",
+    "used": "PLA Sunflower Yellow 181.62 g (slicer)"
    }
   ]
  },

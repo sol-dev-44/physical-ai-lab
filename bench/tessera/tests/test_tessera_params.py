@@ -4,6 +4,10 @@ import math
 
 import pytest
 from tessera_cad.params import (
+    ALCOHOL,
+    ALCOHOL_BOTTLE_MM,
+    BIG,
+    FALSE_FLOOR,
     FIRST_PIECE_CUPS,
     TEST_KEY_CLEARANCES,
     Grid,
@@ -13,9 +17,12 @@ from tessera_cad.params import (
     boss_size,
     bowtie,
     cavity,
+    false_floor_top,
     flank_play,
     half_width,
     module_height,
+    notch_ring_r,
+    proud,
     ribs,
     sockets,
 )
@@ -125,14 +132,13 @@ def test_each_rib_crest_stands_its_interference_past_the_socket_wall(interferenc
         assert G.gap_mm + J.rib_radius_mm < abs(c[0]) < G.gap_mm + J.depth_mm - J.rib_radius_mm
 
 
-def test_layout_fills_the_field_once_and_keeps_room_to_grow():
-    from tessera_cad.layout import FIELD_COLS, FIELD_ROWS, GROW, LAYOUT, cells
+def test_layout_fills_the_field_once():
+    from tessera_cad.layout import FIELD_COLS, FIELD_ROWS, LAYOUT, cells
 
     taken = [c for p in LAYOUT for c in cells(p)]
     assert len(taken) == len(set(taken)), "two modules share a cell"
-    assert not set(taken) & set(GROW)
     field = {(c, r) for c in range(FIELD_COLS) for r in range(FIELD_ROWS)}
-    assert set(taken) | set(GROW) == field
+    assert set(taken) == field  # BIG took the 2 x 2 once kept to grow (2026-11-25)
     assert [p.name for p in LAYOUT if p.status == "printed"] == ["TIPS", "SPARE"]
 
 
@@ -168,3 +174,38 @@ def test_round_and_square_things_clear_the_socket_bosses(name, across_mm):
         px, py = min(max(cx, bx[0]), bx[1]), min(max(cy, by[0]), by[1])
         room = min(room, math.hypot(cx - px, cy - py))
     assert across_mm < 2 * room
+
+
+def test_new_cups_match_the_layout_and_take_the_next_serials():
+    from tessera_cad.layout import LAYOUT
+
+    by = {p.name: p for p in LAYOUT}
+    for c in (ALCOHOL, BIG):
+        p = by[c.label]
+        assert (c.nx, c.ny, c.steps) == (p.nx, p.ny, p.steps)
+    assert (ALCOHOL.serial, BIG.serial) == (4, 5)  # after TIPS, SPARE, PARTS
+
+
+def test_bottle_on_the_false_floor_stands_proud_but_cannot_tip_out():
+    f, (w, _, h) = FALSE_FLOOR, ALCOHOL_BOTTLE_MM
+    top = false_floor_top(G, f)
+    assert top == pytest.approx(14.4)
+    rise = proud(G, ALCOHOL, top, h)
+    assert rise == pytest.approx(51.3, abs=0.05)  # 38.9 on the real floor
+    rim = module_height(G, ALCOHOL.steps)
+    assert top + h / 2 < rim - 25  # its middle sits well inside the cup
+    assert (rim - top) / h > 2 / 3  # two thirds of it inside
+    x0, x1, _, _ = cavity(G, ALCOHOL.nx, ALCOHOL.ny)
+    lean = math.degrees(math.atan(((x1 - x0) - w) / 2 / (rim - top)))
+    assert lean < 10  # the most it can lean before the rim stops it
+
+
+def test_lift_notch_sits_between_the_front_bosses_and_clear_of_a_square_bottle():
+    f = FALSE_FLOOR
+    x0, x1, y0, y1 = cavity(G, ALCOHOL.nx, ALCOHOL.ny)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    w, _ = boss_size(G, J)
+    keepout = G.unit_mm / 2 + w / 2 + f.clearance_mm + f.skirt_mm  # first front boss, x
+    assert cx - notch_ring_r(f) > keepout - 0.5  # the ring meets the boss skirt at most
+    assert y0 + notch_ring_r(f) < cy - ALCOHOL_BOTTLE_MM[1] / 2  # square on, all on plate
+    assert 2 * f.notch_r_mm >= 18  # a fingertip
