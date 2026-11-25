@@ -31,8 +31,8 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
 | exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
 | exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
-| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23, dry-fitted; bolts to base plate v2: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
-| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. To be replaced by plate v2 with holes for the wheel module v2 (same grid; this one becomes a spare and drilling template). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
+| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23, dry-fitted; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
+| exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Drilled for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting (owner, 2026-11-25). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
 ## Robot arms (exp002)
@@ -164,7 +164,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 
 | Item | Start | Used | Left | Planned next | Reorder point | Lead time |
 |---|---|---|---|---|---|---|
-| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | 474 g | about 526 g | about 435 g est. for wheel module v2 (module 190 g in one piece, coupon 18 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place) | Bambu store about 1 week |
+| PETG Basic Orange, spool 1 (AMS A1) | 1000 g | about 656 g (wheel module coupon 17.96 g, wheel module 164.26 g) | about 344 g | about 400 g est. (shells, bumper mounts) | Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24, due 2026-11-27 | Bambu store about 1 week |
 | PETG Basic Orange, spool 2 (sealed) | 1000 g | 0 | 1000 g | | | |
 | PLA Basic Jade White (AMS A2) | 1000 g | about 545 g (toy truck: coupon 35 g; chassis, axles, bins 415 g; cab band 43 g; bin slide test 12 g; new bin and wheels about 40 g) | about 455 g | Toy truck: more bins (about 40 g each with wheels) only if the new bin passes play | One spool per colour is enough for now | Bambu store about 1 week |
 | PLA Basic Blue (AMS A3) | 1000 g | about 559 g (toy truck: tyres 160 g; body and tailgate 360 g; Tessera keys 38.71 g) | about 441 g | Tessera keys (R1), about 4 to 7 g each | | |
@@ -210,8 +210,12 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-23 | Toy truck new bin (tongue +0.15) and 2 spinning bin wheels (about 59 min, left nozzle) | PLA Jade White about 40 g (model estimate: bin 37.5 g, wheels 1.2 g each; the slicer figure was not read); to fit: 2 x M4 x 16 and 2 M4 washers |
 | 2026-11-24 | Tessera test plate 2: keys 05 (plain), R1 and R2 (crush ribs), 52 mm (48 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 19.51 g (slicer) |
 | 2026-11-24 | Tessera plate 3, two jobs: 8 blue R1 keys, 4 x 52 mm and 4 x 26 mm (1 h 33 min), and the PARTS tray, 2 x 1, 26 mm, No. 003 (1 h 13 min); left nozzle, 4 walls, 30% infill | PLA Blue 38.71 g, PLA Sunflower Yellow 33.31 g (slicer) |
+| 2026-11-24 | exp003 wheel module v2 fit coupon (1 h 24 min, left nozzle, 4 walls, 30% infill, front face down) | PETG Orange 17.96 g (slicer) |
+| 2026-11-24 | exp003 wheel module v2 (3 h 52 min, left nozzle, 6 walls, 40% infill, front face down; coupon passed) | PETG Orange 164.26 g (slicer) |
 
 ### Orders to place
+
+**Ordered 2026-11-24 (Amazon, $107.08 before tax):** 3 x Bambu PETG Basic Orange (30301), due 2026-11-27; 4 x 6806-2RS (one pack), due 2026-11-28; 1 x Bambu PLA Sunflower Yellow (10402) from a reseller, due 2026-12-01: its title says Matte, so check the spool label reads PLA Basic 10402 and return it if not. The three entries below stay for their reasons until they arrive.
 
 - **Bambu PETG Basic, 3 x 1 kg at least** (owner, 2026-11-21: "3 spools minimum", printing every
   day on the robot or toys). After the base plate and the caster cups spool 1 is down to about 526 g (after the deck coupon and all three deck parts); with the
@@ -306,3 +310,7 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-24: key R1 chosen; Tessera bench layout drawn (about 493 g Yellow, 149 g PETG est.); one Yellow spool added to Orders to place.
 - 2026-11-24: Tessera plate 3 logged (38.71 g Blue keys, 33.31 g Yellow PARTS tray); about 441 g Blue and 616 g Yellow left.
 - 2026-11-24: exp003 wheel module v2 modelled as one piece (about 190 g, coupon 18 g, plate v2 225 g: about 435 g PETG est.).
+- 2026-11-24: ordered on Amazon: 3 x PETG Orange (due 11-27), 6806-2RS 4-pack (11-28), 1 x PLA Sunflower Yellow (12-01); $107.08 before tax.
+- 2026-11-24: wheel module v2 fit coupon logged (17.96 g PETG); about 508 g left on spool 1.
+- 2026-11-24: coupon passed (servo fits); wheel module v2 sliced at 164.26 g PETG (6 walls, 40%); about 344 g left on spool 1.
+- 2026-11-25: plate v2 (225 g PETG) dropped: plate v1 gets drilled instead.

@@ -437,13 +437,13 @@
    "item": "exp003 compute tray, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printed 2026-11-23, dry-fitted; bolts to base plate v2: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
+   "notes": "Printed 2026-11-23, dry-fitted; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
   },
   {
    "item": "exp003 base plate, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "exp003 chassis. To be replaced by plate v2 with holes for the wheel module v2 (same grid; this one becomes a spare and drilling template). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
+   "notes": "exp003 chassis. Drilled for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting (owner, 2026-11-25). Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22"
   },
   {
    "item": "exp003 caster cup v2 light, PETG",
@@ -458,10 +458,10 @@
    {
     "item": "PETG Basic Orange, spool 1 (AMS A1)",
     "start": "1000 g",
-    "used": "474 g",
-    "left": "about 526 g",
-    "planned": "about 435 g est. for wheel module v2 (module 190 g in one piece, coupon 18 g, base plate v2 225 g; cad/WHEEL_MOUNT.md), then about 400 g est. (shells, bumper mounts)",
-    "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 to order now (see Orders to place)",
+    "used": "about 656 g (wheel module coupon 17.96 g, wheel module 164.26 g)",
+    "left": "about 344 g",
+    "planned": "about 400 g est. (shells, bumper mounts)",
+    "reorder": "Keep at least 2 kg after planned use (daily printing); order 3 spools at a time. 3 ordered 2026-11-24, due 2026-11-27",
     "lead_time": "Bambu store about 1 week"
    },
    {
@@ -709,6 +709,16 @@
     "date": "2026-11-24",
     "what": "Tessera plate 3, two jobs: 8 blue R1 keys, 4 x 52 mm and 4 x 26 mm (1 h 33 min), and the PARTS tray, 2 x 1, 26 mm, No. 003 (1 h 13 min); left nozzle, 4 walls, 30% infill",
     "used": "PLA Blue 38.71 g, PLA Sunflower Yellow 33.31 g (slicer)"
+   },
+   {
+    "date": "2026-11-24",
+    "what": "exp003 wheel module v2 fit coupon (1 h 24 min, left nozzle, 4 walls, 30% infill, front face down)",
+    "used": "PETG Orange 17.96 g (slicer)"
+   },
+   {
+    "date": "2026-11-24",
+    "what": "exp003 wheel module v2 (3 h 52 min, left nozzle, 6 walls, 40% infill, front face down; coupon passed)",
+    "used": "PETG Orange 164.26 g (slicer)"
    }
   ]
  },
@@ -1152,6 +1162,10 @@
   {
    "date": "2026-11-24",
    "text": "wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it \"hella sturdy\", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. An 18 g coupon checks the servo fit first; the rear brace became a 45-degree-tapered fin after the slicer flagged it as a floating cantilever."
+  },
+  {
+   "date": "2026-11-25",
+   "text": "coupon passed; the wheel module printed (164.26 g). No plate v2: the owner asked not to waste filament, and v2 only moved 15 holes, so plate v1 is drilled with the module as its template (1/8 inch bit; cad/WHEEL_MOUNT.md, \"Drilling plate v1\")."
   }
  ],
  "design": {

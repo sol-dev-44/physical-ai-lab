@@ -13,9 +13,9 @@ household's rules about where it may go and when, and can be driven by remote.
 dry fit: under the robot's weight the servo cradles roll over and the wheels lean in. The cause
 is two bolts on one line beside the edge the cradle tips about, and walls loaded across their
 print layers. The fix is a wheel module v2: a boxed servo mount on a wide six-bolt foot, an axle
-beam tying left and right together, and a base plate v2 with the new holes
+beam tying left and right together, bolted through new holes drilled in the base plate
 ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)). All three electronics deck parts are printed and
-dry-fitted ([cad/DECK.md](cad/DECK.md)). They bolt to plate v2, which keeps the same grid. The
+dry-fitted ([cad/DECK.md](cad/DECK.md)). They bolt to the plate's grid, which does not change. The
 robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on
 simulated wheels.
 
@@ -24,11 +24,12 @@ simulated wheels.
 1. Keep the weight off the wheels until the new mounts are in, so the old cradles do not creep.
 2. Wheel module v2 is modelled (2026-11-24): both servo boxes and the beam in one PETG piece,
    checked at 5 x the static load ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md), "Stage 1 as
-   modelled"). Print the fit coupon (18 g, 1 h 24 min), then the module (about 190 g, front face down, 6
-   walls, 40% infill) and plate v2 (about 225 g).
-3. Rebuild the chassis on plate v2 and pass the load check: under 0.5 degrees of lean with 1 kg
+   modelled"). The coupon passed and the module is printed (164.26 g, 2026-11-24). Drill plate v1 for it
+   with the module as the template (no reprint; [cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md),
+   "Drilling plate v1").
+3. Rebuild the chassis on the drilled plate and pass the load check: under 0.5 degrees of lean with 1 kg
    extra, and no change after 10 drops and 24 h loaded.
-4. Bolt the deck to plate v2 in the assembly order in [cad/DECK.md](cad/DECK.md).
+4. Bolt the deck to the plate in the assembly order in [cad/DECK.md](cad/DECK.md).
 5. Power harness: the wiring diagram first, then soldering once the kit lands (2026-11-25 to 27;
    see [docs/inventory.md](../../docs/inventory.md)).
 6. Phase 0 bench test of the servos in wheel mode. It does not need the chassis, so it can run
@@ -161,8 +162,8 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 | Caster cup (corrected, 8.6 mm) | PETG | Printed 2026-11-22 (27 min 24 s, 9.9 g, 4 walls, 30% infill) and fitted with M3 x 16 to the plate: the plate sits level |
 | Base plate | PETG | Printed 2026-11-21 (4 h 56 min, 223 g, 4 walls, 30% infill; [cad/BASE_PLATE.md](cad/BASE_PLATE.md), "The plate"); cradles and caster cup fitted, level on the floor |
 | Electronics deck fit coupon | PETG | Printed 2026-11-23 (27 min 46 s, 8.85 g): the rocker snaps in, the M2.5 boss holds, the UCTRONICS slides into a 27.6 mm channel ([cad/DECK.md](cad/DECK.md)) |
-| Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); dry-fitted, bolt to plate v2 |
-| Compute tray | PETG | Printed 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); dry-fitted, bolts to plate v2 |
+| Deck power tray (with switch panel) and servo bridge | PETG | Printed 2026-11-23 together (1 h 38 min, 34.78 g, 4 walls, 30% infill); dry-fitted, bolt to the base plate |
+| Compute tray | PETG | Printed 2026-11-23 (42 min 16 s, 17.44 g, 4 walls, 30% infill); dry-fitted, bolts to the base plate |
 
 ## Progress log
 
@@ -298,3 +299,4 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   - A ninth checklist rule: trace the load path ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)).
   - The deck waits for plate v2.
 - 2026-11-24: wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it "hella sturdy", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. An 18 g coupon checks the servo fit first; the rear brace became a 45-degree-tapered fin after the slicer flagged it as a floating cantilever.
+- 2026-11-25: coupon passed; the wheel module printed (164.26 g). No plate v2: the owner asked not to waste filament, and v2 only moved 15 holes, so plate v1 is drilled with the module as its template (1/8 inch bit; cad/WHEEL_MOUNT.md, "Drilling plate v1").

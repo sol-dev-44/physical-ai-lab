@@ -200,8 +200,8 @@ tray's). Order:
    M2.5 nut plus 11 mm standoff at each compute tray boss, nut plus 20 mm standoff at each
    bridge boss.
 2. The three parts to the plate, 4 x M3 x 12 each (power tray, compute tray, bridge): nut in the
-   well, screw up from below, snug only. **Wait for base plate v2** ([WHEEL_MOUNT.md](WHEEL_MOUNT.md));
-   the grid does not change.
+   well, screw up from below, snug only. **Wait until the plate is drilled and the wheel module is bolted on**
+   ([WHEEL_MOUNT.md](WHEEL_MOUNT.md)); the grid does not change.
 3. DROK: M3 nut slid into each pad's channel, ears on the pads, M3 x 8 through each ear.
 4. INA226 in its pocket, UCTRONICS in its channel, two zip ties each.
 5. Rocker snapped into the panel and the charge jack through its hole, once their leads are on

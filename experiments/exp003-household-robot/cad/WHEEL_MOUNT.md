@@ -94,12 +94,12 @@ These are in the "Before designing a part" checklist ([README.md](README.md)) fr
    - The two wheels' rolling moments meet in it instead of in the plate: the same idea as
      LeKiwi's top plate.
    - Prints lying on its side, so its bending plane is in the layers.
-3. **Base plate v2.**
-   - Kept the same: outline, thickness, deck grid, caster holes, battery fences and strap slots,
-     so every deck part and the caster cup move across unchanged.
-   - New: holes for the box feet and the beam.
-   - A reprint, not drilling: the owner preferred not to drill the plate for the DROK. About
-     5 h and 225 g. The old plate becomes a spare and a drilling template.
+3. **Plate v1, drilled (owner, 2026-11-25: no reprint).**
+   - A plate v2 would have kept the same outline, thickness, grid, caster holes, fences and slots,
+     and only moved the holes: 225 g of PETG for 15 holes. Instead, drill plate v1 with the
+     module as the template (see "Drilling plate v1" below).
+   - The base plate model (`base_plate.py`) now shows the drilled plate. The old cradle holes
+     stay in the real plate, covered by the feet.
 4. **Fit coupon first, about 30 min.** A slice of the box foot with two bolt holes and one M2
    counterbore, and a 40 mm stub of the beam with its joint. It checks the counterbore depth for
    the M2 x 6, the teardrop holes and the beam-to-box bolts.
@@ -157,16 +157,35 @@ These are in the "Before designing a part" checklist ([README.md](README.md)) fr
 The vendor servo model sits in both boxes with no overlap (`test_exp003_wheel_module_geometry`).
 
 **Printing:** PETG, 6 walls, 40% infill, front face of the beam down, no supports (the holes
-across the print are teardrops). About 190 g; the build's estimate at 4 walls and 30% is 152 g.
+across the print are teardrops). About 164 g and 3 h 52 min in Bambu Studio (the 190 g was an estimate); the build's estimate at 4 walls and 30% is 152 g.
 The coupon (`wheel_module_coupon`, 18 g, 1 h 24 min) is a 28 mm slice at the back wall: push a servo in,
 drive the four M2 screws, and bolt it down with M3 x 12 to check the case fit, the screw bite and
 the holes before the 190 g print.
 
+**Coupon result (owner, 2026-11-24):** printed in orange PETG (17.96 g) and the servo fits. Next is
+the full module.
+
+**Drilling plate v1** (no filament; about 15 minutes). Module frame: x forward, y left.
+- Hole positions, from the plate's centre line (y) and its front edge: feet at x = 5 and -46
+  (y = 85 each side, and y = 105 and 124 at x = -46); beam at x = 23.2, y = 0, 42, 85 and 124
+  each side. They come from the module itself, so nothing needs marking.
+- Place: the module's outer faces sit flush with the plate's side edges (both 130.8 mm from the
+  centre line), and the beam's front face is 79 mm behind the plate's front edge (the end with
+  the two rows of bumper holes). Check: the beam's rear face is 14.9 mm in front of the front
+  strap slots.
+- Bit: 1/8 inch (3.18 mm). It passes through the module's 3.4 mm holes, and M3 (3.0 mm) goes
+  through it. The beam holes are 33 mm deep, so about 40 mm of bit must stand out of the chuck.
+- Slow speed, light pressure, back out to clear chips: fast drilling melts PETG.
+- Every hole is a teardrop with its point to the rear, so start each with the bit against the
+  front of the round part.
+- The nearest old cradle hole is 6.2 mm from the new one at (-46, 105): 2.8 mm of plate between.
+
 **Assembly:**
 1. Battery out. Push each servo into its box from outboard, cables first through the window.
 2. Drive the four M2 x 6 from inboard (the lower two along the driver grooves).
-3. Route the cables back through the rear gusset's notch.
-4. Bolt the module to plate v2: feet first, then the beam, heads on top, nuts under the plate.
+3. Route the cables back over the foot, inboard of the rear fin.
+4. Bolt the module to the drilled plate: feet first (8 x M3 x 12), then the beam (7 x M3 x 16,
+   heads down the counterbores), nuts under the plate.
 5. Fit the hubs and wheels as before.
 
 ### Stage 2: a bearing that carries the wheel
@@ -196,16 +215,13 @@ wheel leaning while the box stays put).
   cradles do not creep further.
 - **The deck:**
   - Put the standoffs into the trays now: step 1 of the assembly order in [DECK.md](DECK.md).
-  - Bolt the trays to plate v2, not the old plate. The grid is unchanged.
+  - Bolt the trays to the plate once the module is on. The grid is unchanged.
 - **Unchanged:** the power harness waits for the soldering kit (2026-11-25 to 27) and the wiring
   diagram. The phase 0 bench test (servos in wheel mode on the bench) does not need the chassis.
 
 ### PETG
 
-The new parts use about 435 g (model and slicer, 2026-11-24):
-- wheel module (boxes and beam in one): about 190 g
-- coupon: about 18 g
-- plate v2: about 225 g
+The new parts used about 182 g (slicer, 2026-11-24): the wheel module 164.26 g and the coupon
+17.96 g. No plate v2: plate v1 is drilled instead (owner, 2026-11-25).
 
-Spool 1 has about 526 g, and spool 2 is sealed. That covers it, but it takes the buffer well
-under the 2 kg rule, so the 3-spool PETG order is now urgent.
+Spool 1 has about 344 g left and spool 2 is sealed; 3 more spools are due 2026-11-27.
