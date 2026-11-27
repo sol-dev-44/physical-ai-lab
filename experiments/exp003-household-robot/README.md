@@ -9,34 +9,30 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-23, evening):** the chassis is assembled, but the wheel mounts failed the
-dry fit: under the robot's weight the servo cradles roll over and the wheels lean in. The cause
-is two bolts on one line beside the edge the cradle tips about, and walls loaded across their
-print layers. The fix is a wheel module v2: a boxed servo mount on a wide six-bolt foot, an axle
-beam tying left and right together, bolted through new holes drilled in the base plate
-([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)). All three electronics deck parts are printed and
-dry-fitted ([cad/DECK.md](cad/DECK.md)). They bolt to the plate's grid, which does not change. The
-robot console (phone control app, [CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on
-simulated wheels.
+**Status (2026-11-26, evening):** the chassis is rebuilt on wheel module v2, bolted through 15
+holes drilled in plate v1 ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)). A crack through the left
+servo box's top wall (a layer joint) was stitched and patched, and the owner passed the load check
+by hand (no caliper numbers). The electronics deck is assembled on the plate: compute tray (Pi 5
+with its Active Cooler, the UCTRONICS 5 V buck), servo bridge (the Waveshare Bus Servo Adapter (A)
+on 20 mm standoffs) and power tray (DROK 12 V converter, INA226), in the layout of
+[cad/DECK.md](cad/DECK.md). Nothing is wired yet; the build checklist is
+[BUILD_STEPS.md](BUILD_STEPS.md). The robot console (phone control app,
+[CONTROL_APP.md](CONTROL_APP.md)) step 1 is built and runs on simulated wheels.
 
 **Next, in order:**
 
-1. Keep the weight off the wheels until the new mounts are in, so the old cradles do not creep.
-2. Wheel module v2 is modelled (2026-11-24): both servo boxes and the beam in one PETG piece,
-   checked at 5 x the static load ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md), "Stage 1 as
-   modelled"). The coupon passed and the module is printed (164.26 g, 2026-11-24). Drill plate v1 for it
-   with the module as the template (no reprint; [cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md),
-   "Drilling plate v1").
-3. Rebuild the chassis on the drilled plate and pass the load check: under 0.5 degrees of lean with 1 kg
-   extra, and no change after 10 drops and 24 h loaded.
-4. Bolt the deck to the plate in the assembly order in [cad/DECK.md](cad/DECK.md).
-5. Power harness: the wiring diagram first, then soldering once the kit lands (2026-11-25 to 27;
-   see [docs/inventory.md](../../docs/inventory.md)).
-6. Phase 0 bench test of the servos in wheel mode. It does not need the chassis, so it can run
-   in between.
-7. Before the v2 arm, or sooner if step 3 shows lean inside the servo: a 6806 bearing so the
+1. Done 2026-11-25 to 26: wheel module v2 printed, plate v1 drilled, module bolted on, crack
+   patched, load check passed by hand; deck parts, boards and Pi mounted (BUILD_STEPS steps 0 to 10).
+2. Zip ties on the UCTRONICS and INA226 (none on hand yet; restock in
+   [docs/inventory.md](../../docs/inventory.md), "Orders to place", with M3 screws).
+3. Power harness: the wiring diagram first, then soldering on the bench (solder arrived 2026-11-25,
+   the other tools are due 2026-11-27); then the rocker, charge jack and fuse holders (BUILD_STEPS 9,
+   11 to 13). Check the DROK reads 12.0 V before any servo is plugged in.
+4. Phase 0 bench test of the servos in wheel mode (and distinct bus IDs), then the servo cables
+   into the servo board.
+5. Before the v2 arm, or sooner if the wheels start to lean or the patched crack opens: a 6806 bearing so the
    servo only drives and the box carries the weight (stage 2 in WHEEL_MOUNT.md). The bearings and
-   the 3-spool PETG order are in "Orders to place".
+   the PETG are on order (due 2026-11-27 and 28).
 
 Nothing here runs against hardware yet. Photos and personal data are the
 owner's call ([ADR 0013](../../docs/adr/0013-owner-governs-personal-data.md)).
@@ -300,3 +296,5 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
   - The deck waits for plate v2.
 - 2026-11-24: wheel module v2 modelled: both servo boxes and the axle beam in one PETG piece, both servos' far ends back, 15 x M3 to a new plate v2. The owner asked for it "hella sturdy", so every check runs at 5 x the static load with the v2 arm reaching forward (73 N a wheel): lever 1.6 to 1 (the cradles were 4.7), 57 N on each outboard bolt, 0.5 MPa in the walls. The wall under the case stays 3 mm so the axle keeps its height. An 18 g coupon checks the servo fit first; the rear brace became a 45-degree-tapered fin after the slicer flagged it as a floating cantilever.
 - 2026-11-25: coupon passed; the wheel module printed (164.26 g). No plate v2: the owner asked not to waste filament, and v2 only moved 15 holes, so plate v1 is drilled with the module as its template (1/8 inch bit; cad/WHEEL_MOUNT.md, "Drilling plate v1").
+- 2026-11-25: plate v1 drilled (15 holes), both servos into the module (bodies to the rear), wheels on, module bolted to the plate. A crack then showed through the +y box's 5 mm top wall, across a layer joint at mid-span.
+- 2026-11-26: the crack stitched with binder-ring wire sunk with the soldering iron (thick office staples would not sink) and a melted bead over it; the owner passed the load check by hand. The electronics deck went on in the DECK.md order: standoffs into the trays, the three parts to the plate, the DROK, INA226 and UCTRONICS, then the Pi 5 with its Active Cooler and the servo board (turned half a turn so its USB-C and power face the Pi). Lessons in [BUILD_STEPS.md](BUILD_STEPS.md) and [cad/DECK.md](cad/DECK.md): the trays' M3 holes are plain (only the bridge legs hold their nuts), zip ties have to be threaded before a tray is bolted down, the DROK sits flush with the plate's right edge. Next: zip ties and screws restock, then the power harness.

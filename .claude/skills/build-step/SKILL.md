@@ -48,3 +48,20 @@ Each build keeps an ordered checklist in its experiment folder, for example
 
 Save what the step taught (a measured fit, a surprise) in the build's notes in the same change
 as the ticked step. Commit and push only when the owner asks.
+
+## Lessons (2026-11-25 to 26)
+
+- **Check the CAD before naming a feature.** "Nut in the well" was wrong for the deck trays
+  (plain holes; only the bridge legs have wells). Read the part's code (`deck_shapes.py`,
+  the part's own module) or run its `derive_*` before telling the owner what a hole holds.
+- **Say what a part is before telling them what to do with it.** The owner asked "is that
+  electric or plastic?" and "zip ties?": name the part, what it looks like and where it sits.
+- **Mark up the owner's own photo when they send one.** "Show me on the real photo" beat any
+  drawing: crop and annotate it with PIL in the scratchpad (circles, an arrow for the route, a
+  two-line legend) and send it with SendUserFile.
+- **Draw in the owner's orientation.** Their photos have the front to the right and the robot's
+  left at the top; a diagram in that view needs no mental rotation.
+- **Gotchas before the step, not after:** things that become hard once a part is fixed (zip
+  ties under a tray, nuts under a board) go first in the step's list.
+- **Record what actually happened**, including uncertainty: the load check passed by hand with
+  no numbers; the crack's bead may be PLA.

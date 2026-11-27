@@ -11,13 +11,65 @@ rows of bumper holes; the caster is at the back.
 
 ## Wheel module v2 onto plate v1 ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md))
 
-- [ ] **2. Bolt the module to the plate.** Feet first (8 x M3 x 12), then the beam (7 x M3 x 16,
-  heads down the counterbores); nuts under the plate.
-- [ ] **4. Load check** (README "Next" 3): under 0.5 degrees of lean with 1 kg extra, no change
-  after 10 drops and 24 h loaded.
+All done 2026-11-26 (steps 0 to 4 in Done).
+
+## Deck onto the plate ([cad/DECK.md](cad/DECK.md), "Dry fit and assembly order")
+
+- [ ] **8b. Zip ties on the UCTRONICS and INA226** (2 each) once there are ties: thread through the
+  floor tunnels, or undo that tray's 4 screws to thread them.
+- [ ] **9. Rocker and charge jack** into the switch panel, once their leads are on (waits for the
+  bench soldering).
+- [ ] **11. Fuse holders** on their tie points while wiring.
+
+## Wiring (next, from README "Next" 5 and 6)
+
+- [ ] **12. Power harness wiring diagram** (Claude drafts it in the repo, the owner checks it
+  against the parts): battery, main switch, 10 A fuse, INA226 shunt, DROK (motor rail, 5 A fuse)
+  to the servo board, UCTRONICS (5 V) to the Pi's USB-C, charge jack.
+- [ ] **13. Bench soldering** of the harness joins, away from the PETG (it softens at about
+  80 C), heat-shrunk; then step 9 (rocker and charge jack) and step 11 (fuse holders).
+- [ ] **14. Check the DROK's output reads 12.0 V** on the meter before any servo is plugged in
+  (inventory "Check on arrival").
+- [ ] **15. Servo cables** from the two wheel servos into the servo board's D V G sockets, in
+  through the boxes' back-wall windows, battery out. The two servos need different bus IDs
+  before they share the bus (phase 0 bench test).
 
 ## Done
 
+- [x] **10. Pi 5 and servo board on their standoffs.** Done 2026-11-26 (owner, photos). Pi:
+  GPIO pins along the front edge, USB/Ethernet toward the centre, USB-C and HDMI on the back
+  edge, Active Cooler fitted (push pins in the diagonal holes, fan at the USB corner, lead in the
+  FAN socket by the USB ports, not the 3-pin UART socket between the HDMI ports), 4 x M2.5 x 5.
+  Servo board: turned half a turn from the first try so its USB-C, DC terminal and barrel jack
+  face the Pi and the D V G sockets face the power side; its own corner screws into the 20 mm
+  standoffs. Jumper caps looked to be on B (USB to servo) in the photo; confirm before wiring.
+- [x] **8. INA226 and UCTRONICS placed.** Done 2026-11-26 (owner, photo): UCTRONICS in the compute
+  tray's back channel, USB-A outboard; INA226 in its pocket, screw terminals forward. No zip ties
+  yet (none on hand), see 8b.
+- [x] **7. DROK onto the power tray.** Done 2026-11-26 (owner). M3 nuts pushed into the pad
+  channels from their open ends (front pad from the front, back pad from the back), 2 x M3 x 8
+  through the ears, leads inboard and left full length for the bench solder joins.
+- [x] **6. The three deck parts to the plate.** Done 2026-11-26 (owner). Compute tray, power
+  tray and servo bridge, 4 x M3 x 12 each up from under the plate. The trays' M3 holes are plain
+  (nut held on the floor while the screw turns); only the bridge's legs have hex wells.
+- [x] **5. Standoffs into the trays.** Done 2026-11-26 (owner). 4 x 11 mm M-F on the compute
+  tray, 4 x 20 mm M-F on the servo bridge, M2.5 nuts in the pockets. The kit's sizes are body
+  length; each has a 6 mm stud on top of that. The servo board's own short corner feet come off
+  (keep its screws for step 10): the CAD's collision check needs at least 18 mm under the board,
+  or its USB-C and 12 V plugs hit the Pi's USB corner.
+- [x] **4. Load check.** Passed 2026-11-26 on the owner's hands-on check (loaded and handled);
+  no caliper readings were taken, so the lean is not measured. If the wheels later look
+  splayed or the +y box crack reopens, do the caliper check (book beside each tire, T and B
+  readings, pass under 0.9 mm change).
+- [x] **4a. Patch the crack in the +y box top.** Done 2026-11-26 (owner). Found 2026-11-25,
+  through the 5 mm top wall along a layer joint. Stitched across with binder-ring wire sunk flush
+  with the Pinecil at 260 C (the office staples were copper-thick and would not sink at 350 C),
+  then a bead melted along the crack over the stitches (the plan was orange PETG from a retired
+  cradle; the bead shows blue in the 2026-11-26 photos, and the only blue filament on hand is
+  PLA, which bonds poorly to PETG: confirm the material, and watch the crack). The load check (step 4) decides
+  whether it holds.
+- [x] **2. Bolt the module to the plate.** Done 2026-11-25 (owner). 8 x M3 x 12 in the feet,
+  7 x M3 x 16 down the beam counterbores, nuts under the plate.
 - [x] **0. Drill plate v1 for the module (15 holes).** Done 2026-11-25 (owner). Feet at
   x 5 and -46 (y 85, 105, 124), beam at x 23.2 (y 0, 42, 85, 124), each side; 1/8 inch bit
   with the module as the template.

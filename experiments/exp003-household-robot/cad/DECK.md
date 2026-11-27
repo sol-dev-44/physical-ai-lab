@@ -213,3 +213,32 @@ Solder or crimp on the bench, away from the PETG (it softens at about 80 C), bef
 INA226 header (if its pins are only pushed through), the rocker's leads (4.8 mm spades or
 soldered) and the power harness joins (DROK, fuse holders, XT60s, charge jack), heat-shrunk as
 one harness. Nothing else on the deck needs solder.
+
+**DROK on the plate (owner, 2026-11-26).** Bolted on its pads, its outboard side sits about
+flush with the plate's right edge, not the 11 mm inside it the CAD gives (the body as fitted is
+wider across than the 39 mm spec, or it sits further out on the slots). Accepted as is; the
+wall or cover over that corner must allow for it (no overhang past the plate edge to rely on,
+and the cover's inner face at the plate edge there).
+
+## Assembled (owner, 2026-11-26)
+
+Steps 1 to 6 of the order above done, in that order, with the photos checked against the CAD;
+not yet: zip ties (none on hand), the rocker and charge jack (5) and the fuse holders (7), which
+wait for the bench soldering. What the assembly taught:
+
+- **The trays' M3 holes are plain round holes** through the 3 mm floor (`m3_holes` in
+  `deck_shapes.py`): the nut sits loose on the floor and is held with a fingertip while the screw
+  turns from below. Only the bridge's legs have hex wells that hold the nut. "Nut in the well"
+  in step 2 above is true of the bridge only.
+- **Thread the zip ties before a tray is bolted down.** Each tie point is two slots joined by a
+  1.5 mm groove under the floor; the plate closes the groove into a tunnel. A v2 tray could cut
+  the groove into the top instead, or use open hooks.
+- **Standoff sizes in the kit are body length**; the M-F studs add 6 mm (the bosses are sized
+  for that). The servo board's own corner feet come off; its corner screws go into the 20 mm
+  standoffs. Below 18 mm the CAD's check finds its USB-C and 12 V plugs in the Pi's USB corner.
+- **The servo board first went on the wrong way round** (D V G sockets toward the Pi); turned,
+  its USB-C, DC terminal and barrel jack face the Pi. Jumper caps looked to be on B.
+- **Pi Active Cooler:** the fan lead goes to the FAN socket by the USB ports, not the 3-pin UART
+  socket between the HDMI ports.
+- The DROK sits flush with the plate's right edge (note above).
+

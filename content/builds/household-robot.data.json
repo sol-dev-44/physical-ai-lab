@@ -401,7 +401,7 @@
    "item": "exp003 wheel module v2, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25; cables not plugged in yet. Next: bolt to the drilled base plate (experiments/exp003-household-robot/BUILD_STEPS.md)"
+   "notes": "Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25, bolted to the drilled base plate the same day (8 x M3 x 12, 7 x M3 x 16); cables not plugged in yet. A crack through the +y box top (a layer joint) was patched 2026-11-26 (binder-ring wire stitches and a melted bead) and the load check passed on the owner's hands-on test (no caliper numbers)"
   },
   {
    "item": "exp003 hub coupon v1, PETG",
@@ -437,13 +437,13 @@
    "item": "exp003 deck power tray and servo bridge, PETG",
    "qty": "2",
    "status": "Reserved",
-   "notes": "Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md)"
+   "notes": "Printed together 2026-11-23; bolted to the plate 2026-11-26 with the DROK, INA226 and servo board on them. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md)"
   },
   {
    "item": "exp003 compute tray, PETG",
    "qty": "1",
    "status": "Reserved",
-   "notes": "Printed 2026-11-23, dry-fitted; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
+   "notes": "Printed 2026-11-23; bolted to the plate 2026-11-26 with the Pi 5 (Active Cooler fitted) and the UCTRONICS on it; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100)"
   },
   {
    "item": "exp003 base plate, PETG",
@@ -527,8 +527,8 @@
    {
     "item": "M3 x 8 button head (Mywish kit)",
     "start": "Not counted: per-size counts are not published; similar kits hold 20 per length",
-    "used": "8 (wheel hubs)",
-    "left": "about 12 if 20",
+    "used": "10 (wheel hubs 8, DROK ears 2)",
+    "left": "about 10 if 20",
     "planned": "None planned",
     "reorder": "Count the compartment when a design picks this length",
     "lead_time": "Amazon 1 to 2 days"
@@ -536,10 +536,10 @@
    {
     "item": "M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit)",
     "start": "Not counted (similar kits hold 20 per length)",
-    "used": "4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts)",
-    "left": "about 16 of each length if 20",
-    "planned": "Electronics deck on the plate's M3 grid, est. 4 to 8 M3",
-    "reorder": "Count the compartments when the deck picks lengths",
+    "used": "M3 x 12: 4 (cradles, retired; not known if back in the kit), 8 (wheel module feet), 12 (deck parts); M3 x 16: 4 (caster cup), 7 (module beam); M3 nuts: 8 (cradles, cup), 15 (module), 14 (deck parts, DROK); 4 x M4 x 8 (caster), 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts)",
+    "left": "Running low (owner, 2026-11-26): M3 x 12 and M3 x 16 nearly used up",
+    "planned": "Shells, bumper mounts, arm v2",
+    "reorder": "Restock now (Orders to place)",
     "lead_time": "Amazon 1 to 2 days"
    },
    {
@@ -563,11 +563,20 @@
    {
     "item": "M2.5 brass standoffs",
     "start": "160 (arrived 2026-11-20)",
-    "used": "0",
-    "left": "160",
-    "planned": "Pi 5 and boards est. 12 to 16",
+    "used": "8 (4 x 11 mm Pi, 4 x 20 mm servo board), 8 M2.5 nuts, 4 x M2.5 x 5",
+    "left": "152",
+    "planned": "Sensors and the camera, est. 8",
     "reorder": "Plenty",
     "lead_time": ""
+   },
+   {
+    "item": "Zip ties, small (about 2.5 mm wide, 100 mm)",
+    "start": "0 (none on hand, 2026-11-26)",
+    "used": "0",
+    "left": "0",
+    "planned": "8 on the deck (2 UCTRONICS, 2 INA226, 4 fuse holders) plus the harness",
+    "reorder": "Order now (Orders to place)",
+    "lead_time": "Amazon 1 to 2 days"
    }
   ],
   "usage": [
@@ -730,6 +739,21 @@
     "date": "2026-11-25",
     "what": "Tessera ALCOHOL tower, 2 x 2, 130 mm, No. 004 (6 h 23 min, left nozzle, 4 walls, 30% infill)",
     "used": "PLA Sunflower Yellow 181.62 g (slicer)"
+   },
+   {
+    "date": "2026-11-25",
+    "what": "exp003 wheel module v2 bolted to plate v1",
+    "used": "8 x M3 x 12 (feet), 7 x M3 x 16 (beam), 15 M3 nuts"
+   },
+   {
+    "date": "2026-11-26",
+    "what": "exp003 +y wheel box crack patched",
+    "used": "Steel wire from a binder ring (5 stitches), a scrap bead melted along the crack, superglue on its edges (owner's choice of scrap; it shows blue in the photos)"
+   },
+   {
+    "date": "2026-11-26",
+    "what": "exp003 electronics deck assembled on the plate",
+    "used": "12 x M3 x 12 and 12 M3 nuts (three deck parts); 2 x M3 x 8 and 2 M3 nuts (DROK ears); 4 x 11 mm and 4 x 20 mm M2.5 M-F standoffs, 8 M2.5 nuts; 4 x M2.5 x 5 (Pi); the servo board's own 4 corner screws"
    }
   ]
  },
@@ -745,7 +769,7 @@
    "n": 2,
    "item": "Official Pi 5 Active Cooler",
    "asin": "B0CLXZBR5P",
-   "check": "",
+   "check": "Fitted to the Pi 5 2026-11-26 (lead in the FAN socket)",
    "group": "Compute"
   },
   {
@@ -773,7 +797,7 @@
    "n": 6,
    "item": "Serial bus servo driver board for Feetech ST/SC, USB",
    "asin": "B0CTMM4LWK",
-   "check": "Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215",
+   "check": "The board that arrived is marked Waveshare Bus Servo Adapter (A) V1.1 (photo, 2026-11-26), so it is the planned board, not a stand-in. On the deck's servo bridge 2026-11-26, jumpers on B (USB to servo; confirm). Test with LeRobot's motor setup on a spare STS3215",
    "group": "Drive"
   },
   {
@@ -1177,6 +1201,14 @@
   {
    "date": "2026-11-25",
    "text": "coupon passed; the wheel module printed (164.26 g). No plate v2: the owner asked not to waste filament, and v2 only moved 15 holes, so plate v1 is drilled with the module as its template (1/8 inch bit; cad/WHEEL_MOUNT.md, \"Drilling plate v1\")."
+  },
+  {
+   "date": "2026-11-25",
+   "text": "plate v1 drilled (15 holes), both servos into the module (bodies to the rear), wheels on, module bolted to the plate. A crack then showed through the +y box's 5 mm top wall, across a layer joint at mid-span."
+  },
+  {
+   "date": "2026-11-26",
+   "text": "the crack stitched with binder-ring wire sunk with the soldering iron (thick office staples would not sink) and a melted bead over it; the owner passed the load check by hand. The electronics deck went on in the DECK.md order: standoffs into the trays, the three parts to the plate, the DROK, INA226 and UCTRONICS, then the Pi 5 with its Active Cooler and the servo board (turned half a turn so its USB-C and power face the Pi). Lessons in BUILD_STEPS.md and cad/DECK.md: the trays' M3 holes are plain (only the bridge legs hold their nuts), zip ties have to be threaded before a tray is bolted down, the DROK sits flush with the plate's right edge. Next: zip ties and screws restock, then the power harness."
   }
  ],
  "design": {

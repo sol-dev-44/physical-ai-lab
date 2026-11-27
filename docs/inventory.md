@@ -25,14 +25,14 @@ The repo is public: personal details go in only when the owner says so (ADR 0013
 | exp003 tire, TPU 95A | 2 | Reserved | On the exp003 wheel hubs; printed and fitted 2026-11-21, snug first try |
 | exp003 hub coupon v2, PETG | 1 | Active | Fit gauge and phase 0 spin indicator |
 | exp003 servo cradle, PETG | 2 | Spare | Retired 2026-11-25: the servos moved into wheel module v2. They rolled over under the robot's weight (2026-11-23; `experiments/exp003-household-robot/cad/WHEEL_MOUNT.md`) |
-| exp003 wheel module v2, PETG | 1 | Reserved | Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25; cables not plugged in yet. Next: bolt to the drilled base plate (`experiments/exp003-household-robot/BUILD_STEPS.md`) |
+| exp003 wheel module v2, PETG | 1 | Reserved | Printed 2026-11-24 (3 h 52 min, 164.26 g). Both servos fitted (bodies to the rear) and wheels on 2026-11-25, bolted to the drilled base plate the same day (8 x M3 x 12, 7 x M3 x 16); cables not plugged in yet. A crack through the +y box top (a layer joint) was patched 2026-11-26 (binder-ring wire stitches and a melted bead) and the load check passed on the owner's hands-on test (no caliper numbers) |
 | exp003 hub coupon v1, PETG | 1 | Spare | Retired (too close to the servo case) |
 | exp003 caster cup v1, PETG | 1 | Spare | Fit test 2026-11-21: plate and holes fit; the fork hits the walls. Retired |
 | exp003 caster cup (final), PETG | 1 | Spare | 4 mm too tall (the robot tips nose up); replaced by the corrected cup. Full strength, v2 cavity, with mounting bosses; printing 2026-11-21 (33 min) |
 | exp003 caster cup (corrected), PETG | 1 | Reserved | On the exp003 chassis. 8.6 mm tall, rim 44.4 mm off the floor; printed 2026-11-22 (27 min) and fitted the same day with 4 x M4 x 8 (caster) and 4 x M3 x 16 (to the plate). The plate sits level |
 | exp003 electronics deck fit coupon, PETG | 1 | Reserved | Printed 2026-11-23 (28 min): rocker cutouts, charge-jack holes, an M2.5 standoff boss with nut pocket, a UCTRONICS channel. Fit results go in cad/DECK.md |
-| exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
-| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23, dry-fitted; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
+| exp003 deck power tray and servo bridge, PETG | 2 | Reserved | Printed together 2026-11-23; bolted to the plate 2026-11-26 with the DROK, INA226 and servo board on them. Power tray: DROK on slotted pads, INA226 pocket, fuse tie points, rocker and charge socket in the panel. Servo bridge: over the caster cup on four posts; Waveshare Bus Servo Adapter (A) on 20 mm standoffs (cad/DECK.md) |
+| exp003 compute tray, PETG | 1 | Reserved | Printed 2026-11-23; bolted to the plate 2026-11-26 with the Pi 5 (Active Cooler fitted) and the UCTRONICS on it; bolts to the base plate: Pi 5 on four 11 mm M2.5 standoffs, UCTRONICS in a zip-tied cradle behind it; bolts to the plate at (-95/-135, 80/100) |
 | exp003 base plate, PETG | 1 | Reserved | exp003 chassis. Drilled 2026-11-25 for the wheel module v2 (15 x M3, 1/8 inch bit, the module as template) instead of reprinting. Printed 2026-11-21 (4 h 56 min, 223 g); cradles and caster cup fitted, level on the floor 2026-11-22 |
 | exp003 caster cup v2 light, PETG | 1 | Spare | Fit test passed 2026-11-21: plate, holes and the fork's full swivel all clear. The full-strength cup prints with the base plate |
 
@@ -103,7 +103,7 @@ not tracked yet; the AMS shows an estimate per spool.
 | WEP 948DQ-III soldering station with fume extractor (2-in-1) | 1 | On order | Ordered 2026-11-23. Due 2026-11-25. For the exp003 power harness; run the fume extractor while soldering |
 | Hakko CHP-170 micro soft wire cutters | 1 | On order | Ordered 2026-11-23. 2-pack. Due 2026-11-25 |
 | MG Chemicals 8341 no-clean flux paste, 10 mL | 1 | On order | Ordered 2026-11-23. Due 2026-11-25 |
-| MG Chemicals 4900 SAC305 lead-free solder, 0.032 in, 1/4 lb | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. Lead-free: runs hotter than leaded (about 350 C tip) |
+| MG Chemicals 4900 SAC305 lead-free solder, 0.032 in, 1/4 lb | 1 | Active | Ordered 2026-11-23, arrived 2026-11-25 (due 2026-11-27). Lead-free: runs hotter than leaded (about 350 C tip) |
 | Klein Tools 3005CR ratcheting crimper, 10 to 22 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For insulated terminals, e.g. the spade terminals (exp003 row 31); not for bare ferrules |
 | IRWIN Vise-Grip wire stripper, 10 to 24 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
 | QWORK 300 W mini heat gun | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For the heat-shrink kit (exp003 row 23) |
@@ -121,11 +121,11 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads and fuse 
 | # | Item | ASIN | Check on arrival | Arrived |
 |---|---|---|---|---|
 | 1 | Raspberry Pi 5 8GB | B0CK2FCG1K | Genuine board | 2026-11-21 |
-| 2 | Official Pi 5 Active Cooler | B0CLXZBR5P | | 2026-11-20 |
+| 2 | Official Pi 5 Active Cooler | B0CLXZBR5P | Fitted to the Pi 5 2026-11-26 (lead in the FAN socket) | 2026-11-20 |
 | 3 | CanaKit 45W USB-C PD supply (27W at 5V 5A for Pi 5) | B07H125ZRL | Bench power only; not the official PSU | 2026-11-20 |
 | 4 | SanDisk Extreme 64GB A2 microSD | B09X7C7LL1 | | 2026-11-20 |
 | 5 | M2.5 brass standoff kit, 160 pcs | B07KM5B3PT | | 2026-11-20 |
-| 6 | Serial bus servo driver board for Feetech ST/SC, USB | B0CTMM4LWK | Stand-in for the Waveshare Bus Servo Adapter (A). Test with LeRobot's motor setup on a spare STS3215 | 2026-11-20 |
+| 6 | Serial bus servo driver board for Feetech ST/SC, USB | B0CTMM4LWK | The board that arrived is marked Waveshare Bus Servo Adapter (A) V1.1 (photo, 2026-11-26), so it is the planned board, not a stand-in. On the deck's servo bridge 2026-11-26, jumpers on B (USB to servo; confirm). Test with LeRobot's motor setup on a spare STS3215 | 2026-11-20 |
 | 7 | 608-ZZ bearings 8x22x7 mm, 10-pack | B07XLV1W2M | Optional outboard wheel support | 2026-11-20 |
 | 8 | 1.5" PU swivel plate casters, set of 8 | B0DHHJRDDV | Checked 2026-11-21: 50 mm to the top of the plate; plate 46 x 38.25 mm, holes on 35.75 x 27.75 mm centres, swivel offset 13 mm (`Caster` in exp003 `params.py`); 1 used, 7 spare | 2026-11-20 |
 | 9 | SUNLU TPU 95A, 1 kg | B0BXNWK6NS | (also listed under Printing) | 2026-11-20 |
@@ -180,11 +180,12 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | PLA Basic Sunflower Yellow (AMS A4) | 1000 g | about 566 g (toy truck: hub caps 13 g; cab, arm, paddle 227 g; Tessera first piece 90.66 g; Tessera test keys 2, 19.51 g; PARTS tray 33.31 g; ALCOHOL tower 181.62 g) | about 434 g | Tessera bench layout: about 460 g est. for the 5 modules left (bench/tessera/README.md); 1 spool due 2026-12-01 (Amazon) and 4 on order (Bambu store) | | |
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
-| M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 8 (wheel hubs) | about 12 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
-| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | 4 x M3 x 12 (cradles), 4 x M3 x 16 (caster cup), 4 x M4 x 8 (caster), 8 M3 nuts, 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts) | about 16 of each length if 20 | Electronics deck on the plate's M3 grid, est. 4 to 8 M3 | Count the compartments when the deck picks lengths | Amazon 1 to 2 days |
+| M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 10 (wheel hubs 8, DROK ears 2) | about 10 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
+| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | M3 x 12: 4 (cradles, retired; not known if back in the kit), 8 (wheel module feet), 12 (deck parts); M3 x 16: 4 (caster cup), 7 (module beam); M3 nuts: 8 (cradles, cup), 15 (module), 14 (deck parts, DROK); 4 x M4 x 8 (caster), 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts) | **Running low (owner, 2026-11-26)**: M3 x 12 and M3 x 16 nearly used up | Shells, bumper mounts, arm v2 | Restock now (Orders to place) | Amazon 1 to 2 days |
 | M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
 | Brass heat-set inserts M2 to M5 | 520 (arrived 2026-11-20) | 0 | 520 | Shells est. 20 to 40 (the plate and cup use nuts) | Plenty | |
-| M2.5 brass standoffs | 160 (arrived 2026-11-20) | 0 | 160 | Pi 5 and boards est. 12 to 16 | Plenty | |
+| M2.5 brass standoffs | 160 (arrived 2026-11-20) | 8 (4 x 11 mm Pi, 4 x 20 mm servo board), 8 M2.5 nuts, 4 x M2.5 x 5 | 152 | Sensors and the camera, est. 8 | Plenty | |
+| Zip ties, small (about 2.5 mm wide, 100 mm) | 0 (none on hand, 2026-11-26) | 0 | 0 | 8 on the deck (2 UCTRONICS, 2 INA226, 4 fuse holders) plus the harness | Order now (Orders to place) | Amazon 1 to 2 days |
 
 ### Usage log
 
@@ -222,6 +223,9 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-24 | exp003 wheel module v2 fit coupon (1 h 24 min, left nozzle, 4 walls, 30% infill, front face down) | PETG Orange 17.96 g (slicer) |
 | 2026-11-24 | exp003 wheel module v2 (3 h 52 min, left nozzle, 6 walls, 40% infill, front face down; coupon passed) | PETG Orange 164.26 g (slicer) |
 | 2026-11-25 | Tessera ALCOHOL tower, 2 x 2, 130 mm, No. 004 (6 h 23 min, left nozzle, 4 walls, 30% infill) | PLA Sunflower Yellow 181.62 g (slicer) |
+| 2026-11-25 | exp003 wheel module v2 bolted to plate v1 | 8 x M3 x 12 (feet), 7 x M3 x 16 (beam), 15 M3 nuts |
+| 2026-11-26 | exp003 +y wheel box crack patched | Steel wire from a binder ring (5 stitches), a scrap bead melted along the crack, superglue on its edges (owner's choice of scrap; it shows blue in the photos) |
+| 2026-11-26 | exp003 electronics deck assembled on the plate | 12 x M3 x 12 and 12 M3 nuts (three deck parts); 2 x M3 x 8 and 2 M3 nuts (DROK ears); 4 x 11 mm and 4 x 20 mm M2.5 M-F standoffs, 8 M2.5 nuts; 4 x M2.5 x 5 (Pi); the servo board's own 4 corner screws |
 
 ### Orders to place
 
@@ -248,6 +252,13 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 - **Bambu PLA Basic Sunflower Yellow, 1 x 1 kg** (2026-11-24): the Tessera bench layout
   (`bench/tessera/README.md`) takes about 493 g of the 649 g left on A4, so add one spool to the
   PETG order (same store). The Tessera heat gun holster (about 149 g) also waits for that PETG.
+
+- **Screws and ties restock (owner, 2026-11-26: "need to order some new hex screws, etc soon")**,
+  before the shells and bumper mounts. M3 button-head hex socket screws: at least 50 each of M3 x 12
+  and M3 x 16, and 25 of M3 x 8 (stainless, 2 mm key, to match the Mywish kit); 100 M3 hex nuts;
+  100 small zip ties (about 2.5 mm wide, 100 mm long; the deck's slots are 4.5 x 2 mm) for the 8
+  deck tie points and the harness. Count the M3 x 20 and M4 compartments at the same time. Vendor
+  and price check (spend-research skill) before the owner orders.
 
 The battery's spade terminals were ordered 2026-11-21 (row 31).
 The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
@@ -332,3 +343,5 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-25: Tessera ALCOHOL tower sent (181.62 g yellow, about 434 g left). Next job: BIG bin and the ALCOHOL false floor in Jade White (215.48 g, 7 h 2 min, sliced).
 - 2026-11-25: plate v1 drilled for the wheel module; both servos fitted in the module, wheels on; cradles retired.
 - 2026-11-25: Bambu store filament order placed: 4 Yellow, 3 White, 2 Blue PLA, 3 Orange PETG, plus a free PETG Matte Avocado Green (Printing, On order).
+- 2026-11-25: exp003 wheel module v2 bolted to the base plate (8 x M3 x 12, 7 x M3 x 16 from the kit).
+- 2026-11-26: exp003 crack patched and load check passed (owner); electronics deck assembled on the plate (three parts, DROK, INA226, UCTRONICS, Pi 5 with cooler, servo board); fasteners logged; M3 screws running low and no zip ties on hand, so a restock went into Orders to place. The servo board on hand is the Waveshare Bus Servo Adapter (A) itself.

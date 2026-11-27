@@ -225,3 +225,14 @@ The new parts used about 182 g (slicer, 2026-11-24): the wheel module 164.26 g a
 17.96 g. No plate v2: plate v1 is drilled instead (owner, 2026-11-25).
 
 Spool 1 has about 344 g left and spool 2 is sealed; 3 more spools are due 2026-11-27.
+
+**Crack (owner, 2026-11-25).** After bolting down, the +y box's top wall showed a crack right
+through it, across x near the middle of the box (about x = -12 judged from the photo, likely between the servo screw columns
+at x = -8.3 and -32.8). It is a layer joint, the print's weak direction: the 5 mm top wall spans
+between the two end walls, and anything pushing it up at mid-span (a tight servo, or the servo's
+outer end lifting under the wheel load) puts its top face in tension across the layers. The box
+is still held on both sides of the crack (rear feet at x = -46, front feet at x = 5 and the beam),
+and the servo's own M2 screws straddle it, so it is patched rather than reprinted (164 g). Patched 2026-11-26: binder-ring wire
+stitches sunk at 260 C (thick office staples would not sink) and a melted bead (it shows blue in the photos, so possibly PLA, which bonds poorly to PETG; to confirm). The owner passed the load check by hand, without caliper numbers (BUILD_STEPS 4a), then the load check. For a v3: thicken the top wall
+or print it so the top wall's span lies along its layers.
+
