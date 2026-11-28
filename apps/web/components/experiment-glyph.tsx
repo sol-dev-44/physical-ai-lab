@@ -56,6 +56,18 @@ const glyphs: Record<string, ReactNode> = {
       <rect x="35" y="35" width="6" height="7" rx="1" />
     </>
   ),
+  // exp003: a two-wheel robot seen from the side, deck on top, caster behind.
+  exp003: (
+    <>
+      <path d="M6 42h36" />
+      <rect x="10" y="20" width="26" height="12" rx="2" />
+      <path d="M14 20v-5h12v5" />
+      <circle cx="18" cy="34" r="7" />
+      <circle cx="18" cy="34" r="2" />
+      <path d="M34 32v5" />
+      <circle cx="34" cy="39" r="3" />
+    </>
+  ),
 };
 
 const fallback = (

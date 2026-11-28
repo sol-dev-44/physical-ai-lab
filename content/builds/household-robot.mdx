@@ -2,7 +2,7 @@
 title: Household robot
 date: 2026-11-17
 status: building
-summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The chassis and the electronics deck are printed, but the first wheel mounts rolled over under the robot's weight, so a stiffer wheel module comes next. A phone control app already drives it on simulated wheels.
+summary: A small two-wheel Wi-Fi robot that will live with the family, designed in parametric CAD, printed on the lab's H2D and built to take an arm later. The chassis is rebuilt on a one-piece wheel module after the first mounts rolled over, the electronics deck is on, and the power wiring has started. A phone control app already drives it on simulated wheels.
 tags: [robot, mobile-base, cad, 3d-printing, exp003]
 parts:
   - 2 × Feetech STS3215 12V servos, wheel mode
@@ -19,19 +19,19 @@ parts:
 
 A small Wi-Fi robot that lives with the family. It should know each person and the pets, talk with
 each of them in a way that suits them, remember them and the house, keep to the household's rules
-about where it may go and when, and take remote driving. This is lab experiment 3.
+about where it may go and when, and take remote driving. This is lab experiment 3; what it tests
+and how is on the [experiment page](/experiments/exp003-household-robot).
 
 - **v1** is the rolling robot. It drives on carpet and hard floor without hitting anything,
   converses, recognises people and pets, remembers, follows the household's rules and goes where
   it is told. It ends with a vision-language-action policy trained on its own driving.
 - **v2** adds an arm to pick up light toys and put them away.
 
-Where it stands: everything for the chassis and the electronics deck is printed: the base plate, both wheels with their TPU tires, the servo
-cradles, the rear caster and the three deck trays. With everything laid out on the plate, the
-wheel mounts failed: under the robot's weight each servo cradle rolls over and its wheel leans
-in. The fix is a stiffer wheel module, a boxed servo mount on a wide foot with a beam tying left
-and right together (see the servo mount and the lessons below). Then come the power wiring, the
-Raspberry Pi and real wheels. A control app for a phone is built and drives simulated wheels.
+Where it stands: the chassis is printed and assembled. The first wheel mounts, two servo cradles,
+rolled over under the robot's weight, so a one-piece wheel module replaced them, bolted through
+holes drilled in the original base plate. The electronics deck is on the plate with the Raspberry
+Pi, the servo board and the power parts, and the power wiring has started: the main switch's
+leads are soldered and tested. A control app for a phone is built and drives simulated wheels.
 Nothing runs against hardware yet.
 
 <Callout>
@@ -101,7 +101,14 @@ first time.
 
 ## Servo mount
 
-Each wheel servo sits in a printed cradle that holds it from below. Its top mounting holes sit only
+<Callout>
+  Retired on 25 November. Under the robot's weight each cradle rolled over about the edge of its
+  foot, and a one-piece wheel module that boxes both servos replaced them (see
+  [The wheels that leaned](/log/2026-11-26-the-wheels-that-leaned)). The cradle drawing stays here
+  as the record of the first design.
+</Callout>
+
+Each wheel servo sat in a printed cradle that holds it from below. Its top mounting holes sit only
 about 2.5 mm under the spinning hub, which leaves no room for a plate, a screw head and the 2 mm of
 air the hub needs. The bottom holes are free, and that is how the SO-101 arm holds its servos.
 

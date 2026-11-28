@@ -1,0 +1,77 @@
+---
+id: exp003-household-robot
+title: "Experiment 3: a household robot"
+date: 2026-11-17
+status: running
+summary: A small two-wheel Wi-Fi robot built to live in a home, with every motion going through one safety gate on the robot. The chassis, wheel module and electronics deck are built and the power wiring has started. The first test, a dead-man drive on real wheels, comes once it is powered.
+hypothesis: A hobby-grade two-wheel robot can send every motion through one safety gate running on the robot, so that no lost, refused or failed command and no dropped link leaves its wheels turning.
+hardware:
+  - 2 × Feetech STS3215 12V servos, wheel mode
+  - Raspberry Pi 5 8GB
+  - 12.8V 10Ah LiFePO4 pack
+  - INA226 current and voltage sensor
+  - Waveshare Bus Servo Adapter (A)
+  - Printed PETG and TPU chassis
+tags: [robot, mobile-base, safety, exp003]
+runs: []
+draft: false
+---
+
+## Why
+
+Experiments 0 to 2 ran on a desk: a toy behind an IR blaster, then a fixed arm. A robot that
+drives around a home is a harder safety problem. It moves where people and pets are, it runs on a
+battery, and it is controlled over Wi-Fi, which drops.
+
+This experiment builds that robot from the ground up and tests whether the lab's harness holds up
+on it: one gated path to the motors, every command logged, and a robot that stops whenever
+anything goes wrong. The hardware itself is written up on the
+[household robot build page](/builds/household-robot), with drawings and every part.
+
+## Setup
+
+- **Drive.** Two bus servos in wheel mode on printed hubs and TPU tires, and a rear caster.
+- **Compute.** A Raspberry Pi 5 on the robot runs the motors, sensors and the safety gate. Heavier
+  work (speech, recognition, policies) runs on the lab machine over Wi-Fi.
+- **Power.** A 12.8 V LiFePO4 pack through a main switch and 10 A fuse, then a current sensor
+  that counts charging and discharging, then a 12 V rail for the servos and a 5 V rail for the Pi.
+- **Control.** The robot serves its own phone app on the home network. Driving is a dead-man: the
+  phone holds a 300 ms lease on the wheels and renews it while the stick is held. `base.stop` is a
+  tool the gate never refuses.
+
+<Callout>
+  Nothing runs against hardware yet. The control app drives simulated wheels, and the wiring is
+  being soldered. No results are published until the first real-wheel test has run through the
+  harness and been logged.
+</Callout>
+
+## What it will measure
+
+Each phase has a pass mark set before it runs. The four below come first, and all of them are
+about stopping.
+
+| Phase | Test | Pass mark |
+| --- | --- | --- |
+| 0. Bench | Drive two servos from the phone app and an Xbox controller | Releasing the stick, closing the tab or dropping Wi-Fi stops the wheels, over 10 minutes of driving |
+| 1. Chassis | Teleop over Wi-Fi on the built robot | 10 minutes of driving; the dead-man stops it every time |
+| 2. Interlocks | Bumpers, forward distance sensors, cliff sensors, a speed cap of about 0.3 m/s | Stops before a box 20/20 and at a test edge 10/10 |
+| 4. Remote | Driving over a private VPN | Stops within 300 ms when the link drops |
+
+Later phases add voice, mapping, household rules enforced by the gate (no-go zones, quiet hours),
+recognising who it is talking to, and a vision-language-action policy trained on its own driving.
+A second version adds an arm to put toys away.
+
+## Open risks
+
+- **A servo that keeps turning.** In wheel mode, a bus servo holds its last speed. If the Pi's
+  software dies mid-command, the wheels may keep going. Phase 0 tests this before the robot is on
+  the floor.
+- **No e-stop in v1.** The main switch is the only hardware cut, so v1 runs only with someone
+  watching. The e-stop comes with the arm.
+- **Wheel mounts under load.** The first mounts rolled over under the robot's weight. The one-piece
+  module that replaced them passed a hands-on load check, and a bearing on each wheel comes before
+  the arm.
+
+## Progress
+
+The build has its own day-by-day log on the build page. Posts about it are listed below.
