@@ -53,6 +53,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   prose, and a bad path fails the build. Write numbers that way, not by hand.
 - Drawings and panels are wrapped `data-wide`; prose stays at `max-w-prose`.
 - Images and video stay out of git (ADR 0006): drawings are SVG components drawn from the data.
+- Blueprints work outside build pages too: the shared MDX map (`components/mdx.tsx`) carries
+  sheets for log posts (`<TesseraJoint />`, `<TesseraLayout />`, `<SolderSteps />`), each wrapped
+  in `Sheet` (wider than the prose, like `Figure`). `BlueprintFrame` only needs `{ source }`.
+  Bench projects export their numbers like builds do: `bench/tessera/export_site.py` writes
+  `content/bench/tessera.data.json` (loader `lib/bench/tessera.ts`, staleness test beside the CAD).
 - Blueprint drawings (`components/builds/blueprints/`) are laid out for a 300 px width; text stays
   11 px and strokes hairline at any size.
 - Chrome breaks `pathLength` draw-on for paths with `vector-effect: non-scaling-stroke` (the line

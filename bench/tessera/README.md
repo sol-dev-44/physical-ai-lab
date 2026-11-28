@@ -47,11 +47,11 @@ module's size follows from its tool, not a fixed ladder of sizes.
 | FLUX | 4, 2 | 1 x 1, 104 mm | flux syringe standing up, a few brushes (6 in, 48 mm proud) | brushes 6 in; syringe length not published, check | 67 g |
 | TIPS | 4, 1 | 1 x 1, 52 mm | printed 2026-11-23 | | |
 | BIG | 5-6, 1-2 | 2 x 2, 130 mm | general bin, 99.5 mm square inside, 128 mm deep; modelled (No. 005) | owner, 2026-11-25: at least 4 x 4 in, and deep | 181 g |
-| ALCOHOL | 7-8, 1-2 | 2 x 2, 130 mm | 16 oz bottle on a false floor over a 10 mm stash, 51 mm proud; modelled (No. 004) | 6.38 x 6.38 x 16.69 cm (diagonal 90 mm, fits the 94) | 181 g + 37 g floor |
+| ALCOHOL | 7-8, 1-2 | 2 x 2, 130 mm | 16 oz bottle on a false floor over a 10 mm stash, 51 mm proud; printed 2026-11-25 (No. 004) | 6.38 x 6.38 x 16.69 cm (diagonal 90 mm, fits the 94) | 181 g + 37 g floor |
 | RACK | 0-2, 0 | 3 x 1, 52 mm | crimper, stripper, 2 cutters, jaws down | Klein 3005CR 9 x 3 in; IRWIN 8 in; Hakko CHP-170 about 5 in; slot widths on arrival | 79 g |
 | GLASSES | 3-5, 0 | 3 x 1, 26 mm | safety glasses, folded flat | no folded size published; 151 mm cavity, check | 47 g |
 | SPARE | 6, 0 | 1 x 1, 52 mm | printed 2026-11-23 | | |
-| PARTS | 7-8, 0 | 2 x 1, 26 mm | heat-shrink offcuts, screws, pins | generic | 34 g |
+| PARTS | 7-8, 0 | 2 x 1, 26 mm | heat-shrink offcuts, screws, pins; printed 2026-11-24 (No. 003) | generic | 34 g |
 
 Not in the field: the Hakko 599B tip cleaner (70 mm round, 71 mm tall, with its own weighted
 base; Hakko datasheet) sits beside the iron, and the WEP 948DQ-III station sits left of the mat

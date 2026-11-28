@@ -38,7 +38,8 @@ export function BlueprintFrame({
   className,
   children,
 }: {
-  data: BuildData;
+  /** Anything with the source path for the title block (a build's data, the Tessera data). */
+  data: Pick<BuildData, "source">;
   /** Part name for the title block. */
   title: string;
   /** Scale note, e.g. "1 : 1 · details 3 : 1". */

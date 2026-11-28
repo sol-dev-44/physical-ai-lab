@@ -6,6 +6,9 @@ import { Stat } from "./ui/stat";
 import { HarnessDiagram } from "./harness-diagram";
 import { RunBoundary } from "./run-boundary";
 import { RunResults } from "./run-results";
+import { SolderSteps } from "./builds/blueprints/solder-steps";
+import { TesseraJoint, TesseraLayout } from "./builds/blueprints/tessera";
+import { getTesseraData } from "../lib/bench/tessera";
 
 /** Components available inside MDX write-ups. Keep this list small and stable. */
 export function Callout({ children }: { children: ReactNode }) {
@@ -49,4 +52,45 @@ function Stats({ children }: { children: ReactNode }) {
   return <div className="not-prose my-10 grid grid-cols-2 gap-6 sm:grid-cols-4">{children}</div>;
 }
 
-export const mdxComponents = { Callout, Run, Figure, HarnessDiagram, Stats, Stat, h2: H2 };
+/** A blueprint sheet in a write-up: wider than the prose on large screens, like Figure. */
+function Sheet({ children }: { children: ReactNode }) {
+  return <div className="not-prose my-10 lg:-mx-24">{children}</div>;
+}
+
+/** Tessera bench storage drawings, from content/bench/tessera.data.json. */
+async function TesseraJointSheet() {
+  return (
+    <Sheet>
+      <TesseraJoint data={await getTesseraData()} />
+    </Sheet>
+  );
+}
+
+function SolderStepsSheet() {
+  return (
+    <Sheet>
+      <SolderSteps />
+    </Sheet>
+  );
+}
+
+async function TesseraLayoutSheet() {
+  return (
+    <Sheet>
+      <TesseraLayout data={await getTesseraData()} />
+    </Sheet>
+  );
+}
+
+export const mdxComponents = {
+  Callout,
+  Run,
+  Figure,
+  HarnessDiagram,
+  Stats,
+  Stat,
+  TesseraJoint: TesseraJointSheet,
+  TesseraLayout: TesseraLayoutSheet,
+  SolderSteps: SolderStepsSheet,
+  h2: H2,
+};

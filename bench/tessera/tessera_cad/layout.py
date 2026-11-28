@@ -81,6 +81,7 @@ LAYOUT: tuple[Placement, ...] = (
         5,
         "16 oz isopropyl bottle (64 mm square, 167 mm tall); false floor with a stash",
         sized_from="listing 6.38 x 6.38 x 16.69 cm",
+        status="printed",
     ),
     Placement(
         "RACK",
@@ -112,6 +113,7 @@ LAYOUT: tuple[Placement, ...] = (
         1,
         "heat-shrink offcuts, screws, header pins; first check that the grid holds over 104 mm",
         sized_from="generic",
+        status="printed",
     ),
 )
 

@@ -139,7 +139,7 @@ def test_layout_fills_the_field_once():
     assert len(taken) == len(set(taken)), "two modules share a cell"
     field = {(c, r) for c in range(FIELD_COLS) for r in range(FIELD_ROWS)}
     assert set(taken) == field  # BIG took the 2 x 2 once kept to grow (2026-11-25)
-    assert [p.name for p in LAYOUT if p.status == "printed"] == ["TIPS", "SPARE"]
+    assert [p.name for p in LAYOUT if p.status == "printed"] == ["TIPS", "ALCOHOL", "SPARE", "PARTS"]
 
 
 def test_layout_puts_tall_at_the_back_and_heat_away_from_the_alcohol():
