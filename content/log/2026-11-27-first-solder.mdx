@@ -1,0 +1,48 @@
+---
+title: "First solder"
+date: 2026-11-27
+summary: "The household robot's power wiring is planned, with three fuses, a current sensor that counts charging and discharging, and no e-stop until v2. The first joints are soldered: the main switch's two leads, tinned, joined flat on the tabs, heat-shrunk and beep-tested."
+tags: [robot, hardware, safety, exp003]
+draft: false
+---
+
+The [household robot](/builds/household-robot) has its wiring plan, and the first part of it is
+soldered.
+
+## The plan
+
+- **Main fuse first.** A 10 A fuse sits a short lead from the battery's positive terminal, so
+  everything after it is protected.
+- **The current sensor before everything else.** Every amp in or out passes its shunt, so it
+  counts charging as well as discharging and works as the robot's fuel gauge.
+- **The charge socket joins before the main switch,** so the battery charges with the robot off.
+  It has its own 3 A fuse, because the socket's leads are thinner than the main run.
+- **Two rails after the switch.** One feeds a 12 V converter through a 5 A fuse for the servos.
+  The other feeds the 5 V converter for the Pi.
+- **One ground point,** soldered, so load current never runs through the sensor's ground.
+
+There is no emergency stop in v1. The main switch is the one hardware cut, so v1 runs only with
+someone watching. The e-stop arrives with the arm in v2.
+
+## The method
+
+This was the lab's first real soldering, so the method is written down step by step for the
+joints still to come.
+
+1. **Prep with the iron cold.** Strip 6 mm, twist the strands, and slide the heat-shrink on
+   before the joint, 5 cm back. It can't go on afterwards.
+2. **Tin both sides.** Lead-free solder at 370 °C. Coat the twisted wires, then the switch tab,
+   in under 3 seconds so the switch's plastic doesn't soften.
+3. **Join flat.** The two wires together are too thick for the tab's hole, so they lie flat
+   along its face. Press the iron on them for about 3 seconds, then hold the wire still for 10
+   while the solder sets.
+4. **Shrink and test.** Slide the tube down over the joint, shrink it with the heat gun, then
+   check the switch with the multimeter's beep test: a beep when on, silence when off.
+
+Both leads passed.
+
+## Next
+
+The charge socket onto its fuse, the servo rail to the 12 V converter, the main fuse, the ground
+point and the battery terminals. Then a continuity check of the whole harness before the battery
+is ever connected.

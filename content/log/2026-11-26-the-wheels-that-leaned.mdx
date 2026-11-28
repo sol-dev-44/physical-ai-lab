@@ -1,0 +1,57 @@
+---
+title: "The wheels that leaned"
+date: 2026-11-26
+summary: "Under load the household robot's servo cradles rolled over and the wheels leaned in. A one-piece wheel module replaced them, bolted through holes drilled in the old plate instead of printing a new one. Then the electronics deck went on: Pi 5, servo board and power parts on three printed trays."
+tags: [robot, mobile-base, cad, 3d-printing, exp003]
+draft: false
+---
+
+The [household robot](/builds/household-robot) sat level on Sunday. By Monday evening its
+wheels were leaning in.
+
+## Why the cradles rolled
+
+Each wheel servo sat in its own printed cradle with two bolts through the foot. Both bolts sat
+on one line, 11 mm from the foot's inboard edge, while the tire pushed 53 mm out. That is a lever
+of 4.7 to 1. The cradle rolled about the edge of its foot, the servo's outer end lifted, and the
+wheel leaned. The cradle's cheeks also took the bending across their print layers, where a
+printed part is weakest.
+
+A new rule went into the checklist every printed part goes through: trace the load path from the
+tire to the plate before modelling anything.
+
+## Wheel module v2
+
+The fix is one PETG piece that boxes both servos and ties them together with an axle beam,
+bolted down with 15 M3 screws. Every check runs at five times the static load, with the planned
+arm reaching forward: 73 N on each wheel.
+
+- The lever dropped from 4.7 to 1.6 to 1.
+- The worst bolt carries 57 N, and the walls see about 0.5 MPa.
+- An 18 g test piece checked the servo fit before the 164 g module printed.
+
+The plan included a new base plate to match. It would only have moved 15 holes, so the old plate
+was drilled instead, with the module as its template, and the filament was saved.
+
+A crack then showed through one servo box's top wall, along a layer joint. It was stitched with
+steel wire sunk in with the soldering iron and sealed with a melted bead, and the robot passed a
+hands-on load check. A 6806 bearing on each wheel, so the servo only drives and the box carries
+the weight, comes before the arm.
+
+## The electronics deck
+
+Three printed trays now sit on the plate.
+
+- **Compute tray.** The Raspberry Pi 5 with its cooler, and a 5 V converter that feeds it.
+- **Servo bridge.** A small table over the caster that holds the board driving the wheel servos.
+- **Power tray.** A 12 V converter for the servos, a current and voltage sensor that will act
+  as the fuel gauge, tie points for the fuses, and a panel with the main switch and the charge
+  socket.
+
+A fit coupon settled the switch cutout and the standoff sizes before the trays printed. Two
+lessons from assembly: zip ties have to be threaded before a tray is bolted down, and only the
+bridge's legs hold captive nuts.
+
+## Next
+
+The power wiring.
