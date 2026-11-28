@@ -9,7 +9,11 @@ household's rules about where it may go and when, and can be driven by remote.
   and ends with a vision-language-action (VLA) policy trained on its own driving.
 - **v2:** adds an arm (or two) to pick up light toys and put them away.
 
-**Status (2026-11-26, evening):** the chassis is rebuilt on wheel module v2, bolted through 15
+**Status (2026-11-27, evening):** the power harness has started: the main rocker has its two
+16 AWG leads and its 3 A and 5 A fuse holders soldered on and heat-shrunk, and it passed the
+beep test (on: continuity, off: open). Wiring plan: [HARNESS.md](HARNESS.md).
+
+**Earlier (2026-11-26, evening):** the chassis is rebuilt on wheel module v2, bolted through 15
 holes drilled in plate v1 ([cad/WHEEL_MOUNT.md](cad/WHEEL_MOUNT.md)). A crack through the left
 servo box's top wall (a layer joint) was stitched and patched, and the owner passed the load check
 by hand (no caliper numbers). The electronics deck is assembled on the plate: compute tray (Pi 5
@@ -23,11 +27,12 @@ on 20 mm standoffs) and power tray (DROK 12 V converter, INA226), in the layout 
 
 1. Done 2026-11-25 to 26: wheel module v2 printed, plate v1 drilled, module bolted on, crack
    patched, load check passed by hand; deck parts, boards and Pi mounted (BUILD_STEPS steps 0 to 10).
-2. Zip ties on the UCTRONICS and INA226 (none on hand yet; restock in
-   [docs/inventory.md](../../docs/inventory.md), "Orders to place", with M3 screws).
-3. Power harness: the wiring diagram first, then soldering on the bench (solder arrived 2026-11-25,
-   the other tools are due 2026-11-27); then the rocker, charge jack and fuse holders (BUILD_STEPS 9,
-   11 to 13). Check the DROK reads 12.0 V before any servo is plugged in.
+2. Zip ties on the UCTRONICS and INA226: ties and M3 screws ordered 2026-11-27, due Dec 1 to 5
+   ([docs/inventory.md](../../docs/inventory.md), "Orders to place").
+3. Power harness ([HARNESS.md](HARNESS.md)): the rocker's leads are done (2026-11-27). Next the
+   charge jack onto the 3 A holder's free lead, the 5 A lead to the DROK, the main fuse, the
+   ground star and the battery spades (BUILD_STEPS 13); then the rocker, charge jack and fuse
+   holders into the deck (9, 11). Check the DROK reads 12.0 V before any servo is plugged in.
 4. Phase 0 bench test of the servos in wheel mode (and distinct bus IDs), then the servo cables
    into the servo board.
 5. Before the v2 arm, or sooner if the wheels start to lean or the patched crack opens: a 6806 bearing so the
@@ -298,3 +303,4 @@ See [cad/README.md](cad/README.md). Measurements: [cad/MEASURING.md](cad/MEASURI
 - 2026-11-25: coupon passed; the wheel module printed (164.26 g). No plate v2: the owner asked not to waste filament, and v2 only moved 15 holes, so plate v1 is drilled with the module as its template (1/8 inch bit; cad/WHEEL_MOUNT.md, "Drilling plate v1").
 - 2026-11-25: plate v1 drilled (15 holes), both servos into the module (bodies to the rear), wheels on, module bolted to the plate. A crack then showed through the +y box's 5 mm top wall, across a layer joint at mid-span.
 - 2026-11-26: the crack stitched with binder-ring wire sunk with the soldering iron (thick office staples would not sink) and a melted bead over it; the owner passed the load check by hand. The electronics deck went on in the DECK.md order: standoffs into the trays, the three parts to the plate, the DROK, INA226 and UCTRONICS, then the Pi 5 with its Active Cooler and the servo board (turned half a turn so its USB-C and power face the Pi). Lessons in [BUILD_STEPS.md](BUILD_STEPS.md) and [cad/DECK.md](cad/DECK.md): the trays' M3 holes are plain (only the bridge legs hold their nuts), zip ties have to be threaded before a tray is bolted down, the DROK sits flush with the plate's right edge. Next: zip ties and screws restock, then the power harness.
+- 2026-11-27: wiring plan drafted ([HARNESS.md](HARNESS.md)) and checked by building to it: a 3 A fuse added on the charge lead, no e-stop in v1. First soldering session (the owner's first real harness work): the rocker's two leads, each a 16 AWG red wire twisted with one lead of an inline fuse holder (3 A on tab A, 5 A on tab B), tinned, laid flat on the tinned tab and reflowed at 370 C, then heat-shrunk. Beep test passed. Method and lessons in HARNESS.md, "Bench method". Screws and ties restock ordered (due Dec 1 to 5).

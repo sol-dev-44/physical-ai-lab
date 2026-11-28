@@ -539,7 +539,7 @@
     "used": "M3 x 12: 4 (cradles, retired; not known if back in the kit), 8 (wheel module feet), 12 (deck parts); M3 x 16: 4 (caster cup), 7 (module beam); M3 nuts: 8 (cradles, cup), 15 (module), 14 (deck parts, DROK); 4 x M4 x 8 (caster), 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts)",
     "left": "Running low (owner, 2026-11-26): M3 x 12 and M3 x 16 nearly used up",
     "planned": "Shells, bumper mounts, arm v2",
-    "reorder": "Restock now (Orders to place)",
+    "reorder": "Restocked: 500 x M3 x 12, 400 x M3 x 16, 600 x M3 x 8, 100 M3 nuts ordered 2026-11-27, due Dec 1 to 5 (Orders to place)",
     "lead_time": "Amazon 1 to 2 days"
    },
    {
@@ -575,7 +575,7 @@
     "used": "0",
     "left": "0",
     "planned": "8 on the deck (2 UCTRONICS, 2 INA226, 4 fuse holders) plus the harness",
-    "reorder": "Order now (Orders to place)",
+    "reorder": "100 ordered 2026-11-27, due Dec 1 (Orders to place)",
     "lead_time": "Amazon 1 to 2 days"
    }
   ],
@@ -754,6 +754,11 @@
     "date": "2026-11-26",
     "what": "exp003 electronics deck assembled on the plate",
     "used": "12 x M3 x 12 and 12 M3 nuts (three deck parts); 2 x M3 x 8 and 2 M3 nuts (DROK ears); 4 x 11 mm and 4 x 20 mm M2.5 M-F standoffs, 8 M2.5 nuts; 4 x M2.5 x 5 (Pi); the servo board's own 4 corner screws"
+   },
+   {
+    "date": "2026-11-27",
+    "what": "exp003 harness 13a: rocker leads soldered and heat-shrunk",
+    "used": "16 AWG red silicone wire 400 mm (150 + 250 mm; about 2.6 m of the 3 m left); 2 of 10 Nilight inline holders (loops cut), with a 3 A and a 5 A ATC fuse from the assortment; 2 x 20 mm of 10 mm heat-shrink (kit row 23); SAC305 solder about 1 g est."
    }
   ]
  },
@@ -874,7 +879,7 @@
    "n": 17,
    "item": "Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A",
    "asin": "B07426WCLM, B0DNCJRX18",
-   "check": "10A main, 5A servo rail",
+   "check": "10A main, 5A servo rail, 3A charge lead (HARNESS.md); 3A and 5A in use from 2026-11-27",
    "group": "Power"
   },
   {
@@ -1209,6 +1214,10 @@
   {
    "date": "2026-11-26",
    "text": "the crack stitched with binder-ring wire sunk with the soldering iron (thick office staples would not sink) and a melted bead over it; the owner passed the load check by hand. The electronics deck went on in the DECK.md order: standoffs into the trays, the three parts to the plate, the DROK, INA226 and UCTRONICS, then the Pi 5 with its Active Cooler and the servo board (turned half a turn so its USB-C and power face the Pi). Lessons in BUILD_STEPS.md and cad/DECK.md: the trays' M3 holes are plain (only the bridge legs hold their nuts), zip ties have to be threaded before a tray is bolted down, the DROK sits flush with the plate's right edge. Next: zip ties and screws restock, then the power harness."
+  },
+  {
+   "date": "2026-11-27",
+   "text": "wiring plan drafted (HARNESS.md) and checked by building to it: a 3 A fuse added on the charge lead, no e-stop in v1. First soldering session (the owner's first real harness work): the rocker's two leads, each a 16 AWG red wire twisted with one lead of an inline fuse holder (3 A on tab A, 5 A on tab B), tinned, laid flat on the tinned tab and reflowed at 370 C, then heat-shrunk. Beep test passed. Method and lessons in HARNESS.md, \"Bench method\". Screws and ties restock ordered (due Dec 1 to 5)."
   }
  ],
  "design": {

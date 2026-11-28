@@ -23,11 +23,20 @@ All done 2026-11-26 (steps 0 to 4 in Done).
 
 ## Wiring (next, from README "Next" 5 and 6)
 
-- [ ] **12. Power harness wiring diagram** (Claude drafts it in the repo, the owner checks it
-  against the parts): battery, main switch, 10 A fuse, INA226 shunt, DROK (motor rail, 5 A fuse)
-  to the servo board, UCTRONICS (5 V) to the Pi's USB-C, charge jack.
 - [ ] **13. Bench soldering** of the harness joins, away from the PETG (it softens at about
-  80 C), heat-shrunk; then step 9 (rocker and charge jack) and step 11 (fuse holders).
+  80 C), heat-shrunk; then step 9 (rocker and charge jack) and step 11 (fuse holders). Method:
+  [HARNESS.md](HARNESS.md), "Bench method".
+  - [x] 13a. Rocker leads. Done 2026-11-27 (owner): tab A (marker dot) = 150 mm red "IN" + the
+    3 A holder; tab B = 250 mm red + the 5 A holder. Beep test passed (on beeps, off silent).
+  - [ ] 13b. Charge jack + onto the 3 A holder's free lead (twist, tin, join, heat-shrink).
+    Check the jack's leads first (HARNESS.md, "To confirm").
+  - [ ] 13c. 5 A holder's free lead to DROK IN+. Find which DROK pair is IN first (label or
+    lead colours).
+  - [ ] 13d. Main 10 A holder: one lead to a crimped 6.3 mm female spade (battery +, Klein
+    crimper), the other into INA226 VIN.
+  - [ ] 13e. Ground star (battery -, DROK IN-, UCTRONICS IN-, INA226 GND, charge jack -),
+    soldered and heat-shrunk; battery - spade crimped.
+  - [ ] 13f. Continuity checks of the whole harness, battery still off.
 - [ ] **14. Check the DROK's output reads 12.0 V** on the meter before any servo is plugged in
   (inventory "Check on arrival").
 - [ ] **15. Servo cables** from the two wheel servos into the servo board's D V G sockets, in
@@ -36,6 +45,9 @@ All done 2026-11-26 (steps 0 to 4 in Done).
 
 ## Done
 
+- [x] **12. Power harness wiring diagram** ([HARNESS.md](HARNESS.md)). Drafted 2026-11-27; the
+  owner checked it against the parts and built the rocker to it the same day (3 A charge fuse
+  kept). The DROK's IN/OUT pair and the charge jack's leads are checked at their joins (13b, 13c).
 - [x] **10. Pi 5 and servo board on their standoffs.** Done 2026-11-26 (owner, photos). Pi:
   GPIO pins along the front edge, USB/Ethernet toward the centre, USB-C and HDMI on the back
   edge, Active Cooler fitted (push pins in the diagonal holes, fan at the USB corner, lead in the

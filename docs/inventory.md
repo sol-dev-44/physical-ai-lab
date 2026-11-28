@@ -100,17 +100,17 @@ not tracked yet; the AMS shows an estimate per spool.
 | 6" C-clamps | 4 | Active | Bench |
 | Felt desk mat | 1 | Active | Bench |
 | Mywish 1290-piece M2 to M5 button-head hex socket screw kit (B0CQWYFTXC) | 1 | Spare | Each size in 8, 12, 16 and 20 mm, with nuts, flat washers and hex keys. No M3 shorter than 8 mm |
-| WEP 948DQ-III soldering station with fume extractor (2-in-1) | 1 | On order | Ordered 2026-11-23. Due 2026-11-25. For the exp003 power harness; run the fume extractor while soldering |
+| WEP 948DQ-III soldering station with fume extractor (2-in-1) | 1 | Active | Ordered 2026-11-23; in use 2026-11-27 (iron at 370 C for SAC305). For the exp003 power harness; run the fume extractor while soldering |
 | Hakko CHP-170 micro soft wire cutters | 1 | On order | Ordered 2026-11-23. 2-pack. Due 2026-11-25 |
 | MG Chemicals 8341 no-clean flux paste, 10 mL | 1 | On order | Ordered 2026-11-23. Due 2026-11-25 |
 | MG Chemicals 4900 SAC305 lead-free solder, 0.032 in, 1/4 lb | 1 | Active | Ordered 2026-11-23, arrived 2026-11-25 (due 2026-11-27). Lead-free: runs hotter than leaded (about 350 C tip) |
 | Klein Tools 3005CR ratcheting crimper, 10 to 22 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For insulated terminals, e.g. the spade terminals (exp003 row 31); not for bare ferrules |
-| IRWIN Vise-Grip wire stripper, 10 to 24 AWG | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
-| QWORK 300 W mini heat gun | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. For the heat-shrink kit (exp003 row 23) |
+| IRWIN Vise-Grip wire stripper, 10 to 24 AWG | 1 | Active | Ordered 2026-11-23; in use 2026-11-27 |
+| QWORK 300 W mini heat gun | 1 | Active | Ordered 2026-11-23; in use 2026-11-27. For the heat-shrink kit (exp003 row 23) |
 | Copper solder wick braid, 2.5 mm | 1 | On order | Ordered 2026-11-23. 2-pack. Due 2026-11-27 |
-| Hakko 599B-02 tip cleaning wire and holder | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
+| Hakko 599B-02 tip cleaning wire and holder | 1 | Active | Ordered 2026-11-23; in use 2026-11-27 |
 | Acid/flux brushes, 3/8 in | 1 | On order | Ordered 2026-11-23. 36 count. Due 2026-11-27 |
-| PAFOWO silicone soldering mat, 17.7 x 11.8 in | 1 | On order | Ordered 2026-11-23. Due 2026-11-27 |
+| PAFOWO silicone soldering mat, 17.7 x 11.8 in | 1 | Active | Ordered 2026-11-23; in use 2026-11-27 |
 | NoCry clear anti-fog safety glasses | 1 | On order | Ordered 2026-11-23. Due 2026-11-27. Wear them when soldering and clipping leads |
 | Amazon Basics 99% isopropyl alcohol, 16 oz | 1 | On order | Ordered 2026-11-23. Due 2026-11-28. Cleans flux off boards |
 
@@ -136,7 +136,7 @@ All reserved for exp003. Most arrived 2026-11-20; the Pi 5, XT60 leads and fuse 
 | 14 | DROK buck-boost, 9-36V in, 12V 5A out, potted | B0B6VK8BPN | Check 12.0V out before connecting servos | 2026-11-20 |
 | 15 | INA226 I2C current/voltage module, 0-36V 20A | B0DRNG1VKM | **Shunt must be R010 (or lower), not R100** | 2026-11-20 |
 | 16 | XT60 pairs with 14 AWG leads, 5 pairs | B085HF31K7 | | 2026-11-21 |
-| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail | Holders 2026-11-20; fuse assortment 2026-11-21 |
+| 17 | Nilight inline ATC fuse holders 14 AWG, 10-pack, + ATC fuse assortment 2-40A | B07426WCLM, B0DNCJRX18 | 10A main, 5A servo rail, 3A charge lead (HARNESS.md); 3A and 5A in use from 2026-11-27 | Holders 2026-11-20; fuse assortment 2026-11-21 |
 | 18 | DaierTek 12V 20A SPST rocker switch | B07S2QJKTX | Main power | 2026-11-20, as a 10-pack of mini rockers: check the rating printed on the switch carries 10 A at 12 V before using one as the main switch |
 | 19 | 5.5x2.1 mm panel-mount DC jacks, 5A, 6 sets | B0D9B7WR23 | Charge port; matches item 12 | 2026-11-20 |
 | 20 | 22 mm red mushroom e-stop, latching, 2NC 10A, 2-pack | B07R8PTTDX | 1 used, 1 spare | 2026-11-20 |
@@ -181,11 +181,11 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | PLA Basic Pumpkin Orange, PLA Pure Baby Blue (spares) | 1000 g each | 0 | 1000 g each | Not planned yet | | |
 | SUNLU TPU 95A, black | 1000 g (arrived 2026-11-20) | 105 g (two tires) | about 895 g | about 100 g est. (bumper) | Order when under 300 g | Amazon 1 to 2 days |
 | M3 x 8 button head (Mywish kit) | Not counted: per-size counts are not published; similar kits hold 20 per length | 10 (wheel hubs 8, DROK ears 2) | about 10 if 20 | None planned | Count the compartment when a design picks this length | Amazon 1 to 2 days |
-| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | M3 x 12: 4 (cradles, retired; not known if back in the kit), 8 (wheel module feet), 12 (deck parts); M3 x 16: 4 (caster cup), 7 (module beam); M3 nuts: 8 (cradles, cup), 15 (module), 14 (deck parts, DROK); 4 x M4 x 8 (caster), 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts) | **Running low (owner, 2026-11-26)**: M3 x 12 and M3 x 16 nearly used up | Shells, bumper mounts, arm v2 | Restock now (Orders to place) | Amazon 1 to 2 days |
+| M3 x 12, M3 x 16, M4 x 8 button head, M3 and M4 nuts (Mywish kit) | Not counted (similar kits hold 20 per length) | M3 x 12: 4 (cradles, retired; not known if back in the kit), 8 (wheel module feet), 12 (deck parts); M3 x 16: 4 (caster cup), 7 (module beam); M3 nuts: 8 (cradles, cup), 15 (module), 14 (deck parts, DROK); 4 x M4 x 8 (caster), 4 M4 nuts; toy truck: 8 x M4 x 16, 4 x M4 x 20, 8 M4 nuts, 6 M4 washers (cab still needs 4 x M4 x 20, arm 2 x M4 x 16 and 2 nuts) | **Running low (owner, 2026-11-26)**: M3 x 12 and M3 x 16 nearly used up | Shells, bumper mounts, arm v2 | Restocked: 500 x M3 x 12, 400 x M3 x 16, 600 x M3 x 8, 100 M3 nuts ordered 2026-11-27, due Dec 1 to 5 (Orders to place) | Amazon 1 to 2 days |
 | M2 self-tapping screws (servo bags) | One bag per servo | 8 (two cradles) | Rest of the bags | None planned | Keep the bags with the servos | |
 | Brass heat-set inserts M2 to M5 | 520 (arrived 2026-11-20) | 0 | 520 | Shells est. 20 to 40 (the plate and cup use nuts) | Plenty | |
 | M2.5 brass standoffs | 160 (arrived 2026-11-20) | 8 (4 x 11 mm Pi, 4 x 20 mm servo board), 8 M2.5 nuts, 4 x M2.5 x 5 | 152 | Sensors and the camera, est. 8 | Plenty | |
-| Zip ties, small (about 2.5 mm wide, 100 mm) | 0 (none on hand, 2026-11-26) | 0 | 0 | 8 on the deck (2 UCTRONICS, 2 INA226, 4 fuse holders) plus the harness | Order now (Orders to place) | Amazon 1 to 2 days |
+| Zip ties, small (about 2.5 mm wide, 100 mm) | 0 (none on hand, 2026-11-26) | 0 | 0 | 8 on the deck (2 UCTRONICS, 2 INA226, 4 fuse holders) plus the harness | 100 ordered 2026-11-27, due Dec 1 (Orders to place) | Amazon 1 to 2 days |
 
 ### Usage log
 
@@ -226,6 +226,7 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
 | 2026-11-25 | exp003 wheel module v2 bolted to plate v1 | 8 x M3 x 12 (feet), 7 x M3 x 16 (beam), 15 M3 nuts |
 | 2026-11-26 | exp003 +y wheel box crack patched | Steel wire from a binder ring (5 stitches), a scrap bead melted along the crack, superglue on its edges (owner's choice of scrap; it shows blue in the photos) |
 | 2026-11-26 | exp003 electronics deck assembled on the plate | 12 x M3 x 12 and 12 M3 nuts (three deck parts); 2 x M3 x 8 and 2 M3 nuts (DROK ears); 4 x 11 mm and 4 x 20 mm M2.5 M-F standoffs, 8 M2.5 nuts; 4 x M2.5 x 5 (Pi); the servo board's own 4 corner screws |
+| 2026-11-27 | exp003 harness 13a: rocker leads soldered and heat-shrunk | 16 AWG red silicone wire 400 mm (150 + 250 mm; about 2.6 m of the 3 m left); 2 of 10 Nilight inline holders (loops cut), with a 3 A and a 5 A ATC fuse from the assortment; 2 x 20 mm of 10 mm heat-shrink (kit row 23); SAC305 solder about 1 g est. |
 
 ### Orders to place
 
@@ -259,6 +260,16 @@ The owner asked (2026-11-19) for usage to be tracked and orders flagged ahead of
   100 small zip ties (about 2.5 mm wide, 100 mm long; the deck's slots are 4.5 x 2 mm) for the 8
   deck tie points and the harness. Count the M3 x 20 and M4 compartments at the same time. Vendor
   and price check (spend-research skill) before the owner orders.
+  **Compared 2026-11-27** (store pages; Amazon blocks automated checks, so not priced): one shop
+  can supply everything. BoltsandNuts.com about $26 delivered (200 x M3 x 12, 100 x M3 x 16,
+  100 x M3 x 8, 100 nuts, 100 ties; free shipping at $25; ISO 7380, 2 mm key confirmed; sale
+  prices end 11-30). Bolt Depot $17.27 plus cart shipping (only listing stating the tie width,
+  2.5 mm). Albany County $15.45 plus shipping (closed until 11-30). McMaster about $37 plus
+  shipping, delivers 11-30. Assortment kits lose per useful screw.
+  **Ordered 2026-11-27 (Amazon, $37.95 before tax):** SVLING 304 SS button heads, ISO 7380
+  (2 mm key): 500 x M3 x 12, 400 x M3 x 16, 600 x M3 x 8; 100 x M3 hex nuts (304 SS, DIN 934,
+  5.5 mm across flats); 100 Kable Kontrol 4 in ties (0.10 in / 2.5 mm wide). Due Dec 1 (M3 x 8,
+  ties) and Dec 5 (M3 x 16, nuts); M3 x 12 date not shown. Move to the stock table on arrival.
 
 The battery's spade terminals were ordered 2026-11-21 (row 31).
 The soldering and wiring tools proposed 2026-11-22 were ordered 2026-11-23 (Tools and bench, On order).
@@ -345,3 +356,4 @@ The BroadLink RM4 Mini and the Wall-e toy predate these orders.
 - 2026-11-25: Bambu store filament order placed: 4 Yellow, 3 White, 2 Blue PLA, 3 Orange PETG, plus a free PETG Matte Avocado Green (Printing, On order).
 - 2026-11-25: exp003 wheel module v2 bolted to the base plate (8 x M3 x 12, 7 x M3 x 16 from the kit).
 - 2026-11-26: exp003 crack patched and load check passed (owner); electronics deck assembled on the plate (three parts, DROK, INA226, UCTRONICS, Pi 5 with cooler, servo board); fasteners logged; M3 screws running low and no zip ties on hand, so a restock went into Orders to place. The servo board on hand is the Waveshare Bus Servo Adapter (A) itself.
+- 2026-11-27: screws and ties restock ordered (Amazon, $37.95 before tax; due Dec 1 to 5). Soldering station, stripper, heat gun, tip cleaner and mat in use (Active); the crimper, wick, brushes, cutters, flux, glasses and adapters still show On order until the owner confirms them. exp003 rocker leads soldered (13a): wire, fuse holders, fuses and heat-shrink logged.
